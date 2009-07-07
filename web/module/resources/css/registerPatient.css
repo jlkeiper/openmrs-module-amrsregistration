@@ -1,0 +1,14 @@
+  th { text-align: left }
+  th.headerCell {
+    border-top: 1px lightgray solid;
+    xborder-right: 1px lightgray solid
+  }
+  td.inputCell {
+    border-top: 1px lightgray solid;
+  }
+  td.inputCell th {
+    font-weight: normal;
+  }
+  .lastCell {
+    border-bottom: 1px lightgray solid;
+  }
