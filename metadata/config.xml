@@ -142,5 +142,8 @@
 <!-- /Internationalization -->
     <tomcat>
         <home>C:/Documents and Settings/nribeka/My Documents/Work/apache-tomcat-6.0.18</home>
+        <brian>
+            <home>/opt/tomcat</home>
+        </brian>
     </tomcat>
 </module>
