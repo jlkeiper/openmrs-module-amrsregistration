@@ -17,6 +17,11 @@
     numObjs["identifier"] = -1;
     numObjs["name"] = -1;
     numObjs["address"] = -1;
+    
+    function hidDiv() {
+		floating = document.getElementById("floatingResult");
+		floating.style.display = "none";
+    }
 
     function addNew(type) {
         var newData = document.getElementById(type + "Data");
@@ -94,11 +99,12 @@
 </script>
 <style>
     .staticElement {
+    	background-color: #ffffff;
         margin-left: 35%;
-        width: 50%;
         position: fixed;
         float: right;
         top: 10%;
+        border: 1px double black
     }
 
     .tabBoxes {
@@ -113,27 +119,34 @@
         cursor: pointer;
     }
 
+    .close {
+        right: 5px;
+        top: 5px;
+        position:absolute;
+        float: left;
+        font-size: 10px;
+        float: left;
+        cursor: pointer;
+    }
+
 </style>
 
 <h2><spring:message code="amrsregistration.edit.title"/></h2>
 <span><spring:message code="amrsregistration.edit.details"/></span>
 <br/>
 
-<div id="floatingResult" class="staticElement" style="display:none">
-    <br/>
-    <b class="boxHeader"><spring:message code="amrsregistration.edit.results"/></b>
-
-    <div class="box">
+<div id="floatingResult" class="staticElement" style="display: none;">
+    <div>
         <table border="0" cellspacing="2" cellpadding="2">
             <tr>
             	<th>Identifier</th>
             	<th>First Name</th>
             	<th>Last Name</th>
             	<th>DOB</th>
-            	<th>Get Patient?</th>
             </tr>
             <tbody id="resultTable"></tbody>
         </table>
+        <span class="close"><a href="javascript:;" onclick="hidDiv()">close</a></span>
     </div>
 </div>
 <br/>
