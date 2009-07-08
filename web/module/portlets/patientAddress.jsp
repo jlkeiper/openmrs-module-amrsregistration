@@ -20,7 +20,7 @@
         </th>
         <td>
             <spring:bind path="address1">
-                <input type="text" id="address1" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="address1_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -28,7 +28,7 @@
         </th>
         <td>
             <spring:bind path="address2">
-                <input type="text" id="address2" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="address2_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -36,7 +36,7 @@
         </th>
         <td>
             <spring:bind path="neighborhoodCell">
-                <input type="text" id="neighborhoodCell" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="neighborhoodCell_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
@@ -46,7 +46,7 @@
         </th>
         <td>
             <spring:bind path="cityVillage">
-                <input type="text" id="cityVillage" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="cityVillage_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -54,7 +54,7 @@
         </th>
         <td>
             <spring:bind path="townshipDivision">
-                <input type="text" id="townshipDivision" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="townshipDivision_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -62,7 +62,7 @@
         </th>
         <td>
             <spring:bind path="countyDistrict">
-                <input type="text" id="countyDistrict" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="countyDistrict_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
