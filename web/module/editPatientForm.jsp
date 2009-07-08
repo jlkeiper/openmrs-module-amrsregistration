@@ -98,7 +98,7 @@
         width: 50%;
         position: fixed;
         float: right;
-        top: 15%;
+        top: 10%;
     }
 
     .tabBoxes {
@@ -130,6 +130,7 @@
             	<th>First Name</th>
             	<th>Last Name</th>
             	<th>DOB</th>
+            	<th>Get Patient?</th>
             </tr>
             <tbody id="resultTable"></tbody>
         </table>
@@ -143,7 +144,6 @@
     <spring:hasBindErrors name="patient.identifiers">
         <span class="error">${error.errorMessage}</span><br/>
     </spring:hasBindErrors>
-
     <div id="pIds">
         <div class="tabBoxes" id="identifierDataBoxes">
             <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
@@ -170,7 +170,6 @@
     <spring:hasBindErrors name="patient.names">
         <span class="error">${error.errorMessage}</span><br/>
     </spring:hasBindErrors>
-
     <div id="pNames">
         <div class="tabBoxes" id="nameDataBoxes">
             <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
@@ -196,7 +195,6 @@
     <spring:hasBindErrors name="patient.addresses">
         <span class="error">${error.errorMessage}</span><br/>
     </spring:hasBindErrors>
-
     <div id="pAddresses">
         <div class="tabBoxes" id="addressDataBoxes">
             <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
@@ -218,21 +216,23 @@
         </div>
     </div>
     <br style="clear: both"/>
-    &nbsp;
+    
     <h3><spring:message code="Patient.information"/></h3>
-
-    <div class="tabBox" id="pInformationBox">
-        <div class="tabBoxes">
-            <table>
-                <spring:nestedPath path="patient">
-                    test
-                </spring:nestedPath>
-            </table>
-        </div>
-    </div>
+    <spring:hasBindErrors name="patient">
+        <span class="error">${error.errorMessage}</span><br/>
+    </spring:hasBindErrors>
+    <div class="tabBoxes">
+	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
+	    <div class="box">
+	    	<table>
+				<spring:nestedPath path="patient">
+					<%@ include file="portlets/personInfo.jsp" %>
+				</spring:nestedPath>
+			</table>
+		</div>
+	</div>
 
     <br/>
-    &nbsp;
     <input type="submit" name="_cancel" value="<spring:message code='general.cancel'/>">
     &nbsp; &nbsp;
     <input type="submit" name="_target2" value="<spring:message code='general.submit'/>">
