@@ -1,43 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
-    <list default="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.ipr" afterPath="$PROJECT_DIR$/amrsregistration.ipr" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RegistrationActivator.java" afterPath="" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/test/VelocityTest.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/startForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/startForm.jsp" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsRegistrationService.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/build.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/build.xml" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/RemoteRegistrationServiceImpl.java" afterPath="" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateRemoteRegistrationDAO.java" afterPath="" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/include" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsRegistrationActivator.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRemoteRegistrationDAO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.iml" afterPath="$PROJECT_DIR$/amrsregistration.iml" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/test/AdminListExtensionTest.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/test/AmrsRegistrationServiceTest.java" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RemoteRegistrationService.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration" afterPath="/home/brian/IdeaProjects/amrsregistration" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AdminListExtensionTest.java" afterPath="" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRRemoteRegistrationService.java" afterPath="" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/RemoteRegistrationDAO.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/.classpath" afterPath="/home/brian/IdeaProjects/amrsregistration/.classpath" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/test" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/PatientRegistrationFormController.java" afterPath="" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/AmrsRegistrationServiceImpl.java" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RemoteRegistrationServiceTest.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" />
-      <change type="DELETED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/VelocityTest.java" afterPath="" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/amrsregistration.iws" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRemoteRegistrationDAO.java" />
-      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration" />
+    <list default="true" readonly="true" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.iws" afterPath="$PROJECT_DIR$/amrsregistration.iws" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <ignored path="amrsregistration.iws" />
@@ -90,7 +56,73 @@
     <favorites_list name="amrsregistration" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="AmrsRegistrationFormController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="88" column="11" selection-start="3179" selection-end="3179" vertical-scroll-proportion="-165.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="viewPatientForm.jsp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/viewPatientForm.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="91" column="13" selection-start="5340" selection-end="5340" vertical-scroll-proportion="-13.666667">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DWRAmrsRegistrationService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="50" selection-start="1729" selection-end="1729" vertical-scroll-proportion="-247.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".classpath" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/.classpath">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="14" selection-start="1639" selection-end="1639" vertical-scroll-proportion="-202.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="editPatientForm.jsp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="93" column="22" selection-start="3145" selection-end="3145" vertical-scroll-proportion="-0.625">
+              <folding>
+                <marker date="1247083271000" expanded="true" signature="4436:4447" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="patientName.jsp" pinned="false" current="true" current-in-tab="true">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.9859155">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="viewPatientForm.jsp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="28" column="68" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -575,7 +607,7 @@
     </subPane>
   </component>
   <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
+    <option name="STATE" value="2" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="0.5" version="1" splitterProportion="0.5">
@@ -592,141 +624,18 @@
     </navigator>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="project.structure.proportion" value="0.0" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RestoreUpdateTree">
-    <UpdateInfo date="7/8/09 1:49 PM" ActionInfo="_Update">
-      <UpdatedFiles>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Updated from server" />
-          <option name="myStatusName" value="Changed on server" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="CHANGED_ON_SERVER" />
-          <FILE-GROUP>
-            <option name="myUpdateName" value="Updated" />
-            <option name="myStatusName" value="Changed" />
-            <option name="mySupportsDeletion" value="false" />
-            <option name="myCanBeAbsent" value="false" />
-            <option name="myId" value="UPDATED" />
-          </FILE-GROUP>
-          <FILE-GROUP>
-            <option name="myUpdateName" value="Created" />
-            <option name="myStatusName" value="Created" />
-            <option name="mySupportsDeletion" value="false" />
-            <option name="myCanBeAbsent" value="false" />
-            <option name="myId" value="CREATED" />
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/web/module/portlets/personInfo.jsp</PATH>
-          </FILE-GROUP>
-          <FILE-GROUP>
-            <option name="myUpdateName" value="Deleted" />
-            <option name="myStatusName" value="Deleted" />
-            <option name="mySupportsDeletion" value="false" />
-            <option name="myCanBeAbsent" value="true" />
-            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-          </FILE-GROUP>
-          <FILE-GROUP>
-            <option name="myUpdateName" value="Restored" />
-            <option name="myStatusName" value="Will be restored" />
-            <option name="mySupportsDeletion" value="false" />
-            <option name="myCanBeAbsent" value="false" />
-            <option name="myId" value="RESTORED" />
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/RemoteRegistrationServiceImpl.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/VelocityTest.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RegistrationActivator.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RemoteRegistrationServiceTest.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/RemoteRegistrationService.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AdminListExtensionTest.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateRemoteRegistrationDAO.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/RemoteRegistrationDAO.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRRemoteRegistrationService.java</PATH>
-            <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/PatientRegistrationFormController.java</PATH>
-          </FILE-GROUP>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Modified" />
-          <option name="myStatusName" value="Modified" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="MODIFIED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Skipped" />
-          <option name="myStatusName" value="Skipped" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="SKIPPED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Merged with conflicts" />
-          <option name="myStatusName" value="Will be merged with conflicts" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="MERGED_WITH_CONFLICTS" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Merged with property conflicts" />
-          <option name="myStatusName" value="Will be merged with property conflicts" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Merged" />
-          <option name="myStatusName" value="Will be merged" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="MERGED" />
-          <PATH vcs="svn" revision="8985">/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Not in repository" />
-          <option name="myStatusName" value="Not in repository" />
-          <option name="mySupportsDeletion" value="true" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="UNKNOWN" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Locally added" />
-          <option name="myStatusName" value="Locally added" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="LOCALLY_ADDED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Locally removed" />
-          <option name="myStatusName" value="Locally removed" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="LOCALLY_REMOVED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Switched" />
-          <option name="myStatusName" value="Switched" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="SWITCHED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Merged with tree conflicts" />
-          <option name="myStatusName" value="Will be merged with tree conflicts" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
-        </FILE-GROUP>
-      </UpdatedFiles>
-    </UpdateInfo>
-  </component>
-  <component name="RunManager" selected="JUnit.AmrsRegistrationServiceTest">
+  <component name="RunManager">
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -854,22 +763,22 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1280" height="775" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="25" width="1280" height="775" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" />
+      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="1" side_tool="false" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24959481" sideWeight="0.660485" order="1" side_tool="false" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2489895" sideWeight="0.660485" order="1" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" />
-      <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" />
+      <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.9975748" order="7" side_tool="false" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33144248" sideWeight="0.660485" order="0" side_tool="false" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27728376" sideWeight="0.660485" order="0" side_tool="false" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38088444" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" />
@@ -963,9 +872,53 @@
         </state>
       </provider>
     </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="68" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/.classpath">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="14" selection-start="1639" selection-end="1639" vertical-scroll-proportion="-202.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="63" selection-start="3936" selection-end="3936" vertical-scroll-proportion="-3.125">
+        <state line="93" column="22" selection-start="3145" selection-end="3145" vertical-scroll-proportion="-0.625">
+          <folding>
+            <marker date="1247083271000" expanded="true" signature="4436:4447" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="50" selection-start="1729" selection-end="1729" vertical-scroll-proportion="-247.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="11" selection-start="3179" selection-end="3179" vertical-scroll-proportion="-165.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/viewPatientForm.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="13" selection-start="5340" selection-end="5340" vertical-scroll-proportion="-13.666667">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.9859155">
           <folding />
         </state>
       </provider>
