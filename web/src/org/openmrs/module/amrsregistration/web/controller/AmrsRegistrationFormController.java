@@ -1,5 +1,6 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -18,8 +20,15 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+import org.openmrs.propertyeditor.ConceptEditor;
+import org.openmrs.propertyeditor.LocationEditor;
+import org.openmrs.propertyeditor.PatientIdentifierTypeEditor;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ModelAndViewDefiningException;
@@ -99,6 +108,25 @@ public class AmrsRegistrationFormController extends
         @SuppressWarnings("unused")
         Patient localPatient = (Patient) paramObject;
     }
+	
+	/**
+	 * Allows for other Objects to be used as values in input tags. Normally, only strings and lists
+	 * are expected
+	 * 
+	 * @see org.springframework.web.servlet.mvc.BaseCommandController#initBinder(javax.servlet.http.HttpServletRequest,
+	 *      org.springframework.web.bind.ServletRequestDataBinder)
+	 */
+	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+		super.initBinder(request, binder);
+		
+		NumberFormat nf = NumberFormat.getInstance(Context.getLocale());
+		binder.registerCustomEditor(java.lang.Integer.class, new CustomNumberEditor(java.lang.Integer.class, nf, true));
+		binder.registerCustomEditor(java.util.Date.class, new CustomDateEditor(Context.getDateFormat(), true, 10));
+		binder.registerCustomEditor(PatientIdentifierType.class, new PatientIdentifierTypeEditor());
+		binder.registerCustomEditor(Location.class, new LocationEditor());
+		binder.registerCustomEditor(Concept.class, "civilStatus", new ConceptEditor());
+		binder.registerCustomEditor(Concept.class, "causeOfDeath", new ConceptEditor());
+	}
 
     protected ModelAndView processCancel(
             HttpServletRequest paramHttpServletRequest,
