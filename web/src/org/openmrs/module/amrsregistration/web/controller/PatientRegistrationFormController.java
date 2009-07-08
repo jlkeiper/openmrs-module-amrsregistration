@@ -44,11 +44,17 @@ public class PatientRegistrationFormController extends
         return this.patient;
     }
 
-    protected Map<String, String> referenceData(
-            HttpServletRequest paramHttpServletRequest, Object paramObject,
-            Error paramError, int paramInt) {
-        HashMap<String, String> localHashMap = new HashMap<String, String>();
-        switch (paramInt) {
+    /* (non-Javadoc)
+	 * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors, int)
+	 */
+	@Override
+	protected Map<String, Object> referenceData(HttpServletRequest request, Object command,
+			Errors errors, int page) throws Exception {
+        HashMap<String, Object> localHashMap = new HashMap<String, Object>();
+		localHashMap.put("emptyIdentifier", new PatientIdentifier());
+		localHashMap.put("emptyName", new PersonName());
+		localHashMap.put("emptyAddress", new PersonAddress());
+        switch (page) {
         case 0:
             break;
         case 1:
@@ -57,7 +63,7 @@ public class PatientRegistrationFormController extends
         }
 
         return localHashMap;
-    }
+	}
 
     protected int getTargetPage(HttpServletRequest paramHttpServletRequest,
             Object paramObject, Errors paramErrors, int paramInt) {
@@ -73,24 +79,8 @@ public class PatientRegistrationFormController extends
                 this.patient = ((Patient) paramObject);
             }
 
-            String str1 = ServletRequestUtils.getStringParameter(
-                    paramHttpServletRequest, "familyName_0", "Bronson");
-
-            this.patient.getPersonName().setFamilyName(str1);
-
             break;
         case 2:
-            /*
-            if (this.patient == null) {
-                this.patient = ((Patient) paramObject);
-                log.error("Error: Null patient submitted to viewPatient.form");
-            }
-            */
-
-            String str2 = ServletRequestUtils.getStringParameter(
-                    paramHttpServletRequest, "familyName_0", "Charles");
-
-            this.patient.getPersonName().setFamilyName(str2);
             
         }
 

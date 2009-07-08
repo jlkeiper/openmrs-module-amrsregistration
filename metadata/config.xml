@@ -141,6 +141,6 @@
     </messages>
 <!-- /Internationalization -->
     <tomcat>
-        <home>/opt/tomcat</home>
+        <home>C:/Documents and Settings/nribeka/My Documents/Work/apache-tomcat-6.0.18</home>
     </tomcat>
 </module>
