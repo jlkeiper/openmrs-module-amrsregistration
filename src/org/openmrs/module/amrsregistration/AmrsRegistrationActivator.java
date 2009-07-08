@@ -4,10 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
 
-public class RegistrationActivator implements Activator {
+public class AmrsRegistrationActivator implements Activator {
     private Log log;
 
-    public RegistrationActivator() {
+    public AmrsRegistrationActivator() {
         this.log = LogFactory.getLog(super.getClass());
     }
 

@@ -9,11 +9,11 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
-import org.openmrs.module.amrsregistration.db.RemoteRegistrationDAO;
+import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
 
-public abstract interface RemoteRegistrationService {
+public abstract interface AmrsRegistrationService {
     public abstract void setRemoteRegistrationDAO(
-            RemoteRegistrationDAO paramRemoteRegistrationDAO);
+            AmrsRemoteRegistrationDAO paramAmrsRemoteRegistrationDAO);
 
     public abstract void registerPatient(Patient paramPatient,
             String paramString1, String paramString2) throws APIException;

@@ -18,13 +18,13 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.amrsregistration.RemoteRegistrationService</value>
+                <value>org.openmrs.module.amrsregistration.AmrsRegistrationService</value>
                 <bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
                     <property name="transactionManager"><ref bean="transactionManager"/></property>
                     <property name="target">
-                        <bean class="org.openmrs.module.amrsregistration.impl.RemoteRegistrationServiceImpl">
+                        <bean class="org.openmrs.module.amrsregistration.impl.AmrsRegistrationServiceImpl">
                             <property name="remoteRegistrationDAO">
-                                <bean class="org.openmrs.module.amrsregistration.db.hibernate.HibernateRemoteRegistrationDAO">
+                                <bean class="org.openmrs.module.amrsregistration.db.hibernate.HibernateAmrsRemoteRegistrationDAO">
                                     <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                                 </bean>
                             </property>
@@ -45,7 +45,7 @@
 
 
     <!-- Controllers -->
-    <bean id="remoteRegistrationWizardForm" class="org.openmrs.module.amrsregistration.web.controller.PatientRegistrationFormController">
+    <bean id="remoteRegistrationWizardForm" class="org.openmrs.module.amrsregistration.web.controller.AmrsRegistrationFormController">
         <!--property name="sessionForm"><value>true</value></property -->
         <!-- property name="bindOnNewForm"><value>false</value></property -->
         <property name="commandName"><value>patient</value></property>

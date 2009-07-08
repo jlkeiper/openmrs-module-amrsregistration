@@ -26,12 +26,12 @@ import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.mvc.AbstractWizardFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class PatientRegistrationFormController extends
+public class AmrsRegistrationFormController extends
         AbstractWizardFormController {
     Log log;
     Patient patient;
 
-    public PatientRegistrationFormController() {
+    public AmrsRegistrationFormController() {
         this.log = LogFactory.getLog(super.getClass());
     }
 

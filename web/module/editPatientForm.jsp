@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/template/header.jsp" %>
 <%@ include file="localHeader.jsp" %>
 <openmrs:htmlInclude file="/dwr/interface/DWRPatientService.js"></openmrs:htmlInclude>
-<openmrs:htmlInclude file="/dwr/interface/DWRRemoteRegistrationService.js"></openmrs:htmlInclude>
+<openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/engine.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/util.js"></openmrs:htmlInclude>
 
@@ -89,7 +89,7 @@
             givenName:gName.value
         }
 
-        DWRRemoteRegistrationService.getPatients(name, null, null, null, null, null, handlePatientResult);
+        DWRAmrsRegistrationService.getPatients(name, null, null, null, null, null, handlePatientResult);
     }
 </script>
 <style>

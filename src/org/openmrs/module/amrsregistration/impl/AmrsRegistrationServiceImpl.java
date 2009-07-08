@@ -20,24 +20,24 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.amrsregistration.RemoteRegistrationService;
-import org.openmrs.module.amrsregistration.db.RemoteRegistrationDAO;
+import org.openmrs.module.amrsregistration.AmrsRegistrationService;
+import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
 import org.openmrs.reporting.export.DataExportFunctions;
 import org.openmrs.util.OpenmrsUtil;
 
-public class RemoteRegistrationServiceImpl implements RemoteRegistrationService {
+public class AmrsRegistrationServiceImpl implements AmrsRegistrationService {
     private static Log log = LogFactory
-            .getLog(RemoteRegistrationServiceImpl.class);
-    private RemoteRegistrationDAO dao;
+            .getLog(AmrsRegistrationServiceImpl.class);
+    private AmrsRemoteRegistrationDAO daoAmrs;
 
     public void setRemoteRegistrationDAO(
-            RemoteRegistrationDAO paramRemoteRegistrationDAO) {
-        this.dao = paramRemoteRegistrationDAO;
+            AmrsRemoteRegistrationDAO paramAmrsRemoteRegistrationDAO) {
+        this.daoAmrs = paramAmrsRemoteRegistrationDAO;
     }
 
     @SuppressWarnings("unused")
-    private RemoteRegistrationDAO getRemoteRegistrationDAO() {
-        return this.dao;
+    private AmrsRemoteRegistrationDAO getRemoteRegistrationDAO() {
+        return this.daoAmrs;
     }
 
     public void registerPatient(Patient paramPatient, String paramString1,
@@ -99,7 +99,7 @@ public class RemoteRegistrationServiceImpl implements RemoteRegistrationService 
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger)
             throws APIException {
-        return this.dao.getPersons(paramPersonName, paramPersonAddress,
+        return this.daoAmrs.getPersons(paramPersonName, paramPersonAddress,
                 paramSet, paramString, paramDate, paramInteger);
     }
 }

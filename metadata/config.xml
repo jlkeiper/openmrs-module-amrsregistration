@@ -4,12 +4,12 @@
 
 <!-- Base Module Properties -->
     <id>amrsregistration</id>
-    <name>Remote Registration Module</name>
+    <name>AMRS Registration Module</name>
     <version>0.8</version>
     <package>org.openmrs.module.amrsregistration</package>
-    <author>Saptarshi Purkayastha</author>
+    <author>Win Ribeka, Brian McKown</author>
     <description>
-	Remote Registration Module is used to find/create patients. It can identify patients through barcode id cards. It can also register patients in offline mode.
+	AMRS Registration Module is for registering patients.
     </description>
     <require_version>1.3.0.0000</require_version>
 <!--
@@ -17,7 +17,7 @@
         <require_module>org.openmrs.module.remoteformentry</require_module>
     </require_modules>
 -->
-    <activator>org.openmrs.module.amrsregistration.RegistrationActivator</activator>
+    <activator>org.openmrs.module.amrsregistration.AmrsRegistrationActivator</activator>
     <!--<updateURL>https://dev.openmrs.org/modules/download/amrsregistration/update.rdf</updateURL> -->
 
 <!-- /Base Module Properties -->
@@ -103,8 +103,8 @@
                     townshipDivision, region, subregion, retired"/>
             </convert>
             <convert converter="bean" match="org.openmrs.module.amrsregistration.web.RegisteredPatientListItem"/>
-            <create creator="new" javascript="DWRRemoteRegistrationService">
-                <param name="class" value="org.openmrs.module.amrsregistration.web.DWRRemoteRegistrationService"/>
+            <create creator="new" javascript="DWRAmrsRegistrationService">
+                <param name="class" value="org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService"/>
                 <include method="getPatients"/>
                 <include method="sayHello"/>
                 <include method="getPersonName"/>
@@ -116,10 +116,10 @@
             import org.openmrs.PersonName;
             import org.openmrs.PersonAddress;
             import org.openmrs.PersonAttribute;
-            import org.openmrs.module.amrsregistration.web.DWRRemoteRegistrationService;
-            DWRRemoteRegistrationService.getPatients(PersonName name, PersonAddress address, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
-            DWRRemoteRegistrationService.sayHello(String name);
-            DWRRemoteRegistrationService.getPersonName(Integer personId);
+            import org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService;
+            DWRAmrsRegistrationService.getPatients(PersonName name, PersonAddress address, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
+            DWRAmrsRegistrationService.sayHello(String name);
+            DWRAmrsRegistrationService.getPersonName(Integer personId);
             ]]>
         </signatures>
     </dwr>

@@ -24,8 +24,8 @@
         //var identifier = {
         //    identifier:idCardInput.value
         //}
-        //DWRRemoteRegistrationService.getPatients(name, null, null, null, null, null, function(str) {alert(str[0].personName);});
-        //DWRRemoteRegistrationService.getPatients(null, null, null, null, null, null, handlePatientResult);
+        //DWRAmrsRegistrationService.getPatients(name, null, null, null, null, null, function(str) {alert(str[0].personName);});
+        //DWRAmrsRegistrationService.getPatients(null, null, null, null, null, null, handlePatientResult);
         DWRPatientService.findPatients(identifier, false, handlePatientResult);
     }
 

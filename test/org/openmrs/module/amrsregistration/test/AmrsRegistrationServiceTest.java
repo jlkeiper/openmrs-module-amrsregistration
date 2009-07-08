@@ -1,4 +1,4 @@
-package org.openmrs.module.amrsregistration;
+package org.openmrs.module.amrsregistration.test;
 
 import java.util.List;
 
@@ -9,10 +9,11 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
+import org.openmrs.module.amrsregistration.AmrsRegistrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-public class RemoteRegistrationServiceTest extends
+public class AmrsRegistrationServiceTest extends
         BaseModuleContextSensitiveTest {
     @Before
     public void runBeforeEachTest() throws Exception {
@@ -41,12 +42,12 @@ public class RemoteRegistrationServiceTest extends
     @Test
     public void shouldGetPersonsUsingAnyPersonProperties() {
         Person localPerson1 = Context.getPersonService().getPerson(
-                Integer.valueOf(11));
-        RemoteRegistrationService localRemoteRegistrationService = (RemoteRegistrationService) Context
-                .getService(RemoteRegistrationService.class);
+                Integer.valueOf(364));
+        AmrsRegistrationService localAmrsRegistrationService = (AmrsRegistrationService) Context
+                .getService(AmrsRegistrationService.class);
         PersonName localPersonName = new PersonName();
         localPersonName.setGivenName("luc");
-        List<Person> localList = localRemoteRegistrationService.getPersons(null, null,
+        List<Person> localList = localAmrsRegistrationService.getPersons(null, null,
                 null, null, null, localPerson1.getAge());
 
         Assert.assertTrue(localList.size() > 0);
@@ -54,7 +55,7 @@ public class RemoteRegistrationServiceTest extends
         System.out.println("apiPerson: " + localPerson1.getPersonId());
         System.out.println("modulePerson " + localPerson1.getPersonId());
 
-        Assert.assertNotNull(localRemoteRegistrationService);
+        Assert.assertNotNull(localAmrsRegistrationService);
         for (Person localPerson2 : localList) {
             Patient localPatient = (Patient) localPerson2;
             System.out.println("id: " + localPatient.getPersonId() + ", name: "

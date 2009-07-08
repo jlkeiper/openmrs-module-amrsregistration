@@ -9,7 +9,7 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.db.DAOException;
 
-public abstract interface RemoteRegistrationDAO {
+public abstract interface AmrsRemoteRegistrationDAO {
     public abstract List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger)

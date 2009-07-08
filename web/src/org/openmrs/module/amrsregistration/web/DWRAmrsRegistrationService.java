@@ -11,13 +11,13 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.amrsregistration.RemoteRegistrationService;
+import org.openmrs.module.amrsregistration.AmrsRegistrationService;
 import org.openmrs.web.dwr.DWRPersonService;
 
-public class DWRRemoteRegistrationService extends DWRPersonService {
-    private RemoteRegistrationService getRemoteRegistrationService() {
-        return ((RemoteRegistrationService) Context
-                .getService(RemoteRegistrationService.class));
+public class DWRAmrsRegistrationService extends DWRPersonService {
+    private AmrsRegistrationService getRemoteRegistrationService() {
+        return ((AmrsRegistrationService) Context
+                .getService(AmrsRegistrationService.class));
     }
 
     public List<Patient> getPatients(PersonName paramPersonName,

@@ -18,9 +18,9 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.db.DAOException;
-import org.openmrs.module.amrsregistration.db.RemoteRegistrationDAO;
+import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
 
-public class HibernateRemoteRegistrationDAO implements RemoteRegistrationDAO {
+public class HibernateAmrsRemoteRegistrationDAO implements AmrsRemoteRegistrationDAO {
     protected final Log log = LogFactory.getLog(super.getClass());
     private SessionFactory sessionFactory;
 

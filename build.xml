@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!-- ********************************************************* -->
-<!-- ** Remote Registration Module                          ** -->
+<!-- ** AMRS Registration Module                            ** -->
 <!-- **	                                                    ** -->
-<!-- ** @author Saptarshi Purkayastha                       ** -->
+<!-- ** @author Win Ribeka, Brian McKown                    ** -->
 <!-- ** @version 0.8                                        ** -->
 <!-- ********************************************************* -->
 <project name="amrsregistration" default="package-module">
