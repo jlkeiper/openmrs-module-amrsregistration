@@ -93,10 +93,12 @@ public class AmrsRegistrationFormController extends
 	 	            this.patient.getPersonName().setFamilyName(str1);
             break;
         case 2:
+            if (this.patient == null) {
+                this.patient = ((Patient) paramObject);
             String str2 = ServletRequestUtils.getStringParameter(
 	 	            paramHttpServletRequest, "familyName_0", "Spring Binding Test 2");
-
 	 	            this.patient.getPersonName().setFamilyName(str2);
+            }
         }
 
         return i;
