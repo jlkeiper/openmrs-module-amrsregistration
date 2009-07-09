@@ -32,59 +32,59 @@
     </tr>
     <tr>
         <spring:bind path="personNameId">
-            <input type="hidden" id="personNameId_${varStatus.index}" value="${status.value}"/>
+            <input type="hidden" id="personNameId_${varStatus.index}" name="personNameId_${varStatus.index}" value="${status.value}"/>
         </spring:bind>
         <td align="left" valign="top">
             <spring:bind path="preferred">
-                <input type="checkbox" id="personName.preferred_${varStatus.index}" value="${status.value}" <c:if
+                <input type="checkbox" id="personName.preferred_${varStatus.index}" name="personName.preferred_${varStatus.index}" value="${status.value}" <c:if
                     test="${status.value == 'true'}">checked</c:if>/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="prefix">
-                <input type="text" id="prefix_${varStatus.index}" size="3" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="prefix_${varStatus.index}" name="prefix_${varStatus.index}" size="3" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="givenName">
-                <input type="text" id="givenName_${varStatus.index}" size="16" value="${status.value}"
+                <input type="text" id="givenName_${varStatus.index}" name="givenName_${varStatus.index}" size="16" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="middleName">
-                <input type="text" id="middleName_${varStatus.index}" size="12" value="${status.value}"
+                <input type="text" id="middleName_${varStatus.index}" name="middleName_${varStatus.index}" size="12" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td>&nbsp;</td>
         <td align="left" valign="top">
             <spring:bind path="familyNamePrefix">
-                <input type="text" id="familyNamePrefix_${varStatus.index}" size="3" value="${status.value}"
+                <input type="text" id="familyNamePrefix_${varStatus.index}" name="familyNamePrefix_${varStatus.index}" size="3" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="familyName">
-                <input type="text" name="familyName_${varStatus.index}" id="familyName" size="16" value="${status.value}"
+                <input type="text" id="familyName_${varStatus.index}" name="familyName_${varStatus.index}" size="16" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="familyName2">
-                <input type="text" id="familyName2_${varStatus.index}" size="16" value="${status.value}"
+                <input type="text" id="familyName2_${varStatus.index}" name="familyName2_${varStatus.index}" size="16" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="familyNameSuffix">
-                <input type="text" id="familyNameSuffix_${varStatus.index}" size="3" value="${status.value}"
+                <input type="text" id="familyNameSuffix_${varStatus.index}" name="familyNameSuffix_${varStatus.index}" size="3" value="${status.value}"
                        onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
             <spring:bind path="degree">
-                <input type="text" id="degree_${varStatus.index}" size="4" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="degree_${varStatus.index}" name="degree_${varStatus.index}" size="4" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>

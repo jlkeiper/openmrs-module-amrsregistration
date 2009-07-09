@@ -6,7 +6,7 @@
         </th>
         <td align="left" valign="top">
             <spring:bind path="preferred">
-                <input type="checkbox" id="identifier.preferred_${varStatus.index}" value="${status.value}" <c:if
+                <input type="checkbox" id="identifier.preferred_${varStatus.index}" name="identifier.preferred_${varStatus.index}" value="${status.value}" <c:if
                     test="${status.value == 'true'}">checked</c:if>/>
             </spring:bind>
         </td>
@@ -15,7 +15,7 @@
         </th>
         <td>
             <spring:bind path="identifier">
-                <input type="text" id="identifier_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="identifier_${varStatus.index}" name="identifier_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -23,7 +23,7 @@
         </th>
         <td>
             <spring:bind path="identifierType">
-                <select name="identifierType" id="identifierType_${varStatus.index}">
+                <select id="identifierType_${varStatus.index}" name="identifierType_${varStatus.index}">
                     <openmrs:forEachRecord name="patientIdentifierType">
                         <option value="${record.patientIdentifierTypeId}"
                         <c:if test="${status.value == record.name}">selected</c:if> >

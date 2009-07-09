@@ -54,7 +54,6 @@
     }
 
     function handlePatientResult(result) {
-
         if (result != null) {
             floating = document.getElementById("floatingResult");
             floating.style.display = "";
@@ -77,14 +76,14 @@
     }
 
     function patientSearch(thing) {
-        var fName = document.getElementById("familyName");
+        var fName = document.getElementById("familyName_0");
         if (fName.value.length < 3) {
             return;
         }
+        
+        var mName = document.getElementById("middleName_0");
 
-        var mName = document.getElementById("middleName");
-
-        var gName = document.getElementById("givenName");
+        var gName = document.getElementById("givenName_0");
         if (gName.value.length < 3) {
             return;
         }
