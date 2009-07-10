@@ -1,6 +1,7 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
@@ -35,81 +37,215 @@ import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.mvc.AbstractWizardFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class AmrsRegistrationFormController extends
-        AbstractWizardFormController {
-    Log log;
-    Patient patient;
-
-    public AmrsRegistrationFormController() {
-        this.log = LogFactory.getLog(super.getClass());
-    }
-
-    protected Object formBackingObject(
-            HttpServletRequest paramHttpServletRequest)
-            throws ModelAndViewDefiningException {
-        if (this.patient == null) {
-            return getNewPatient();
-        }
-        return this.patient;
-    }
-
-    /* (non-Javadoc)
+public class AmrsRegistrationFormController extends AbstractWizardFormController {
+	
+	Log log;
+	
+	Patient patient;
+	
+	public AmrsRegistrationFormController() {
+		this.log = LogFactory.getLog(super.getClass());
+	}
+	
+	protected Object formBackingObject(HttpServletRequest paramHttpServletRequest) throws ModelAndViewDefiningException {
+		if (this.patient == null) {
+			return getNewPatient();
+		}
+		return this.patient;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors, int)
 	 */
 	@Override
-	protected Map<String, Object> referenceData(HttpServletRequest request, Object command,
-			Errors errors, int page) throws Exception {
-        HashMap<String, Object> localHashMap = new HashMap<String, Object>();
+	protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors, int page)
+	                                                                                                                throws Exception {
+		HashMap<String, Object> localHashMap = new HashMap<String, Object>();
 		localHashMap.put("emptyIdentifier", new PatientIdentifier());
 		localHashMap.put("emptyName", new PersonName());
 		localHashMap.put("emptyAddress", new PersonAddress());
-        switch (page) {
-        case 0:
-            break;
-        case 1:
-            break;
-        case 2:
-        }
-
-        return localHashMap;
+		switch (page) {
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+		}
+		
+		return localHashMap;
 	}
+	
+	protected int getTargetPage(HttpServletRequest paramHttpServletRequest, Object paramObject, Errors paramErrors,
+	                            int paramInt) {
+		int i = super.getTargetPage(paramHttpServletRequest, paramObject, paramErrors, paramInt);
+		
+		switch (paramInt) {
+			case 0:
+				this.patient = null;
+				break;
+			case 1:
+				if (this.patient == null) {
+					this.patient = ((Patient) paramObject);
+				}
+				String str1 = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "familyName_0",
+			    "Spring Binding Test 1");
+				
+				this.patient.getPersonName().setFamilyName(str1);
+				
+				PatientService ps = Context.getPatientService();
+				
+				String[] ids = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier_");
+				String[] idTypes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifierType_");
+				String[] preferredIds = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier.preferred_");
+				if (ids != null || idTypes != null || preferredIds != null) {
+					int maxIds = 0;
+					if (ids != null && ids.length > maxIds)
+						maxIds = ids.length;
+					if (idTypes != null && idTypes.length > maxIds)
+						maxIds = idTypes.length;
+					if (preferredIds != null && preferredIds.length > maxIds)
+						maxIds = preferredIds.length;
+					
+					for (int j = 0; j < maxIds; j++) {
+	                    PatientIdentifier identifier = new PatientIdentifier();
+	                    identifier.setIdentifier(ids[j]);
+	                    identifier.setIdentifierType(ps.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
+	                    identifier.setPreferred(new Boolean(preferredIds[j]));
+						patient.addIdentifier(identifier);
+                    }
+				}
+				
 
-    protected int getTargetPage(HttpServletRequest paramHttpServletRequest,
-            Object paramObject, Errors paramErrors, int paramInt) {
-        int i = super.getTargetPage(paramHttpServletRequest, paramObject,
-                paramErrors, paramInt);
-
-        switch (paramInt) {
-        case 0:
-            this.patient = null;
-            break;
-        case 1:
-            if (this.patient == null) {
-                this.patient = ((Patient) paramObject);
-            }
-            String str1 = ServletRequestUtils.getStringParameter(
-	 	            paramHttpServletRequest, "familyName_0", "Spring Binding Test 1");
-	 	 
-	 	            this.patient.getPersonName().setFamilyName(str1);
-            break;
-        case 2:
-            if (this.patient == null) {
-                this.patient = ((Patient) paramObject);
-            String str2 = ServletRequestUtils.getStringParameter(
-	 	            paramHttpServletRequest, "familyName_0", "Spring Binding Test 2");
-	 	            this.patient.getPersonName().setFamilyName(str2);
-            }
-        }
-
-        return i;
-    }
-
-    protected void onBindAndValidate(
-            HttpServletRequest paramHttpServletRequest, Object paramObject,
-            BindException paramBindException, int paramInt) {
-        @SuppressWarnings("unused")
-        Patient localPatient = (Patient) paramObject;
-    }
+				String[] givenNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "givenName_");
+				String[] middleNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "middleName_");
+				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyNamePrefix_");
+				String[] familyNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyName_");
+				String[] familyName2s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyName2_");
+				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyNameSuffix_");
+				String[] degrees = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "degree_");
+				String[] prefixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "prefix_");
+				String[] preferredNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "personName.preferred_");
+				
+				if (givenNames != null || middleNames != null ||
+						familyNamePrefixes != null || familyNames != null ||
+						familyName2s != null || familyNameSuffixes != null ||
+						degrees != null || prefixes != null || preferredNames != null) {
+					int maxNames = 0;
+					if (givenNames != null && givenNames.length > maxNames)
+						maxNames = givenNames.length;
+					if (middleNames != null && middleNames.length > maxNames)
+						maxNames = middleNames.length;
+					if (familyNamePrefixes != null && familyNamePrefixes.length > maxNames)
+						maxNames = familyNamePrefixes.length;
+					if (familyNames != null && familyNames.length > maxNames)
+						maxNames = familyNames.length;
+					if (familyName2s != null && familyName2s.length > maxNames)
+						maxNames = familyName2s.length;
+					if (familyNameSuffixes != null && familyNameSuffixes.length > maxNames)
+						maxNames = familyNameSuffixes.length;
+					if (degrees != null && degrees.length > maxNames)
+						maxNames = degrees.length;
+					if (prefixes != null && prefixes.length > maxNames)
+						maxNames = prefixes.length;
+					if (preferredNames != null && preferredNames.length > maxNames)
+						maxNames = preferredNames.length;
+					for (int j = 0; j < maxNames; j++) {
+						PersonName name = new PersonName();
+						name.setPreferred(new Boolean(preferredNames[j]));
+						name.setGivenName(givenNames[j]);
+						name.setMiddleName(middleNames[j]);
+						name.setFamilyNamePrefix(familyNamePrefixes[j]);
+						name.setFamilyName(familyNames[j]);
+						name.setFamilyName2(familyName2s[j]);
+						name.setFamilyNameSuffix(familyNameSuffixes[j]);
+						name.setDegree(prefixes[j]);
+						name.setDegree(degrees[j]);
+						patient.addName(name);
+                    }
+				}
+				
+				String[] address1s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "address1_");
+				String[] address2s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "address2_");
+				String[] cells = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "neighborhoodCell_");
+				String[] cities = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "cityVillage_");
+				String[] townships = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "townshipDivision_");
+				String[] counties = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "countyDistrict_");
+				String[] states = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "stateProvince_");
+				String[] regions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "region_");
+				String[] subregions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "subRegion_");
+				String[] countries = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "country_");
+				String[] postalCodes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "postalCode_");
+				String[] preferredAddress = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "preferred_");
+				
+				if (address1s != null || address1s != null ||
+						cells != null || cities != null ||
+						townships != null || counties != null ||
+						states != null || regions != null ||
+						subregions != null || countries != null ||
+						postalCodes != null || preferredAddress != null) {
+					int maxAddress = 0;
+					if(address1s != null && address1s.length > maxAddress)
+						maxAddress = address1s.length;
+					if(address1s != null && address1s.length > maxAddress)
+						maxAddress = address1s.length;
+					if(cells != null && cells.length > maxAddress)
+						maxAddress = cells.length;
+					if(cities != null && cities.length > maxAddress)
+						maxAddress = cities.length;
+					if(townships != null && townships.length > maxAddress)
+						maxAddress = townships.length;
+					if(counties != null && counties.length > maxAddress)
+						maxAddress = counties.length;
+					if(states != null && states.length > maxAddress)
+						maxAddress = states.length;
+					if(regions != null && regions.length > maxAddress)
+						maxAddress = regions.length;
+					if(subregions != null && subregions.length > maxAddress)
+						maxAddress = subregions.length;
+					if(countries != null && countries.length > maxAddress)
+						maxAddress = countries.length;
+					if(postalCodes != null && postalCodes.length > maxAddress)
+						maxAddress = postalCodes.length;
+					if(preferredAddress != null && preferredAddress.length > maxAddress)
+						maxAddress = preferredAddress.length;
+					
+					for (int j = 0; j < maxAddress; j++) {
+						PersonAddress pa = new PersonAddress();
+						pa.setAddress1(address1s[i]);
+						pa.setAddress2(address2s[i]);
+						pa.setNeighborhoodCell(cells[i]);
+						pa.setCityVillage(cities[i]);
+						pa.setTownshipDivision(townships[i]);
+						pa.setCountyDistrict(counties[i]);
+						pa.setStateProvince(states[i]);
+						pa.setRegion(regions[i]);
+						pa.setSubregion(subregions[i]);
+						pa.setCountry(countries[i]);
+						pa.setPostalCode(postalCodes[i]);
+						pa.setCountyDistrict(counties[i]);
+						pa.setPreferred(new Boolean(preferredAddress[i]));
+						patient.addAddress(pa);
+					}
+				}
+				
+				break;
+			case 2:
+				if (this.patient == null) {
+					this.patient = ((Patient) paramObject);
+					String str2 = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "familyName_0",
+					    "Spring Binding Test 2");
+					this.patient.getPersonName().setFamilyName(str2);
+				}
+		}
+		
+		return i;
+	}
+	
+	protected void onBindAndValidate(HttpServletRequest paramHttpServletRequest, Object paramObject,
+	                                 BindException paramBindException, int paramInt) {
+		@SuppressWarnings("unused")
+		Patient localPatient = (Patient) paramObject;
+	}
 	
 	/**
 	 * Allows for other Objects to be used as values in input tags. Normally, only strings and lists

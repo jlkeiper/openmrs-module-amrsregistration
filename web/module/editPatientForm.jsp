@@ -54,7 +54,7 @@
     }
 
     function handlePatientResult(result) {
-        if (result != null) {
+        if (result.length > 0) {
             floating = document.getElementById("floatingResult");
             floating.style.display = "";
             
@@ -74,6 +74,18 @@
             }
         }
     }
+	
+	function removeBlankData() {
+		var obj = document.getElementById("identifierData");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
+		obj = document.getElementById("nameData");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
+		obj = document.getElementById("addressData");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
+	}
 
     function patientSearch(thing) {
         var fName = document.getElementById("familyName_0");
@@ -107,12 +119,11 @@
     }
 
     .tabBoxes {
-        width: 80%;
         padding: 3px;
     }
 
     .addNew {
-        margin-right: 20%;
+        margin-right: 10px;
         font-size: 10px;
         float: right;
         cursor: pointer;
@@ -150,7 +161,7 @@
 </div>
 <br/>
 
-<form id="identifierForm" method="post">
+<form id="identifierForm" method="post" onSubmit="removeBlankData()">
 
     <h3><spring:message code="Patient.identifiers"/></h3>
     <spring:hasBindErrors name="patient.identifiers">
