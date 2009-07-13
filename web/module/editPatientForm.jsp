@@ -148,9 +148,14 @@
         	identifierType: idType.value
         }
         
+        // convert to js date object before passing it to dwr
         var birthStr = DWRUtil.getValue("birthdate");
-        var birthdate = new Date(Date.parse(birthStr));
-        var gender = "";
+        var birthdate = null;
+        if (birtStr != null)
+        	birthdate = new Date(Date.parse(birthStr));
+        
+        // the id element of the gender turn out to be "M" and "F"
+        var gender = null;
         var male = document.getElementById("M");
         var female = document.getElementById("F");
         if (male != null && male.checked) {
