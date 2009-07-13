@@ -1,10 +1,12 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
 import java.text.NumberFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -106,11 +108,29 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					if (preferredIds != null && preferredIds.length > maxIds)
 						maxIds = preferredIds.length;
 					
+					//TODO: method to remove null identifier from set
+					// the null identifier shouldn't be in the identifiers set from the first place.
+					// this block can be omitted from the code when the set doesn't contains null ids
+					if (maxIds > 0) {
+						List<PatientIdentifier> identifiers = new ArrayList<PatientIdentifier>(patient.getIdentifiers());
+						for (int j = 0; j < identifiers.size(); j++) {
+	                        PatientIdentifier patientIdentifier = identifiers.remove(j);;
+	                        if (patientIdentifier.getPatient() == null &&
+	                        		patientIdentifier.getIdentifierType() == null &&
+	                        		patientIdentifier.getIdentifier() == null)
+	                        	identifiers.add(patientIdentifier);
+						}
+						Set<PatientIdentifier> identifiersSet = new HashSet<PatientIdentifier>(identifiers);
+						
+						patient.setIdentifiers(identifiersSet);
+					}
+					
 					for (int j = 0; j < maxIds; j++) {
 	                    PatientIdentifier identifier = new PatientIdentifier();
 	                    identifier.setIdentifier(ids[j]);
 	                    identifier.setIdentifierType(ps.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
-	                    identifier.setPreferred(new Boolean(preferredIds[j]));
+						if (preferredIds != null && preferredIds.length > i)
+							identifier.setPreferred(new Boolean(preferredIds[j]));
 						patient.addIdentifier(identifier);
                     }
 				}
@@ -151,7 +171,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxNames = preferredNames.length;
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
-						name.setPreferred(new Boolean(preferredNames[j]));
+						if (preferredNames != null && preferredNames.length > i)
+							name.setPreferred(new Boolean(preferredNames[j]));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
 						name.setFamilyNamePrefix(familyNamePrefixes[j]);
@@ -172,10 +193,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String[] counties = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "countyDistrict_");
 				String[] states = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "stateProvince_");
 				String[] regions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "region_");
-				String[] subregions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "subRegion_");
+				String[] subregions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "subregion_");
 				String[] countries = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "country_");
 				String[] postalCodes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "postalCode_");
-				String[] preferredAddress = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "preferred_");
+				String[] preferredAddress = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "personAddress.preferred_");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||
@@ -223,7 +244,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						pa.setCountry(countries[i]);
 						pa.setPostalCode(postalCodes[i]);
 						pa.setCountyDistrict(counties[i]);
-						pa.setPreferred(new Boolean(preferredAddress[i]));
+						if (preferredAddress != null && preferredAddress.length > i)
+							pa.setPreferred(new Boolean(preferredAddress[i]));
 						patient.addAddress(pa);
 					}
 				}

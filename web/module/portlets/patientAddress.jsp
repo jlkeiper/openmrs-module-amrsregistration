@@ -75,7 +75,7 @@
         </th>
         <td>
             <spring:bind path="subregion">
-                <input type="text" id="subregion_${varStatus.index}" name="subregion_${varStatus.index}" value="${status.value}" onkeyup="personSearch(this.value)"/>
+                <input type="text" id="subregion_${varStatus.index}" name="subregion_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -83,7 +83,7 @@
         </th>
         <td>
             <spring:bind path="region">
-                <input type="text" id="region_${varStatus.index}" name="region_${varStatus.index}" value="${status.value}" onkeyup="personSearch(this.value)"/>
+                <input type="text" id="region_${varStatus.index}" name="region_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
@@ -93,7 +93,7 @@
         </th>
         <td>
             <spring:bind path="stateProvince">
-                <input type="text" id="stateProvince_${varStatus.index}" name="stateProvince_${varStatus.index}" value="${status.value}" onkeyup="personSearch(this.value)"/>
+                <input type="text" id="stateProvince_${varStatus.index}" name="stateProvince_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -101,7 +101,7 @@
         </th>
         <td>
             <spring:bind path="country">
-                <input type="text" id="country_${varStatus.index}" name="country_${varStatus.index}" value="${status.value}" onkeyup="personSearch(this.value)"/>
+                <input type="text" id="country_${varStatus.index}" name="country_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
         <th align="right">
@@ -109,7 +109,7 @@
         </th>
         <td>
             <spring:bind path="postalCode">
-                <input type="text" id="postalCode_${varStatus.index}" name="postalCode_${varStatus.index}" value="${status.value}" onkeyup="personSearch(this.value)"/>
+                <input type="text" id="postalCode_${varStatus.index}" name="postalCode_${varStatus.index}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>

@@ -8,6 +8,7 @@
 <openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/engine.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/util.js"></openmrs:htmlInclude>
+<openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
 
 <script type="text/javascript">
 
@@ -88,24 +89,77 @@
 	}
 
     function patientSearch(thing) {
+        var gName = document.getElementById("givenName_0");
+        var mName = document.getElementById("middleName_0");
+        var fNamePrefix = document.getElementById("familyNamePrefix_0");
         var fName = document.getElementById("familyName_0");
-        if (fName.value.length < 3) {
-            return;
+        var fName2 = document.getElementById("familyName2_0");
+        var fNameSuffix = document.getElementById("familyNameSuffix_0");
+        var deg = document.getElementById("degree_0");
+        var pref = document.getElementById("prefix_0");
+        var prefName = document.getElementById("personName.preferred_0");
+
+        var personName = {
+        	preferred: prefName.checked,
+        	prefix: pref.value,
+        	givenName: gName.value,
+        	middleName: mName.value,
+        	familyNamePrefix: fNamePrefix.value,
+        	familyName: fName.value,
+        	familyName2: fName2.value,
+        	familyNameSuffix: fNameSuffix.value,
+        	degree: deg.value
         }
         
-        var mName = document.getElementById("middleName_0");
-
-        var gName = document.getElementById("givenName_0");
-        if (gName.value.length < 3) {
-            return;
+        var add1 = document.getElementById("address1_0");
+        var add2 = document.getElementById("address2_0");
+        var cell = document.getElementById("neighborhoodCell_0");
+        var city = document.getElementById("cityVillage_0");
+        var township = document.getElementById("townshipDivision_0");
+        var county = document.getElementById("countyDistrict_0");
+        var state = document.getElementById("stateProvince_0");
+        var reg = document.getElementById("region_0");
+        var subreg = document.getElementById("subregion_0");
+        var cntry = document.getElementById("country_0");
+        var postCode = document.getElementById("postalCode_0");
+        var prefAdd = document.getElementById("personAddress.preferred_0");
+        
+        var personAddress = {
+        	preferred: prefAdd.checked,
+        	address1: add1.value,
+        	address2: add2.value,
+        	cityVillage: city.value,
+        	neighborhoodCell: cell.value,
+        	countyDistrict: county.value,
+        	townshipDivision: township.value,
+        	region: reg.value,
+        	subregion: subreg.value,
+        	stateProvince: state.value,
+        	country: cntry.value,
+        	postalCode: postCode.value
         }
-
-        var name = {
-            familyName:fName.value,
-            givenName:gName.value
+        
+        var id = document.getElementById("identifier_0");
+        var idType = document.getElementById("identifierType_0");
+        var preferredId = document.getElementById("identifier.preferred_0");
+        
+        var patientIdentifier = {
+        	identifier: id.value,
+        	identifierType: idType.value
         }
-
-        DWRAmrsRegistrationService.getPatients(name, null, null, null, null, null, handlePatientResult);
+        
+        var birthStr = DWRUtil.getValue("birthdate");
+        var birthdate = new Date(Date.parse(birthStr));
+        var gender = "";
+        var male = document.getElementById("M");
+        var female = document.getElementById("F");
+        if (male != null && male.checked) {
+        	gender = "M";
+        } else if (female != null && female.checked) {
+        	gender = "F";
+        }
+        
+        DWRAmrsRegistrationService.getPatients(personName, personAddress, null, gender, birthdate, null, handlePatientResult);
     }
 </script>
 <style>
