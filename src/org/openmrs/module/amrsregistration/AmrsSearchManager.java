@@ -1,16 +1,15 @@
 package org.openmrs.module.amrsregistration;
 
-import org.openmrs.Person;
-import org.openmrs.PersonName;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonAttribute;
-import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
-
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.Date;
-import java.util.ArrayList;
+
+import org.openmrs.Person;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
 
 /**
  * Manages search fields for AmrsRegistrationService method(s).

@@ -40,7 +40,7 @@
         <property>amrsregistration.dir</property>
         <defaultValue>amrsregistration</defaultValue>
         <description>
-            Directory for remoteregisration data
+            Directory for AMRS remote regisration data
         </description>
     </globalProperty>
 <!-- /Required Global Properties -->
