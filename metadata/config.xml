@@ -72,7 +72,7 @@
             </convert>
             <convert converter="bean" match="org.openmrs.PersonAttribute">
                 <param name="include" value="personAttributeId,
-                    person, personAttributeType, value, voided"/>
+                    person, attributeType, value, voided"/>
             </convert>
             <convert converter="bean" match="org.openmrs.PersonAttributeType">
                 <param name="include" value="personAttributeTypeId,

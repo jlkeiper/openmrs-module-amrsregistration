@@ -19,6 +19,8 @@
     numObjs["name"] = -1;
     numObjs["address"] = -1;
     
+    var attributes = null;
+    
     function hidDiv() {
 		floating = document.getElementById("floatingResult");
 		floating.style.display = "none";
@@ -110,6 +112,7 @@
         	familyNameSuffix: fNameSuffix.value,
         	degree: deg.value
         }
+        // alert(DWRUtil.toDescriptiveString(personName, 2));
         
         var add1 = document.getElementById("address1_0");
         var add2 = document.getElementById("address2_0");
@@ -138,6 +141,7 @@
         	country: cntry.value,
         	postalCode: postCode.value
         }
+        // alert(DWRUtil.toDescriptiveString(personAddress, 2));
         
         var id = document.getElementById("identifier_0");
         var idType = document.getElementById("identifierType_0");
@@ -151,7 +155,8 @@
         // convert to js date object before passing it to dwr
         var birthStr = DWRUtil.getValue("birthdate");
         var birthdate = null;
-        if (birtStr != null)
+        // need to validate the date entered by user here
+        if (birthStr != null && birthStr.length > 0)
         	birthdate = new Date(Date.parse(birthStr));
         
         // the id element of the gender turn out to be "M" and "F"
@@ -164,7 +169,31 @@
         	gender = "F";
         }
         
-        DWRAmrsRegistrationService.getPatients(personName, personAddress, null, gender, birthdate, null, handlePatientResult);
+        if (attributes == null) {
+        	prepareAttributes();
+        }
+        
+        for(i=0; i<attributes.length; i++) {
+        	attributes[i].value = DWRUtil.getValue(attributes[i].attributeType.personAttributeTypeId).toString();
+        }
+        // alert("Attributes: " + DWRUtil.toDescriptiveString(attributes, 2));
+        
+        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, gender, birthdate, null, handlePatientResult);
+    }
+    
+    function prepareAttributes() {
+    	attributes = new Array();
+        
+        <openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+        	type = new Object();
+        	type.personAttributeTypeId = "${attrType.personAttributeTypeId}";
+        	type.name = "${attrType.name}";
+        	type.format = "${attrType.format}";
+        	
+        	attr = new Object();
+        	attr.attributeType = type;
+        	attributes[${varStatus.index}] = attr;
+		</openmrs:forEachDisplayAttributeType>
     }
 </script>
 <style>
