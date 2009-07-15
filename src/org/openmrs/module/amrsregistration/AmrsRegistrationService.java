@@ -11,14 +11,14 @@ import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
 
-public abstract interface AmrsRegistrationService {
-    public abstract void setRemoteRegistrationDAO(
+public interface AmrsRegistrationService {
+    public void setRemoteRegistrationDAO(
             AmrsRemoteRegistrationDAO paramAmrsRemoteRegistrationDAO);
 
-    public abstract void registerPatient(Patient paramPatient,
+    public void registerPatient(Patient paramPatient,
             String paramString1, String paramString2) throws APIException;
 
-    public abstract List<Person> getPersons(PersonName paramPersonName,
+    public List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger)
             throws APIException;

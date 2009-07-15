@@ -41,9 +41,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class AmrsRegistrationFormController extends AbstractWizardFormController {
 	
-	Log log;
+	private Log log = LogFactory.getLog(AmrsRegistrationFormController.class);
 	
-	Patient patient;
+	private Patient patient;
 	
 	public AmrsRegistrationFormController() {
 		this.log = LogFactory.getLog(super.getClass());
@@ -79,9 +79,26 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	
 	protected int getTargetPage(HttpServletRequest paramHttpServletRequest, Object paramObject, Errors paramErrors,
 	                            int paramInt) {
-		int i = super.getTargetPage(paramHttpServletRequest, paramObject, paramErrors, paramInt);
+		int targetPage = super.getTargetPage(paramHttpServletRequest, paramObject, paramErrors, paramInt);
+		int currentPage = super.getCurrentPage(paramHttpServletRequest);
 		
-		switch (paramInt) {
+		PatientService patientService = Context.getPatientService();
+		
+		// only do search if we're coming from the start page
+		if (currentPage == 0) {
+			// get the scanned id and search for patients with that id
+ 			String idCard = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "idCardInput", null);
+			List<Patient> patients = patientService.getPatients(null, idCard, null, true);
+			// This needs to be exactly match a single patient. if more then one patient are found, then the id
+			// card possibly has a null value.
+			if (patients.size() == 1) {
+				this.patient = patients.get(0);
+				// patient with matching id are found, take to the review page
+				targetPage = 2;
+			}
+		}
+		
+		switch (targetPage) {
 			case 0:
 				this.patient = null;
 				break;
@@ -93,8 +110,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			    "Spring Binding Test 1");
 				
 				this.patient.getPersonName().setFamilyName(str1);
-				
-				PatientService ps = Context.getPatientService();
 				
 				String[] ids = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier_");
 				String[] idTypes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifierType_");
@@ -128,8 +143,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					for (int j = 0; j < maxIds; j++) {
 	                    PatientIdentifier identifier = new PatientIdentifier();
 	                    identifier.setIdentifier(ids[j]);
-	                    identifier.setIdentifierType(ps.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
-						if (preferredIds != null && preferredIds.length > i)
+	                    identifier.setIdentifierType(patientService.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
+						if (preferredIds != null && preferredIds.length > j)
 							identifier.setPreferred(new Boolean(preferredIds[j]));
 						patient.addIdentifier(identifier);
                     }
@@ -171,7 +186,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxNames = preferredNames.length;
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
-						if (preferredNames != null && preferredNames.length > i)
+						if (preferredNames != null && preferredNames.length > j)
 							name.setPreferred(new Boolean(preferredNames[j]));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
@@ -232,20 +247,20 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					
 					for (int j = 0; j < maxAddress; j++) {
 						PersonAddress pa = new PersonAddress();
-						pa.setAddress1(address1s[i]);
-						pa.setAddress2(address2s[i]);
-						pa.setNeighborhoodCell(cells[i]);
-						pa.setCityVillage(cities[i]);
-						pa.setTownshipDivision(townships[i]);
-						pa.setCountyDistrict(counties[i]);
-						pa.setStateProvince(states[i]);
-						pa.setRegion(regions[i]);
-						pa.setSubregion(subregions[i]);
-						pa.setCountry(countries[i]);
-						pa.setPostalCode(postalCodes[i]);
-						pa.setCountyDistrict(counties[i]);
-						if (preferredAddress != null && preferredAddress.length > i)
-							pa.setPreferred(new Boolean(preferredAddress[i]));
+						pa.setAddress1(address1s[j]);
+						pa.setAddress2(address2s[j]);
+						pa.setNeighborhoodCell(cells[j]);
+						pa.setCityVillage(cities[j]);
+						pa.setTownshipDivision(townships[j]);
+						pa.setCountyDistrict(counties[j]);
+						pa.setStateProvince(states[j]);
+						pa.setRegion(regions[j]);
+						pa.setSubregion(subregions[j]);
+						pa.setCountry(countries[j]);
+						pa.setPostalCode(postalCodes[j]);
+						pa.setCountyDistrict(counties[j]);
+						if (preferredAddress != null && preferredAddress.length > j)
+							pa.setPreferred(new Boolean(preferredAddress[j]));
 						patient.addAddress(pa);
 					}
 				}
@@ -260,7 +275,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 		}
 		
-		return i;
+		return targetPage;
 	}
 	
 	protected void onBindAndValidate(HttpServletRequest paramHttpServletRequest, Object paramObject,
