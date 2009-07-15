@@ -6,15 +6,15 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/avalon-framework-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/barcode4j.jar"/>
-	<classpathentry kind="lib" path="lib-common/openmrs-api-1.5.0.6232-dev.jar"/>
+	<classpathentry kind="lib" path="lib-common/openmrs-api-1.5.0.6232-dev.jar" sourcepath="/openmrs-1.5.x/src/api"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.5.0.6232-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.5.0.6232-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-2.5.1.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-2.5.1.jar" sourcepath="/openmrs-source/spring-2.5.1-src.zip"/>
 	<classpathentry kind="lib" path="lib-common/spring-test.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-webmvc.jar" sourcepath="/openmrs-source/spring-webmvc-sources.zip"/>
 	<classpathentry kind="lib" path="lib-common/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib-common/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate3.jar"/>

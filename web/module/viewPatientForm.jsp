@@ -11,8 +11,6 @@
 <form id="identifierForm" method="post">
     <b class="boxHeader"><spring:message code="amrsregistration.edit"/> </b>
     <table class="box" border="0" cellspacing="2" cellpadding="2">
-        <c:forEach items="${patient.names}" var="name" varStatus="varStatus">
-                <spring:nestedPath path="patient.names[${varStatus.index}]">
                     <tr id="name${varStatus.index}Data" >
                         <th align="left" valign="top">
                             <!-- spring:message code="general.preferred"/ -->
@@ -43,12 +41,14 @@
                             <spring:message code="PersonName.degree"/>
                         </th>
                     </tr>
+        <c:forEach items="${patient.names}" var="name" varStatus="varStatus">
+                <spring:nestedPath path="patient.names[${varStatus.index}]">
                     <tr>
                         <spring:bind path="personNameId">
                             <input type="hidden" id="personNameId_${varStatus.index}" value="${status.value}"/>
                         </spring:bind>
                         <td align="left" valign="top">
-                            ${varStatus.index}&nbsp;
+                            <span style="font-weight:bold;">${varStatus.index}</span>&nbsp;
                             <spring:bind path="preferred">
                                 <input type="checkbox" id="personName.preferred_${varStatus.index}" value="${status.value}" <c:if test="${status.value == 'true'}">checked</c:if>/>
                             </spring:bind>
@@ -253,6 +253,70 @@
                 </spring:nestedPath>
         </c:forEach>
     </table>
+    
+    <spring:hasBindErrors name="patient">
+        <span class="error">${error.errorMessage}</span><br/>
+    </spring:hasBindErrors>
+    <div class="tabBoxes">
+	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
+	    <div class="box">
+	    	<table><c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
+				<tr>
+					<td><spring:message code="Person.gender"/></td>
+					<td><spring:bind path="patient.gender">
+							<openmrs:forEachRecord name="gender">
+								<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
+									<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
+							</openmrs:forEachRecord>
+						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+						</spring:bind>
+					</td>
+				</tr>
+			</c:if>
+			<tr>
+				<td>
+					<spring:message code="Person.birthdate"/><br/>
+					<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
+				</td>
+				<td colspan="3">
+					<spring:bind path="patient.birthdate">			
+						<input type="text" 
+								name="birthdate" size="10" id="birthdate"
+								value="${status.value}" />
+						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
+					</spring:bind>
+					
+					<span id="age"></span> &nbsp; 
+					
+					<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
+						<spring:bind path="patient.birthdateEstimated">
+							<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
+							<input type="hidden" name="_birthdateEstimated">
+							<input type="checkbox" name="birthdateEstimated" value="true" 
+								   <c:if test="${status.value == true}">checked</c:if> 
+								   id="birthdateEstimatedInput" />
+							<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+						</spring:bind>
+					</span>
+				</td>
+			</tr>
+			<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+				<tr>
+					<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
+					<td>
+						<spring:bind path="patient.attributeMap">
+							<openmrs:fieldGen 
+								type="${attrType.format}" 
+								formFieldName="${attrType.personAttributeTypeId}" 
+								val="${status.value[attrType.name].hydratedObject}" 
+								parameters="optionHeader=[blank]|showAnswers=${attrType.foreignKey}" />
+						</spring:bind>
+					</td>
+				</tr>
+			</openmrs:forEachDisplayAttributeType>
+			</table>
+		</div>
+	</div>
     <br/>
 <!--
     TestAttributes:

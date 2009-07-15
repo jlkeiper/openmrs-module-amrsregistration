@@ -9,27 +9,6 @@
         var idCardInput = document.getElementById("idCardInput");
         idCardInput.focus();
     }
-
-    function handlePatientResult(result) {
-        var scannedPatientId = document.getElementById("scannedPatientId");
-        if (result.length != 1) {
-            scannedPatientId.value = "";
-        } else {
-            scannedPatientId.value = result[0].patientId;
-        }
-    }
-
-    function patientSearch(thing) {
-        var identifier = document.getElementById("idCardInput");
-        //var identifier = {
-        //    identifier:idCardInput.value
-        //}
-        //DWRAmrsRegistrationService.getPatients(name, null, null, null, null, null, function(str) {alert(str[0].personName);});
-        //DWRAmrsRegistrationService.getPatients(null, null, null, null, null, null, handlePatientResult);
-        DWRPatientService.findPatients(identifier, false, handlePatientResult);
-    }
-
-
 </script>
 
 <h2><spring:message code="amrsregistration.start.title"/></h2>
@@ -41,12 +20,17 @@
         <tr id="initMrn" name="initMrn">
             <td align="center" valign="top">
                 <input type="hidden" id="scannedPatientId" name="scannedPatientId"/>
-                <input type="text" id="idCardInput" size="16" name="idCardInput" onchange="patientSearch(this.value)"/>
+                <input type="text" id="idCardInput" size="16" name="idCardInput"/>
             </td>
             <td>
                 &nbsp;<label><spring:message code="amrsregistration.start.barcode"/></label><br/>
             </td>
+			<td align="center" valign="top">
+				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.start.go"/>">
+			</td>
         </tr>
+</form>
+<form id="newIdentifierForm" method="post" class="box">
 		<tr>
 			<td align="center" valign="top">
 				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.start.nocard"/>">

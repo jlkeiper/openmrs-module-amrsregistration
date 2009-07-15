@@ -70,10 +70,10 @@
             	var tr = document.createElement("tr");
             	tbody.appendChild(tr);
             	
-            	createColumn(tr, result[0].identifiers[0].identifier);
-            	createColumn(tr, result[0].personName.givenName);
-            	createColumn(tr, result[0].personName.familyName);
-            	createColumn(tr, result[0].birthdate);
+            	createColumn(tr, result[i].identifiers[0].identifier);
+            	createColumn(tr, result[i].personName.givenName);
+            	createColumn(tr, result[i].personName.familyName);
+            	createColumn(tr, result[i].birthdate);
             }
         }
     }

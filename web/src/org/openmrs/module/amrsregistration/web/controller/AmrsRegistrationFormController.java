@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,75 +42,80 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class AmrsRegistrationFormController extends AbstractWizardFormController {
 	
-	private Log log = LogFactory.getLog(AmrsRegistrationFormController.class);
-	
-	private Patient patient;
+    private Log log = LogFactory.getLog(super.getClass());
 	
 	public AmrsRegistrationFormController() {
-		this.log = LogFactory.getLog(super.getClass());
 	}
 	
 	protected Object formBackingObject(HttpServletRequest paramHttpServletRequest) throws ModelAndViewDefiningException {
-		if (this.patient == null) {
-			return getNewPatient();
-		}
-		return this.patient;
+		return getNewPatient();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors, int)
 	 */
 	@Override
-	protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors, int page)
-	                                                                                                                throws Exception {
+	protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
 		HashMap<String, Object> localHashMap = new HashMap<String, Object>();
 		localHashMap.put("emptyIdentifier", new PatientIdentifier());
 		localHashMap.put("emptyName", new PersonName());
 		localHashMap.put("emptyAddress", new PersonAddress());
-		switch (page) {
-			case 0:
-				break;
-			case 1:
-				break;
-			case 2:
-		}
-		
 		return localHashMap;
 	}
 	
-	protected int getTargetPage(HttpServletRequest paramHttpServletRequest, Object paramObject, Errors paramErrors,
-	                            int paramInt) {
+	protected int getTargetPage(HttpServletRequest paramHttpServletRequest, Object paramObject, Errors paramErrors, int paramInt) {
+		
+		Patient patient = (Patient) paramObject;
+		Patient patientSearched = null;
+		
 		int targetPage = super.getTargetPage(paramHttpServletRequest, paramObject, paramErrors, paramInt);
 		int currentPage = super.getCurrentPage(paramHttpServletRequest);
 		
 		PatientService patientService = Context.getPatientService();
+		String idCard = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "idCardInput", null);
 		
 		// only do search if we're coming from the start page
-		if (currentPage == 0) {
+		if (currentPage == 0 && idCard != null) {
 			// get the scanned id and search for patients with that id
- 			String idCard = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "idCardInput", null);
 			List<Patient> patients = patientService.getPatients(null, idCard, null, true);
 			// This needs to be exactly match a single patient. if more then one patient are found, then the id
 			// card possibly has a null value.
 			if (patients.size() == 1) {
-				this.patient = patients.get(0);
+				patientSearched = patients.get(0);
+				
+				// hacky way to get all the patient data. need further research on this
+				for (PatientIdentifier identifier : patientSearched.getIdentifiers()) {
+	                patient.addIdentifier(identifier);
+                }
+				copyPatient(patient, patientSearched);
+				patient.getAttributeMap();
+				
 				// patient with matching id are found, take to the review page
 				targetPage = 2;
 			}
 		}
 		
+		// Check if it is really a back request, not a refresh page
+		// This is done because in the "start page" the name of the "GO" button is "_target1" which told the controller
+		// that the next page is the "edit page" (default behavior). But above code changes the flow from "start page" to
+		// "review page", but the "_target1" is still inside the parameter.		
+		if ((currentPage == getPageCount() - 1) && (targetPage == getPageCount() - 2)) {
+			String back = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "_target1", null);
+			if (!"back".equalsIgnoreCase(back)) {
+				targetPage = currentPage;
+			}
+		}
+		
 		switch (targetPage) {
 			case 0:
-				this.patient = null;
+				patient = null;
 				break;
 			case 1:
-				if (this.patient == null) {
-					this.patient = ((Patient) paramObject);
+				if (patient == null) {
+					patient = ((Patient) paramObject);
 				}
-				String str1 = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "familyName_0",
-			    "Spring Binding Test 1");
-				
-				this.patient.getPersonName().setFamilyName(str1);
+				break;
+			case 2:
 				
 				String[] ids = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier_");
 				String[] idTypes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifierType_");
@@ -149,7 +155,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						patient.addIdentifier(identifier);
                     }
 				}
-				
 
 				String[] givenNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "givenName_");
 				String[] middleNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "middleName_");
@@ -266,22 +271,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 				
 				break;
-			case 2:
-				if (this.patient == null) {
-					this.patient = ((Patient) paramObject);
-					String str2 = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "familyName_0",
-					    "Spring Binding Test 2");
-					this.patient.getPersonName().setFamilyName(str2);
-				}
 		}
 		
 		return targetPage;
-	}
-	
-	protected void onBindAndValidate(HttpServletRequest paramHttpServletRequest, Object paramObject,
-	                                 BindException paramBindException, int paramInt) {
-		@SuppressWarnings("unused")
-		Patient localPatient = (Patient) paramObject;
 	}
 	
 	/**
@@ -307,7 +299,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             HttpServletRequest paramHttpServletRequest,
             HttpServletResponse paramHttpServletResponse, Object paramObject,
             BindException paramBindException) throws Exception {
-        this.patient = null;
         return new ModelAndView(new RedirectView(paramHttpServletRequest
                 .getContextPath()
                 + "/module/amrsregistration/start.form"));
@@ -317,13 +308,14 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             HttpServletRequest paramHttpServletRequest,
             HttpServletResponse paramHttpServletResponse, Object paramObject,
             BindException paramBindException) throws Exception {
-        this.patient = null;
         return new ModelAndView(new RedirectView(paramHttpServletRequest
                 .getContextPath()
                 + "/module/amrsregistration/start.form"));
     }
 
     private Patient getNewPatient() {
+    	Patient patient = null;
+    	
         HashSet<PersonName> localHashSet1 = new HashSet<PersonName>();
         localHashSet1.add(new PersonName());
         HashSet<PersonAddress> localHashSet2 = new HashSet<PersonAddress>();
@@ -332,33 +324,39 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         PersonAttribute localPersonAttribute = new PersonAttribute();
         localPersonAttribute.setAttributeType(new PersonAttributeType());
         localHashSet3.add(localPersonAttribute);
-        HashSet<PatientIdentifier> localHashSet4 = new HashSet<PatientIdentifier>();
-        PatientIdentifier localPatientIdentifier = new PatientIdentifier();
-        localPatientIdentifier.setIdentifierType(new PatientIdentifierType());
-        localPatientIdentifier.setLocation(new Location());
-        localHashSet4.add(localPatientIdentifier);
         Person localPerson = new Person();
         localPerson.setNames(localHashSet1);
         localPerson.setAddresses(localHashSet2);
         localPerson.setAttributes(localHashSet3);
-        this.patient = new Patient(localPerson) {
-            private static final long serialVersionUID = 1L;
-
-            public PatientIdentifier getPatientIdentifier() {
-                if ((getIdentifiers() != null) && (getIdentifiers().size() > 0)) {
-                    return ((PatientIdentifier) getIdentifiers().toArray()[0]);
-                }
-                return new PatientIdentifier();
-            }
-
-            public PersonAddress getPersonAddress() {
-                if ((getAddresses() != null) && (getAddresses().size() > 0)) {
-                    return ((PersonAddress) getAddresses().toArray()[0]);
-                }
-                return new PersonAddress();
-            }
-        };
-        this.patient.getIdentifiers().add(new PatientIdentifier());
-        return this.patient;
+        patient = new Patient(localPerson);
+        patient.getIdentifiers().add(new PatientIdentifier());
+        return patient;
+        
+    }
+    
+    private void copyPatient(Patient to, Patient from) {
+    	to.setPersonId(from.getPersonId());
+		
+    	to.setAddresses(from.getAddresses());
+    	to.setNames(from.getNames());
+    	to.setAttributes(from.getAttributes());
+		
+    	to.setGender(from.getGender());
+    	to.setBirthdate(from.getBirthdate());
+    	to.setBirthdateEstimated(from.getBirthdateEstimated());
+    	to.setDead(from.isDead());
+    	to.setDeathDate(from.getDeathDate());
+    	to.setCauseOfDeath(from.getCauseOfDeath());
+		
+    	to.setPersonCreator(from.getPersonCreator());
+    	to.setPersonDateCreated(from.getPersonDateCreated());
+    	to.setPersonChangedBy(from.getPersonChangedBy());
+    	to.setPersonDateChanged(from.getPersonDateChanged());
+    	to.setPersonVoided(from.isPersonVoided());
+    	to.setPersonVoidedBy(from.getPersonVoidedBy());
+    	to.setPersonDateVoided(from.getPersonDateVoided());
+    	to.setPersonVoidReason(from.getPersonVoidReason());
+		to.setPatientId(from.getPatientId());
+		to.setIdentifiers(from.getIdentifiers());
     }
 }
