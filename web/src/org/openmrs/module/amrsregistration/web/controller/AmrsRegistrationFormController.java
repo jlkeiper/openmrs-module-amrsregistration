@@ -1,12 +1,15 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +49,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	public AmrsRegistrationFormController() {
 	}
 	
-	protected Object formBackingObject(HttpServletRequest paramHttpServletRequest) throws ModelAndViewDefiningException {
+	protected Object formBackingObject(HttpServletRequest request) throws ModelAndViewDefiningException {
 		return getNewPatient();
 	}
 	
@@ -62,16 +65,16 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		return localHashMap;
 	}
 	
-	protected int getTargetPage(HttpServletRequest paramHttpServletRequest, Object paramObject, Errors paramErrors, int paramInt) {
+	protected int getTargetPage(HttpServletRequest request, Object command, Errors errors, int page) {
 		
-		Patient patient = (Patient) paramObject;
-		Patient patientSearched = null;
+		Patient patient = (Patient) command;
+		Patient patientSearched = patient;
 		
-		int targetPage = super.getTargetPage(paramHttpServletRequest, paramObject, paramErrors, paramInt);
-		int currentPage = super.getCurrentPage(paramHttpServletRequest);
+		int targetPage = super.getTargetPage(request, command, errors, page);
+		int currentPage = super.getCurrentPage(request);
 		
 		PatientService patientService = Context.getPatientService();
-		String idCard = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "idCardInput", null);
+		String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
 		
 		// only do search if we're coming from the start page
 		if (currentPage == 0 && idCard != null) {
@@ -99,7 +102,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		// that the next page is the "edit page" (default behavior). But above code changes the flow from "start page" to
 		// "review page", but the "_target1" is still inside the parameter.		
 		if ((currentPage == getPageCount() - 1) && (targetPage == getPageCount() - 2)) {
-			String back = ServletRequestUtils.getStringParameter(paramHttpServletRequest, "_target1", null);
+			String back = ServletRequestUtils.getStringParameter(request, "_target1", null);
 			if (!"back".equalsIgnoreCase(back)) {
 				targetPage = currentPage;
 			}
@@ -111,14 +114,100 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				break;
 			case 1:
 				if (patient == null) {
-					patient = ((Patient) paramObject);
+					patient = ((Patient) command);
 				}
 				break;
 			case 2:
 				
-				String[] ids = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier_");
-				String[] idTypes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifierType_");
-				String[] preferredIds = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "identifier.preferred_");
+				// this is because spring doesn't bind the form. so we need to manually update the command object
+				patient.setGender(ServletRequestUtils.getStringParameter(request, "gender", patient.getGender()));
+				
+				String date = ServletRequestUtils.getStringParameter(request, "birthdate", null);
+				Date birthdate = null;
+				if (date != null) {
+					try {
+	                    birthdate = Context.getDateFormat().parse(date);
+                    }
+                    catch (ParseException e) {
+	                    log.error("Unable to parse given date", e);
+                    }
+				}
+				
+				if (birthdate != null)
+					patient.setBirthdate(birthdate);
+				
+				String birthEst = ServletRequestUtils.getStringParameter(request, "birthdateEstimated", null);
+				if (birthEst != null)
+					patient.setBirthdateEstimated(new Boolean(birthEst));
+				
+				int i = 0;
+				for (PersonName name : patient.getNames()) {
+					name.setGivenName(ServletRequestUtils.getStringParameter(request, "givenName_" + i, name.getGivenName()));
+					name.setMiddleName(ServletRequestUtils.getStringParameter(request, "middleName_" + i, name.getMiddleName()));
+					name.setFamilyNamePrefix(ServletRequestUtils.getStringParameter(request, "familyNamePrefix_" + i, name.getFamilyNamePrefix()));
+					name.setFamilyName(ServletRequestUtils.getStringParameter(request, "familyName_" + i, name.getFamilyName()));
+					name.setFamilyName2(ServletRequestUtils.getStringParameter(request, "familyName2_" + i, name.getFamilyName2()));
+					name.setFamilyNameSuffix(ServletRequestUtils.getStringParameter(request, "familyNameSuffix_" + i, name.getFamilyNameSuffix()));
+					name.setDegree(ServletRequestUtils.getStringParameter(request, "degree_" + i, name.getDegree()));
+					name.setPrefix(ServletRequestUtils.getStringParameter(request, "prefix_" + i, name.getPrefix()));
+					
+					String preferred = ServletRequestUtils.getStringParameter(request, "personName.preferred_" + i, null);
+					if (preferred != null)
+						name.setPreferred(new Boolean (true));
+					else
+						name.setPreferred(new Boolean(false));
+					i++;
+                }
+
+				i = 0;
+				for (PersonAddress address : patient.getAddresses()) {
+					address.setAddress1(ServletRequestUtils.getStringParameter(request, "address1_" + i, address.getAddress1()));
+					address.setAddress2(ServletRequestUtils.getStringParameter(request, "address2_" + i, address.getAddress2()));
+					address.setNeighborhoodCell(ServletRequestUtils.getStringParameter(request, "neighborhoodCell_" + i, address.getNeighborhoodCell()));
+					address.setCityVillage(ServletRequestUtils.getStringParameter(request, "cityVillage_" + i, address.getCityVillage()));
+					address.setTownshipDivision(ServletRequestUtils.getStringParameter(request, "townshipDivision_" + i, address.getTownshipDivision()));
+					address.setCountyDistrict(ServletRequestUtils.getStringParameter(request, "countyDistrict_" + i, address.getCountyDistrict()));
+					address.setStateProvince(ServletRequestUtils.getStringParameter(request, "stateProvince_" + i, address.getStateProvince()));
+					address.setRegion(ServletRequestUtils.getStringParameter(request, "region_" + i, address.getRegion()));
+					address.setSubregion(ServletRequestUtils.getStringParameter(request, "subregion_" + i, address.getSubregion()));
+					address.setCountry(ServletRequestUtils.getStringParameter(request, "country_" + i, address.getCountry()));
+					address.setPostalCode(ServletRequestUtils.getStringParameter(request, "postalCode_" + i, address.getPostalCode()));
+					
+					String preferred = ServletRequestUtils.getStringParameter(request, "personAddress.preferred_" + i, null);
+					if (preferred != null)
+						address.setPreferred(new Boolean(true));
+					else
+						address.setPreferred(new Boolean(false));
+					i++;
+                }
+				
+				for (PersonAttribute attribute : patient.getAttributes()) {
+					Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
+	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
+	                attribute.setValue(value);
+                }
+				
+				i = 0;
+				for (PatientIdentifier identifier : patient.getIdentifiers()) {
+					identifier.setIdentifier(ServletRequestUtils.getStringParameter(request, "identifier_" + i, identifier.getIdentifier()));
+					
+					String idType = ServletRequestUtils.getStringParameter(request, "identifierType_" + i, null);
+					if (idType != null) {
+						PatientIdentifierType type = Context.getPatientService().getPatientIdentifierType(Integer.parseInt(idType));
+						identifier.setIdentifierType(type);
+					}
+					
+					String preferred = ServletRequestUtils.getStringParameter(request, "identifier.preferred_" + i, null);
+					if (preferred != null)
+						identifier.setPreferred(new Boolean(true));
+					else
+						identifier.setPreferred(new Boolean(false));
+					i++;
+                }
+				
+				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier_");
+				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType_");
+				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "identifier.preferred_");
 				if (ids != null || idTypes != null || preferredIds != null) {
 					int maxIds = 0;
 					if (ids != null && ids.length > maxIds)
@@ -135,12 +224,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						List<PatientIdentifier> identifiers = new ArrayList<PatientIdentifier>(patient.getIdentifiers());
 						for (int j = 0; j < identifiers.size(); j++) {
 	                        PatientIdentifier patientIdentifier = identifiers.remove(j);;
-	                        if (patientIdentifier.getPatient() == null &&
-	                        		patientIdentifier.getIdentifierType() == null &&
-	                        		patientIdentifier.getIdentifier() == null)
+	                        if (patientIdentifier.getPatient() != null ||
+	                        		patientIdentifier.getIdentifierType() != null ||
+	                        		patientIdentifier.getIdentifier() != null)
 	                        	identifiers.add(patientIdentifier);
 						}
-						Set<PatientIdentifier> identifiersSet = new HashSet<PatientIdentifier>(identifiers);
+						Set<PatientIdentifier> identifiersSet = new TreeSet<PatientIdentifier>(identifiers);
 						
 						patient.setIdentifiers(identifiersSet);
 					}
@@ -150,20 +239,22 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                    identifier.setIdentifier(ids[j]);
 	                    identifier.setIdentifierType(patientService.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
 						if (preferredIds != null && preferredIds.length > j)
-							identifier.setPreferred(new Boolean(preferredIds[j]));
+							identifier.setPreferred(new Boolean(true));
+						else
+							identifier.setPreferred(new Boolean(false));
 						patient.addIdentifier(identifier);
                     }
 				}
 
-				String[] givenNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "givenName_");
-				String[] middleNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "middleName_");
-				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyNamePrefix_");
-				String[] familyNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyName_");
-				String[] familyName2s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyName2_");
-				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "familyNameSuffix_");
-				String[] degrees = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "degree_");
-				String[] prefixes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "prefix_");
-				String[] preferredNames = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "personName.preferred_");
+				String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName_");
+				String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName_");
+				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix_");
+				String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName_");
+				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2_");
+				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix_");
+				String[] degrees = ServletRequestUtils.getStringParameters(request, "degree_");
+				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix_");
+				String[] preferredNames = ServletRequestUtils.getStringParameters(request, "personName.preferred_");
 				
 				if (givenNames != null || middleNames != null ||
 						familyNamePrefixes != null || familyNames != null ||
@@ -191,7 +282,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
 						if (preferredNames != null && preferredNames.length > j)
-							name.setPreferred(new Boolean(preferredNames[j]));
+							name.setPreferred(new Boolean(true));
+						else
+							name.setPreferred(new Boolean(false));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
 						name.setFamilyNamePrefix(familyNamePrefixes[j]);
@@ -204,18 +297,18 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
 				}
 				
-				String[] address1s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "address1_");
-				String[] address2s = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "address2_");
-				String[] cells = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "neighborhoodCell_");
-				String[] cities = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "cityVillage_");
-				String[] townships = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "townshipDivision_");
-				String[] counties = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "countyDistrict_");
-				String[] states = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "stateProvince_");
-				String[] regions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "region_");
-				String[] subregions = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "subregion_");
-				String[] countries = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "country_");
-				String[] postalCodes = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "postalCode_");
-				String[] preferredAddress = ServletRequestUtils.getStringParameters(paramHttpServletRequest, "personAddress.preferred_");
+				String[] address1s = ServletRequestUtils.getStringParameters(request, "address1_");
+				String[] address2s = ServletRequestUtils.getStringParameters(request, "address2_");
+				String[] cells = ServletRequestUtils.getStringParameters(request, "neighborhoodCell_");
+				String[] cities = ServletRequestUtils.getStringParameters(request, "cityVillage_");
+				String[] townships = ServletRequestUtils.getStringParameters(request, "townshipDivision_");
+				String[] counties = ServletRequestUtils.getStringParameters(request, "countyDistrict_");
+				String[] states = ServletRequestUtils.getStringParameters(request, "stateProvince_");
+				String[] regions = ServletRequestUtils.getStringParameters(request, "region_");
+				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion_");
+				String[] countries = ServletRequestUtils.getStringParameters(request, "country_");
+				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode_");
+				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "personAddress.preferred_");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||
@@ -264,7 +357,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						pa.setPostalCode(postalCodes[j]);
 						pa.setCountyDistrict(counties[j]);
 						if (preferredAddress != null && preferredAddress.length > j)
-							pa.setPreferred(new Boolean(preferredAddress[j]));
+							pa.setPreferred(new Boolean(true));
+						else
+							pa.setPreferred(new Boolean(false));
 						patient.addAddress(pa);
 					}
 				}
@@ -295,19 +390,19 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	}
 
     protected ModelAndView processCancel(
-            HttpServletRequest paramHttpServletRequest,
-            HttpServletResponse paramHttpServletResponse, Object paramObject,
-            BindException paramBindException) throws Exception {
-        return new ModelAndView(new RedirectView(paramHttpServletRequest
+            HttpServletRequest request,
+            HttpServletResponse response, Object command,
+            BindException bindException) throws Exception {
+        return new ModelAndView(new RedirectView(request
                 .getContextPath()
                 + "/module/amrsregistration/start.form"));
     }
 
     protected ModelAndView processFinish(
-            HttpServletRequest paramHttpServletRequest,
-            HttpServletResponse paramHttpServletResponse, Object paramObject,
-            BindException paramBindException) throws Exception {
-        return new ModelAndView(new RedirectView(paramHttpServletRequest
+            HttpServletRequest request,
+            HttpServletResponse response, Object command,
+            BindException bindException) throws Exception {
+        return new ModelAndView(new RedirectView(request
                 .getContextPath()
                 + "/module/amrsregistration/start.form"));
     }
@@ -317,16 +412,20 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     	
         HashSet<PersonName> localHashSet1 = new HashSet<PersonName>();
         localHashSet1.add(new PersonName());
+        
         HashSet<PersonAddress> localHashSet2 = new HashSet<PersonAddress>();
         localHashSet2.add(new PersonAddress());
+        
         HashSet<PersonAttribute> localHashSet3 = new HashSet<PersonAttribute>();
         PersonAttribute localPersonAttribute = new PersonAttribute();
         localPersonAttribute.setAttributeType(new PersonAttributeType());
         localHashSet3.add(localPersonAttribute);
+        
         Person localPerson = new Person();
         localPerson.setNames(localHashSet1);
         localPerson.setAddresses(localHashSet2);
         localPerson.setAttributes(localHashSet3);
+        
         patient = new Patient(localPerson);
         patient.getIdentifiers().add(new PatientIdentifier());
         return patient;
