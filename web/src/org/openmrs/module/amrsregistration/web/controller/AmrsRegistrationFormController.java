@@ -416,10 +416,13 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         HashSet<PersonAddress> localHashSet2 = new HashSet<PersonAddress>();
         localHashSet2.add(new PersonAddress());
         
+        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
         HashSet<PersonAttribute> localHashSet3 = new HashSet<PersonAttribute>();
-        PersonAttribute localPersonAttribute = new PersonAttribute();
-        localPersonAttribute.setAttributeType(new PersonAttributeType());
-        localHashSet3.add(localPersonAttribute);
+        for (PersonAttributeType personAttributeType : attributeTypes) {
+	        PersonAttribute attribute = new PersonAttribute();
+	        attribute.setAttributeType(personAttributeType);
+	        localHashSet3.add(attribute);
+        }
         
         Person localPerson = new Person();
         localPerson.setNames(localHashSet1);
