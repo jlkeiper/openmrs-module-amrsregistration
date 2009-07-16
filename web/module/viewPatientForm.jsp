@@ -6,11 +6,11 @@
 <%@ include file="localHeader.jsp" %>
 
 <h2><spring:message code="amrsregistration.start.title"/></h2>
-<span><spring:message code="amrsregistration.start.details"/></span>
+<span><spring:message code="amrsregistration.start.review"/></span>
 <br/><br/>
 
 <form id="identifierForm" method="post">
-<b class="boxHeader"><spring:message code="amrsregistration.edit"/> </b>
+<b class="boxHeader"><spring:message code="amrsregistration.edit.name"/> </b>
 <table class="box" border="0" cellspacing="2" cellpadding="2">
     <tr id="name${varStatus.index}Data">
         <th align="left" valign="top">
@@ -51,56 +51,56 @@
                 <td align="left" valign="top">
                     <span style="font-weight:bold;">${varStatus.index}</span>&nbsp;
                     <spring:bind path="preferred">
-                        <input type="checkbox" disabled id="personName.preferred_${varStatus.index}" value="${status.value}"
+                        <input type="checkbox" id="personName.preferred_${varStatus.index}" value="${status.value}"
                         <c:if test="${status.value == 'true'}">checked</c:if>/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="prefix">
-                        <input type="text" disabled id="prefix_${varStatus.index}" size="3" value="${status.value}"
+                        <input type="text" id="prefix_${varStatus.index}" size="3" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="givenName">
-                        <input type="text" disabled id="givenName_${varStatus.index}" size="16" value="${status.value}"
+                        <input type="text" id="givenName_${varStatus.index}" size="16" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="middleName">
-                        <input type="text" disabled id="middleName_${varStatus.index}" size="12" value="${status.value}"
+                        <input type="text" id="middleName_${varStatus.index}" size="12" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td>&nbsp;</td>
                 <td align="left" valign="top">
                     <spring:bind path="familyNamePrefix">
-                        <input type="text" disabled id="familyNamePrefix_${varStatus.index}" size="3" value="${status.value}"
+                        <input type="text" id="familyNamePrefix_${varStatus.index}" size="3" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="familyName">
-                        <input type="text" disabled id="familyName_${varStatus.index}" size="16" value="${status.value}"
+                        <input type="text" id="familyName_${varStatus.index}" size="16" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="familyName2">
-                        <input type="text" disabled id="familyName2_${varStatus.index}" size="16" value="${status.value}"
+                        <input type="text" id="familyName2_${varStatus.index}" size="16" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="familyNameSuffix">
-                        <input type="text" disabled id="familyNameSuffix_${varStatus.index}" size="3" value="${status.value}"
+                        <input type="text" id="familyNameSuffix_${varStatus.index}" size="3" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
                 <td align="left" valign="top">
                     <spring:bind path="degree">
-                        <input type="text" disabled id="degree_${varStatus.index}" size="4" value="${status.value}"
+                        <input type="text" id="degree_${varStatus.index}" size="4" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -122,7 +122,7 @@
                         <input type="hidden" id="personAddressId_${varStatus.index}" value="${status.value}"/>
                     </spring:bind>
                     <spring:bind path="preferred">
-                        <input type="checkbox" disabled id="personAddress.preferred_${varStatus.index}" value="${status.value}"
+                        <input type="checkbox" id="personAddress.preferred_${varStatus.index}" value="${status.value}"
                         <c:if test="${status.value == 'true'}">checked</c:if>/>
                     </spring:bind>
                 </td>
@@ -133,7 +133,7 @@
                 </th>
                 <td>
                     <spring:bind path="address1">
-                        <input type="text" disabled id="address1_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="address1_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -142,7 +142,7 @@
                 </th>
                 <td>
                     <spring:bind path="address2">
-                        <input type="text" disabled id="address2_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="address2_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -151,7 +151,7 @@
                 </th>
                 <td>
                     <spring:bind path="neighborhoodCell">
-                        <input type="text" disabled id="neighborhoodCell_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="neighborhoodCell_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -162,7 +162,7 @@
                 </th>
                 <td>
                     <spring:bind path="cityVillage">
-                        <input type="text" disabled id="cityVillage_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="cityVillage_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -171,7 +171,7 @@
                 </th>
                 <td>
                     <spring:bind path="townshipDivision">
-                        <input type="text" disabled id="townshipDivision_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="townshipDivision_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -180,7 +180,7 @@
                 </th>
                 <td>
                     <spring:bind path="countyDistrict">
-                        <input type="text" disabled id="countyDistrict_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="countyDistrict_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -191,7 +191,7 @@
                 </th>
                 <td>
                     <spring:bind path="subregion">
-                        <input type="text" disabled id="subregion_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="subregion_${varStatus.index}" value="${status.value}"
                                onkeyup="personSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -200,7 +200,7 @@
                 </th>
                 <td>
                     <spring:bind path="region">
-                        <input type="text" disabled id="region_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="region_${varStatus.index}" value="${status.value}"
                                onkeyup="personSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -211,7 +211,7 @@
                 </th>
                 <td>
                     <spring:bind path="stateProvince">
-                        <input type="text" disabled id="stateProvince_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="stateProvince_${varStatus.index}" value="${status.value}"
                                onkeyup="personSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -220,7 +220,7 @@
                 </th>
                 <td>
                     <spring:bind path="country">
-                        <input type="text" disabled id="country_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="country_${varStatus.index}" value="${status.value}"
                                onkeyup="personSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -229,7 +229,7 @@
                 </th>
                 <td>
                     <spring:bind path="postalCode">
-                        <input type="text" disabled id="postalCode_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="postalCode_${varStatus.index}" value="${status.value}"
                                onkeyup="personSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -240,7 +240,7 @@
 </table>
 <br/>
 <table class="box" border="0" cellspacing="2" cellpadding="2">
-    <b class="boxHeader"><spring:message code="amrsregistration.edit.address"/></b>
+    <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>
     <c:forEach items="${patient.identifiers}" var="identifier" varStatus="varStatus">
         <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
             <tr id="identifier${varStatus.index}Data">
@@ -249,7 +249,7 @@
                 </th>
                 <td align="left" valign="top">
                     <spring:bind path="preferred">
-                        <input type="checkbox" disabled id="identifier.preferred_${varStatus.index}" value="${status.value}"
+                        <input type="checkbox" id="identifier.preferred_${varStatus.index}" value="${status.value}"
                         <c:if test="${status.value == 'true'}">checked</c:if>/>
                     </spring:bind>
                 </td>
@@ -258,7 +258,7 @@
 		        </th>
                 <td>
                     <spring:bind path="identifier">
-                        <input type="text" disabled id="identifier_${varStatus.index}" value="${status.value}"
+                        <input type="text" id="identifier_${varStatus.index}" value="${status.value}"
                                onkeyup="patientSearch(this.value)"/>
                     </spring:bind>
                 </td>
@@ -267,7 +267,7 @@
                 </th>
                 <td>
                     <spring:bind path="identifierType">
-                        <select name="identifierType" disabled id="identifierType_${varStatus.index}">
+                        <select name="identifierType" id="identifierType_${varStatus.index}">
                             <openmrs:forEachRecord name="patientIdentifierType">
                                 <option value="${record.patientIdentifierTypeId}"
                                 <c:if test="${status.value == record.name}">selected</c:if> >
@@ -296,7 +296,7 @@
                 <td><spring:message code="Person.gender"/></td>
                 <td><spring:bind path="patient.gender">
                     <openmrs:forEachRecord name="gender">
-                        <input type="radio" disabled name="gender" id="${record.key}" value="${record.key}" <c:if
+                        <input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if
                             test="${record.key == status.value}">checked</c:if> />
                         <label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
                     </openmrs:forEachRecord>
@@ -313,7 +313,7 @@
                 </td>
                 <td colspan="3">
                     <spring:bind path="patient.birthdate">
-                        <input type="text" disabled
+                        <input type="text"
                                name="birthdate" size="10" id="birthdate"
                                value="${status.value}"/>
                         <c:if test="${status.errorMessage != ''}"><span
@@ -327,7 +327,7 @@
                             <label for="birthdateEstimatedInput"><spring:message
                                     code="Person.birthdateEstimated"/></label>
                             <input type="hidden" name="_birthdateEstimated">
-                            <input type="checkbox" disabled name="birthdateEstimated" value="true"
+                            <input type="checkbox" name="birthdateEstimated" value="true"
                             <c:if test="${status.value == true}">checked</c:if>
                             id="birthdateEstimatedInput" />
                             <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
@@ -354,6 +354,14 @@
     </div>
 </div>
 <br/>
+
+<script type="text/javascript">
+	inputElements = document.forms[0].elements;
+	for(i = 0; i < inputElements.length; i ++) {
+		inputElements[i].disabled = true;
+	}
+</script>
+
 <!--
     TestAttributes:
     <c:if test="${testAttributes != null}">${testAttributes}</c:if>

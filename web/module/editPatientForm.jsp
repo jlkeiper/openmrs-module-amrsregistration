@@ -229,7 +229,7 @@
 
 </style>
 
-<h2><spring:message code="amrsregistration.edit.title"/></h2>
+<h2><spring:message code="amrsregistration.edit.start"/></h2>
 <span><spring:message code="amrsregistration.edit.details"/></span>
 <br/>
 

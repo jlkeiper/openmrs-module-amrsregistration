@@ -11,7 +11,7 @@ public class AdminList extends AdministrationSectionExt {
     }
 
     public String getTitle() {
-        return "Remote Registration Module";
+        return "AMRS Remote Registration Module";
     }
 
     public Map<String, String> getLinks() {

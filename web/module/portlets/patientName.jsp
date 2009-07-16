@@ -1,4 +1,4 @@
-<b class="boxHeader"><spring:message code="amrsregistration.edit"/> </b>
+<b class="boxHeader"><spring:message code="amrsregistration.edit.name"/> </b>
 <table class="box" border="0" cellspacing="2" cellpadding="2">
     <tr>
         <th align="left" valign="top">

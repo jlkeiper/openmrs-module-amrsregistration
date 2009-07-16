@@ -1,5 +1,5 @@
 <table class="box" border="0" cellspacing="2" cellpadding="2">
-    <b class="boxHeader"><spring:message code="amrsregistration.edit.address"/></b>
+    <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>
     <tr>
         <th align="left" valign="top">
             <spring:message code="general.preferred"/>?

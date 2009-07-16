@@ -2,10 +2,8 @@ package org.openmrs.module.amrsregistration.web.controller;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -181,10 +179,27 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					i++;
                 }
 				
+				// remove from this list elements that already in the person attribute (list.remove(personattributeType)
+		        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
 				for (PersonAttribute attribute : patient.getAttributes()) {
 					Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
 	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
-	                attribute.setValue(value);
+	                if (value != null) {
+	                	attribute.setValue(value);
+	                	attributeTypes.remove(attribute.getAttributeType());
+	                }
+                }
+				
+				// iterate over what is left in the list to see whether the user add a new element or not
+				for (PersonAttributeType personAttributeType : attributeTypes) {
+					Integer id = personAttributeType.getPersonAttributeTypeId();
+	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), "");
+	                if (value != null && value.length() > 0) {
+		                PersonAttribute attribute = new PersonAttribute();
+		                attribute.setAttributeType(personAttributeType);
+		                attribute.setValue(value);
+		                patient.addAttribute(attribute);
+	                }
                 }
 				
 				i = 0;
@@ -216,23 +231,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxIds = idTypes.length;
 					if (preferredIds != null && preferredIds.length > maxIds)
 						maxIds = preferredIds.length;
-					
-					//TODO: method to remove null identifier from set
-					// the null identifier shouldn't be in the identifiers set from the first place.
-					// this block can be omitted from the code when the set doesn't contains null ids
-					if (maxIds > 0) {
-						List<PatientIdentifier> identifiers = new ArrayList<PatientIdentifier>(patient.getIdentifiers());
-						for (int j = 0; j < identifiers.size(); j++) {
-	                        PatientIdentifier patientIdentifier = identifiers.remove(j);;
-	                        if (patientIdentifier.getPatient() != null ||
-	                        		patientIdentifier.getIdentifierType() != null ||
-	                        		patientIdentifier.getIdentifier() != null)
-	                        	identifiers.add(patientIdentifier);
-						}
-						Set<PatientIdentifier> identifiersSet = new TreeSet<PatientIdentifier>(identifiers);
-						
-						patient.setIdentifiers(identifiersSet);
-					}
 					
 					for (int j = 0; j < maxIds; j++) {
 	                    PatientIdentifier identifier = new PatientIdentifier();
@@ -410,27 +408,23 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     private Patient getNewPatient() {
     	Patient patient = null;
     	
-        HashSet<PersonName> localHashSet1 = new HashSet<PersonName>();
-        localHashSet1.add(new PersonName());
+        Set<PersonName> names = new TreeSet<PersonName>();
+        names.add(new PersonName());
         
-        HashSet<PersonAddress> localHashSet2 = new HashSet<PersonAddress>();
-        localHashSet2.add(new PersonAddress());
-        
-        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
-        HashSet<PersonAttribute> localHashSet3 = new HashSet<PersonAttribute>();
-        for (PersonAttributeType personAttributeType : attributeTypes) {
-	        PersonAttribute attribute = new PersonAttribute();
-	        attribute.setAttributeType(personAttributeType);
-	        localHashSet3.add(attribute);
-        }
+        Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
+        addresses.add(new PersonAddress());
         
         Person localPerson = new Person();
-        localPerson.setNames(localHashSet1);
-        localPerson.setAddresses(localHashSet2);
-        localPerson.setAttributes(localHashSet3);
+        localPerson.setNames(names);
+        localPerson.setAddresses(addresses);
+        
+        PatientIdentifier identifier = new PatientIdentifier();
+        identifier.setIdentifier("");
+        Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
+        identifiers.add(identifier);
         
         patient = new Patient(localPerson);
-        patient.getIdentifiers().add(new PatientIdentifier());
+        patient.setIdentifiers(identifiers);
         return patient;
         
     }
