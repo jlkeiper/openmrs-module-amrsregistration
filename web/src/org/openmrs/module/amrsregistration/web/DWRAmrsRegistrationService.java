@@ -11,21 +11,19 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.amrsregistration.AmrsRegistrationService;
+import org.openmrs.module.amrsregistration.AmrsSearchManager;
 import org.openmrs.web.dwr.DWRPersonService;
 
 public class DWRAmrsRegistrationService extends DWRPersonService {
-    private AmrsRegistrationService getRemoteRegistrationService() {
-        return ((AmrsRegistrationService) Context
-                .getService(AmrsRegistrationService.class));
-    }
+	
+	private AmrsSearchManager searchManager = new AmrsSearchManager();
 
     public List<Patient> getPatients(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger) {
-        List<Person> localList = getRemoteRegistrationService().getPersons(
+    	List<Person> localList = searchManager.getPersons(
                 paramPersonName, paramPersonAddress, paramSet, paramString,
-                paramDate, paramInteger);
+                paramDate, paramInteger, 10);
         ArrayList<Patient> localArrayList = new ArrayList<Patient>();
         for (Person localPerson : localList) {
             if (!(localPerson.isUser())) {
