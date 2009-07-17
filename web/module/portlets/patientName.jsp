@@ -36,8 +36,8 @@
         </spring:bind>
         <td align="left" valign="top">
             <spring:bind path="preferred">
-                <input type="checkbox" id="${status.expression}" name="${status.expression}" value="${status.value}" <c:if
-                    test="${status.value == 'true'}">checked</c:if>/>
+				<input type="hidden" name="_${status.expression}">
+                <input type="checkbox" id="${status.expression}" name="${status.expression}" value="true" alt="patientName" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == 'true'}">checked</c:if>/>
             </spring:bind>
         </td>
         <td align="left" valign="top">

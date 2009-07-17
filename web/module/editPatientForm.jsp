@@ -178,6 +178,18 @@
         	attributes[${varStatus.index}] = attr;
 		</openmrs:forEachDisplayAttributeType>
     }
+    
+	function preferredBoxClick(obj) {
+		var inputs = document.getElementsByName("input");
+		if (obj.checked == true) {
+			for (var i=0; i<inputs.length; i++) {
+				var input = inputs[i];
+				if (input.type == "checkbox")
+					if (input.alt == obj.alt && input != obj)
+						input.checked = false;
+			}
+		}
+	}
 </script>
 <style>
     .staticElement {
@@ -327,9 +339,9 @@
 	</div>
 
     <br/>
-    <input type="submit" name="_cancel" value="<spring:message code='general.cancel'/>">
+    <input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
     &nbsp; &nbsp;
-    <input type="submit" name="_target2" value="<spring:message code='general.submit'/>">
+    <input type="submit" name="_target2" value="<spring:message code='amrsregistration.button.save'/>">
 </form>
 <br/>
 

@@ -9,10 +9,12 @@
                 <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
             </spring:bind>
             <spring:bind path="preferred">
+				<input type="hidden" name="_${status.expression}">
                 <input type="checkbox"
                 	id="${status.expression}"
                 	name="${status.expression}"
-                    value="${status.value}"
+                    value="true" alt="patientAddress"
+                    onclick="if (preferredBoxClick) preferredBoxClick(this)"
                     <c:if test="${status.value == 'true'}">checked</c:if>/>
             </spring:bind>
         </td>

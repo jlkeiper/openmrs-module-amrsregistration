@@ -26,20 +26,17 @@
         <tr id="initMrn" name="initMrn">
             <td align="center" valign="top">
                 <input type="hidden" id="scannedPatientId" name="scannedPatientId"/>
-                <input type="text" id="idCardInput" size="16" name="idCardInput"/>
-            </td>
-            <td>
-                &nbsp;<label><spring:message code="amrsregistration.start.barcode"/></label><br/>
+                <input type="text" id="idCardInput" size="20" name="idCardInput"/>
             </td>
 			<td align="center" valign="top">
-				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.start.go"/>">
+				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.button.go"/>">
 			</td>
         </tr>
 </form>
 <form id="newIdentifierForm" method="post" class="box">
 		<tr>
 			<td align="center" valign="top">
-				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.start.nocard"/>">
+				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.button.nocard"/>">
 			</td>
 		</tr>
 	</table>

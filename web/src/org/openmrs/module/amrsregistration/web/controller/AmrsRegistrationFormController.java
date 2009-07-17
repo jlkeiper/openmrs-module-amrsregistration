@@ -19,6 +19,8 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -99,7 +101,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		// "review page", but the "_target1" is still inside the parameter.		
 		if ((currentPage == getPageCount() - 1) && (targetPage == getPageCount() - 2)) {
 			String back = ServletRequestUtils.getStringParameter(request, "_target1", null);
-			if (!"back".equalsIgnoreCase(back)) {
+			if (!"Edit Patient".equalsIgnoreCase(back)) {
 				targetPage = currentPage;
 			}
 		}
@@ -114,6 +116,29 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 				break;
 			case 2:
+				
+				// remove from this list elements that already in the person attribute (list.remove(personattributeType)
+		        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
+				for (PersonAttribute attribute : patient.getAttributes()) {
+					Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
+	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
+	                if (value != null) {
+	                	attribute.setValue(value);
+	                	attributeTypes.remove(attribute.getAttributeType());
+	                }
+                }
+				
+				// iterate over what is left in the list to see whether the user add a new element or not
+				for (PersonAttributeType personAttributeType : attributeTypes) {
+					Integer id = personAttributeType.getPersonAttributeTypeId();
+	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), "");
+	                if (value != null && value.length() > 0) {
+		                PersonAttribute attribute = new PersonAttribute();
+		                attribute.setAttributeType(personAttributeType);
+		                attribute.setValue(value);
+		                patient.addAttribute(attribute);
+	                }
+                }
 				
 				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
 				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");

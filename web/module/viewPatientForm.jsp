@@ -384,11 +384,11 @@
     <c:if test="${testAttributesString != null}">${testAttributesString}</c:if>
 -->
 &nbsp;
-<input type="submit" name="_cancel" value="<spring:message code='general.cancel'/>">
+<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 &nbsp; &nbsp;
-<input type="submit" name="_target1" value="<spring:message code='general.back'/>">
+<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 &nbsp; &nbsp;
-<input type="submit" name="_finish" value="<spring:message code='general.submit'/>">
+<input type="submit" name="_finish" value="<spring:message code='amrsregistration.button.register'/>">
 </form>
 <br/>
 <%@ include file="/WEB-INF/template/footer.jsp" %>
