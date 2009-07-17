@@ -1,8 +1,6 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,6 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -75,7 +71,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
 		
 		// only do search if we're coming from the start page
-		if (currentPage == 0 && idCard != null) {
+		if (idCard != null) {
 			// get the scanned id and search for patients with that id
 			List<Patient> patients = patientService.getPatients(null, idCard, null, true);
 			// This needs to be exactly match a single patient. if more then one patient are found, then the id
@@ -92,6 +88,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				
 				// patient with matching id are found, take to the review page
 				targetPage = 2;
+			} else {
+				errors.reject("No patient with specified ID is found");
 			}
 		}
 		
@@ -117,112 +115,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				break;
 			case 2:
 				
-				// this is because spring doesn't bind the form. so we need to manually update the command object
-				patient.setGender(ServletRequestUtils.getStringParameter(request, "gender", patient.getGender()));
-				
-				String date = ServletRequestUtils.getStringParameter(request, "birthdate", null);
-				Date birthdate = null;
-				if (date != null) {
-					try {
-	                    birthdate = Context.getDateFormat().parse(date);
-                    }
-                    catch (ParseException e) {
-	                    log.error("Unable to parse given date", e);
-                    }
-				}
-				
-				if (birthdate != null)
-					patient.setBirthdate(birthdate);
-				
-				String birthEst = ServletRequestUtils.getStringParameter(request, "birthdateEstimated", null);
-				if (birthEst != null)
-					patient.setBirthdateEstimated(new Boolean(birthEst));
-				
-				int i = 0;
-				for (PersonName name : patient.getNames()) {
-					name.setGivenName(ServletRequestUtils.getStringParameter(request, "givenName_" + i, name.getGivenName()));
-					name.setMiddleName(ServletRequestUtils.getStringParameter(request, "middleName_" + i, name.getMiddleName()));
-					name.setFamilyNamePrefix(ServletRequestUtils.getStringParameter(request, "familyNamePrefix_" + i, name.getFamilyNamePrefix()));
-					name.setFamilyName(ServletRequestUtils.getStringParameter(request, "familyName_" + i, name.getFamilyName()));
-					name.setFamilyName2(ServletRequestUtils.getStringParameter(request, "familyName2_" + i, name.getFamilyName2()));
-					name.setFamilyNameSuffix(ServletRequestUtils.getStringParameter(request, "familyNameSuffix_" + i, name.getFamilyNameSuffix()));
-					name.setDegree(ServletRequestUtils.getStringParameter(request, "degree_" + i, name.getDegree()));
-					name.setPrefix(ServletRequestUtils.getStringParameter(request, "prefix_" + i, name.getPrefix()));
-					
-					String preferred = ServletRequestUtils.getStringParameter(request, "personName.preferred_" + i, null);
-					if (preferred != null)
-						name.setPreferred(new Boolean (true));
-					else
-						name.setPreferred(new Boolean(false));
-					i++;
-                }
-
-				i = 0;
-				for (PersonAddress address : patient.getAddresses()) {
-					address.setAddress1(ServletRequestUtils.getStringParameter(request, "address1_" + i, address.getAddress1()));
-					address.setAddress2(ServletRequestUtils.getStringParameter(request, "address2_" + i, address.getAddress2()));
-					address.setNeighborhoodCell(ServletRequestUtils.getStringParameter(request, "neighborhoodCell_" + i, address.getNeighborhoodCell()));
-					address.setCityVillage(ServletRequestUtils.getStringParameter(request, "cityVillage_" + i, address.getCityVillage()));
-					address.setTownshipDivision(ServletRequestUtils.getStringParameter(request, "townshipDivision_" + i, address.getTownshipDivision()));
-					address.setCountyDistrict(ServletRequestUtils.getStringParameter(request, "countyDistrict_" + i, address.getCountyDistrict()));
-					address.setStateProvince(ServletRequestUtils.getStringParameter(request, "stateProvince_" + i, address.getStateProvince()));
-					address.setRegion(ServletRequestUtils.getStringParameter(request, "region_" + i, address.getRegion()));
-					address.setSubregion(ServletRequestUtils.getStringParameter(request, "subregion_" + i, address.getSubregion()));
-					address.setCountry(ServletRequestUtils.getStringParameter(request, "country_" + i, address.getCountry()));
-					address.setPostalCode(ServletRequestUtils.getStringParameter(request, "postalCode_" + i, address.getPostalCode()));
-					
-					String preferred = ServletRequestUtils.getStringParameter(request, "personAddress.preferred_" + i, null);
-					if (preferred != null)
-						address.setPreferred(new Boolean(true));
-					else
-						address.setPreferred(new Boolean(false));
-					i++;
-                }
-				
-				// remove from this list elements that already in the person attribute (list.remove(personattributeType)
-		        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
-				for (PersonAttribute attribute : patient.getAttributes()) {
-					Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
-	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
-	                if (value != null) {
-	                	attribute.setValue(value);
-	                	attributeTypes.remove(attribute.getAttributeType());
-	                }
-                }
-				
-				// iterate over what is left in the list to see whether the user add a new element or not
-				for (PersonAttributeType personAttributeType : attributeTypes) {
-					Integer id = personAttributeType.getPersonAttributeTypeId();
-	                String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), "");
-	                if (value != null && value.length() > 0) {
-		                PersonAttribute attribute = new PersonAttribute();
-		                attribute.setAttributeType(personAttributeType);
-		                attribute.setValue(value);
-		                patient.addAttribute(attribute);
-	                }
-                }
-				
-				i = 0;
-				for (PatientIdentifier identifier : patient.getIdentifiers()) {
-					identifier.setIdentifier(ServletRequestUtils.getStringParameter(request, "identifier_" + i, identifier.getIdentifier()));
-					
-					String idType = ServletRequestUtils.getStringParameter(request, "identifierType_" + i, null);
-					if (idType != null) {
-						PatientIdentifierType type = Context.getPatientService().getPatientIdentifierType(Integer.parseInt(idType));
-						identifier.setIdentifierType(type);
-					}
-					
-					String preferred = ServletRequestUtils.getStringParameter(request, "identifier.preferred_" + i, null);
-					if (preferred != null)
-						identifier.setPreferred(new Boolean(true));
-					else
-						identifier.setPreferred(new Boolean(false));
-					i++;
-                }
-				
-				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier_");
-				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType_");
-				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "identifier.preferred_");
+				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
+				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
+				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "preferred");
 				if (ids != null || idTypes != null || preferredIds != null) {
 					int maxIds = 0;
 					if (ids != null && ids.length > maxIds)
@@ -244,15 +139,15 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
 				}
 
-				String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName_");
-				String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName_");
-				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix_");
-				String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName_");
-				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2_");
-				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix_");
-				String[] degrees = ServletRequestUtils.getStringParameters(request, "degree_");
-				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix_");
-				String[] preferredNames = ServletRequestUtils.getStringParameters(request, "personName.preferred_");
+				String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName");
+				String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName");
+				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix");
+				String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName");
+				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2");
+				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix");
+				String[] degrees = ServletRequestUtils.getStringParameters(request, "degree");
+				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix");
+				String[] preferredNames = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (givenNames != null || middleNames != null ||
 						familyNamePrefixes != null || familyNames != null ||
@@ -295,18 +190,18 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
 				}
 				
-				String[] address1s = ServletRequestUtils.getStringParameters(request, "address1_");
-				String[] address2s = ServletRequestUtils.getStringParameters(request, "address2_");
-				String[] cells = ServletRequestUtils.getStringParameters(request, "neighborhoodCell_");
-				String[] cities = ServletRequestUtils.getStringParameters(request, "cityVillage_");
-				String[] townships = ServletRequestUtils.getStringParameters(request, "townshipDivision_");
-				String[] counties = ServletRequestUtils.getStringParameters(request, "countyDistrict_");
-				String[] states = ServletRequestUtils.getStringParameters(request, "stateProvince_");
-				String[] regions = ServletRequestUtils.getStringParameters(request, "region_");
-				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion_");
-				String[] countries = ServletRequestUtils.getStringParameters(request, "country_");
-				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode_");
-				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "personAddress.preferred_");
+				String[] address1s = ServletRequestUtils.getStringParameters(request, "address1");
+				String[] address2s = ServletRequestUtils.getStringParameters(request, "address2");
+				String[] cells = ServletRequestUtils.getStringParameters(request, "neighborhoodCell");
+				String[] cities = ServletRequestUtils.getStringParameters(request, "cityVillage");
+				String[] townships = ServletRequestUtils.getStringParameters(request, "townshipDivision");
+				String[] counties = ServletRequestUtils.getStringParameters(request, "countyDistrict");
+				String[] states = ServletRequestUtils.getStringParameters(request, "stateProvince");
+				String[] regions = ServletRequestUtils.getStringParameters(request, "region");
+				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion");
+				String[] countries = ServletRequestUtils.getStringParameters(request, "country");
+				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
+				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||

@@ -2,7 +2,7 @@
 
 <openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/admin/amrsregistration/start.form"/>
 
-<%@ include file="/WEB-INF/template/header.jsp" %>
+<%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
 
 <h2><spring:message code="amrsregistration.start.title"/></h2>
@@ -274,6 +274,20 @@
                                 ${record.name}
                                 </option>
                             </openmrs:forEachRecord>
+                        </select>
+                    </spring:bind>
+                </td>
+                <th align="right">
+                    <spring:message code="PatientIdentifier.location"/>
+                </th>
+                <td>
+                    <spring:bind path="location">
+                        <select name="${status.expression}" id="identifierType_${varStatus.index}">
+							<openmrs:forEachRecord name="location">
+								<option value="${record.locationId}" <c:if test="${record.locationId == status.value}">selected</c:if>>
+									${record.name}
+								</option>
+							</openmrs:forEachRecord>
                         </select>
                     </spring:bind>
                 </td>

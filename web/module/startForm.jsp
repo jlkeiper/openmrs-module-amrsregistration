@@ -2,7 +2,7 @@
 
 <openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/admin/amrsregistration/start.form" />
 
-<%@ include file="/WEB-INF/template/header.jsp" %>
+<%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
 <script type="text/javascript">
     function focusOnTextBox() {
@@ -14,6 +14,12 @@
 <h2><spring:message code="amrsregistration.start.title"/></h2>
 <span><spring:message code="amrsregistration.start.details"/></span>
 <br/><br/>
+
+<spring:hasBindErrors name="patient">
+	<c:forEach items="${errors.allErrors}" var="error">
+		<span class="error"><spring:message code="${error.code}"/></span>
+	</c:forEach>
+</spring:hasBindErrors>
 <b class="boxHeader"><spring:message code="amrsregistration.start"/> </b>
 <form id="identifierForm" method="post" class="box">
     <table name="initialMrn" border="0" cellspacing="2" cellpadding="2" align="center">

@@ -16,67 +16,10 @@
 		<spring:message code="Person.birthdate"/><br/>
 		<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
 	</td>
-	<td colspan="3">
-		<script type="text/javascript">
-			function updateEstimated(txtbox) {
-				var input = document.getElementById("birthdateEstimatedInput");
-				if (input) {
-					input.checked = false;
-					input.parentNode.className = "";
-				}
-				else if (txtbox)
-					txtbox.parentNode.className = "listItemChecked";
-			}
-			
-			function updateAge() {
-				var birthdateBox = document.getElementById('birthdate');
-				var ageBox = document.getElementById('age');
-				try {
-					var birthdate = parseSimpleDate(birthdateBox.value, '<openmrs:datePattern />');
-					var age = getAge(birthdate);
-					if (age > 0)
-						ageBox.innerHTML = "(" + age + ' <spring:message code="Person.age.years"/>)';
-					else if (age == 1)
-						ageBox.innerHTML = '(1 <spring:message code="Person.age.year"/>)';
-					else if (age == 0)
-						ageBox.innerHTML = '( < 1 <spring:message code="Person.age.year"/>)';
-					else
-						ageBox.innerHTML = '( ? )';
-					ageBox.style.display = "";
-				} catch (err) {
-					ageBox.innerHTML = "";
-					ageBox.style.display = "none";
-				}
-			}
-		</script>
-		<spring:bind path="patient.birthdate">			
-			<input type="text" 
-					name="birthdate" size="10" id="birthdate"
-					value="${status.value}"
-					onChange="updateAge(); updateEstimated(this);"
-					onClick="showCalendar(this)" />
-			<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
-		</spring:bind>
-		
-		<span id="age"></span> &nbsp; 
-		
-		<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
-			<spring:bind path="birthdateEstimated">
-				<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
-				<input type="hidden" name="_birthdateEstimated">
-				<input type="checkbox" name="birthdateEstimated" value="true" 
-					   <c:if test="${status.value == true}">checked</c:if> 
-					   id="birthdateEstimatedInput" 
-					   onclick="if (!this.checked) updateEstimated()" />
-				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-			</spring:bind>
-		</span>
-		
-		<script type="text/javascript">
-			if (document.getElementById("birthdateEstimatedInput").checked == false)
-				updateEstimated();
-			updateAge();
-		</script>
+	<td valign="top">
+		<input type="text" name="addBirthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" />
+		<spring:message code="Person.age.or"/>
+		<input type="text" name="addAge" id="age" size="5" value="" />
 	</td>
 </tr>
 <openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">

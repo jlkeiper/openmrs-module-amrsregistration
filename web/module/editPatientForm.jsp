@@ -2,7 +2,7 @@
 
 <openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/admin/amrsregistration/start.form"/>
 
-<%@ include file="/WEB-INF/template/header.jsp" %>
+<%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
 <openmrs:htmlInclude file="/dwr/interface/DWRPatientService.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js"></openmrs:htmlInclude>
@@ -91,15 +91,15 @@
 	}
 
     function patientSearch(thing) {
-        var gName = document.getElementById("givenName_0");
-        var mName = document.getElementById("middleName_0");
-        var fNamePrefix = document.getElementById("familyNamePrefix_0");
-        var fName = document.getElementById("familyName_0");
-        var fName2 = document.getElementById("familyName2_0");
-        var fNameSuffix = document.getElementById("familyNameSuffix_0");
-        var deg = document.getElementById("degree_0");
-        var pref = document.getElementById("prefix_0");
-        var prefName = document.getElementById("personName.preferred_0");
+        var gName = document.getElementById("names[0].givenName");
+        var mName = document.getElementById("names[0].middleName");
+        var fNamePrefix = document.getElementById("names[0].familyNamePrefix");
+        var fName = document.getElementById("names[0].familyName");
+        var fName2 = document.getElementById("names[0].familyName2");
+        var fNameSuffix = document.getElementById("names[0].familyNameSuffix");
+        var deg = document.getElementById("names[0].degree");
+        var pref = document.getElementById("names[0].prefix");
+        var prefName = document.getElementById("names[0].preferred");
 
         var personName = {
         	preferred: prefName.checked,
@@ -114,18 +114,18 @@
         }
         // alert(DWRUtil.toDescriptiveString(personName, 2));
         
-        var add1 = document.getElementById("address1_0");
-        var add2 = document.getElementById("address2_0");
-        var cell = document.getElementById("neighborhoodCell_0");
-        var city = document.getElementById("cityVillage_0");
-        var township = document.getElementById("townshipDivision_0");
-        var county = document.getElementById("countyDistrict_0");
-        var state = document.getElementById("stateProvince_0");
-        var reg = document.getElementById("region_0");
-        var subreg = document.getElementById("subregion_0");
-        var cntry = document.getElementById("country_0");
-        var postCode = document.getElementById("postalCode_0");
-        var prefAdd = document.getElementById("personAddress.preferred_0");
+        var add1 = document.getElementById("addresses[0].address1");
+        var add2 = document.getElementById("addresses[0].address2");
+        var cell = document.getElementById("addresses[0].neighborhoodCell");
+        var city = document.getElementById("addresses[0].cityVillage");
+        var township = document.getElementById("addresses[0].townshipDivision");
+        var county = document.getElementById("addresses[0].countyDistrict");
+        var state = document.getElementById("addresses[0].stateProvince");
+        var reg = document.getElementById("addresses[0].region");
+        var subreg = document.getElementById("addresses[0].subregion");
+        var cntry = document.getElementById("addresses[0].country");
+        var postCode = document.getElementById("addresses[0].postalCode");
+        var prefAdd = document.getElementById("addresses[0].preferred");
         
         var personAddress = {
         	preferred: prefAdd.checked,
@@ -143,30 +143,13 @@
         }
         // alert(DWRUtil.toDescriptiveString(personAddress, 2));
         
-        var id = document.getElementById("identifier_0");
-        var idType = document.getElementById("identifierType_0");
-        var preferredId = document.getElementById("identifier.preferred_0");
+        var id = document.getElementById("identifiers[0].identifier");
+        var idType = document.getElementById("identifiers[0].identifierType");
+        var preferredId = document.getElementById("identifiers[0].identifier.preferred");
         
         var patientIdentifier = {
         	identifier: id.value,
         	identifierType: idType.value
-        }
-        
-        // convert to js date object before passing it to dwr
-        var birthStr = DWRUtil.getValue("birthdate");
-        var birthdate = null;
-        // need to validate the date entered by user here
-        if (birthStr != null && birthStr.length > 0)
-        	birthdate = new Date(Date.parse(birthStr));
-        
-        // the id element of the gender turn out to be "M" and "F"
-        var gender = null;
-        var male = document.getElementById("M");
-        var female = document.getElementById("F");
-        if (male != null && male.checked) {
-        	gender = "M";
-        } else if (female != null && female.checked) {
-        	gender = "F";
         }
         
         if (attributes == null) {
@@ -178,7 +161,7 @@
         }
         // alert("Attributes: " + DWRUtil.toDescriptiveString(attributes, 2));
         
-        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, gender, birthdate, null, handlePatientResult);
+        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, null, null, null, handlePatientResult);
     }
     
     function prepareAttributes() {
@@ -260,7 +243,7 @@
             <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
                 <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
                     <div id="identifier${varStatus.index}Data" class="tabBox">
-                        <%@ include file="portlets/patientIdentifier.jsp" %>
+                    	<%@ include file="portlets/patientIdentifier.jsp" %>
                     </div>
                 </spring:nestedPath>
             </c:forEach>
