@@ -108,6 +108,7 @@
                 <include method="getPatients"/>
                 <include method="sayHello"/>
                 <include method="getPersonName"/>
+                <include method="getPatientByIdentifier"/>
             </create>
         </allow>
 
@@ -120,6 +121,7 @@
             DWRAmrsRegistrationService.getPatients(PersonName name, PersonAddress address, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
             DWRAmrsRegistrationService.sayHello(String name);
             DWRAmrsRegistrationService.getPersonName(Integer personId);
+            DWRAmrsRegistrationService.getPatientByIdentifier(String identifier);
             ]]>
         </signatures>
     </dwr>

@@ -108,11 +108,13 @@
 		</javac>
 
 		<!--  Compile module test java files -->
+		<!--
 		<javac destdir="build" classpathref="classpath" debug="true" debuglevel="lines,source">
 			<compilerarg line="-target 1.5 -g" />
 			<src path="test/" />
 			<include name="**/*.java" />
 		</javac>
+		-->
 
 	</target>
 

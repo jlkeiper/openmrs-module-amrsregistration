@@ -71,14 +71,19 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		PatientService patientService = Context.getPatientService();
 		String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
+		boolean foundPatient = false;
 		
-		// only do search if we're coming from the start page
+		// only do search if the id card is not null and not empty
 		if (idCard != null) {
 			// get the scanned id and search for patients with that id
 			List<Patient> patients = patientService.getPatients(null, idCard, null, true);
 			// This needs to be exactly match a single patient. if more then one patient are found, then the id
 			// card possibly has a null value.
 			if (patients.size() == 1) {
+				// mark that this search is coming from first page
+				if (currentPage == 0) {
+					foundPatient = true;
+				}
 				patientSearched = patients.get(0);
 				
 				// hacky way to get all the patient data. need further research on this
@@ -88,11 +93,14 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				copyPatient(patient, patientSearched);
 				patient.getAttributeMap();
 				
-				// patient with matching id are found, take to the review page
-				targetPage = 2;
 			} else {
 				errors.reject("No patient with specified ID is found");
 			}
+		}
+		
+		if (idCard != null && foundPatient) {
+			// patient with matching id are found, take to the review page
+			targetPage = 2;
 		}
 		
 		// Check if it is really a back request, not a refresh page
@@ -108,12 +116,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		switch (targetPage) {
 			case 0:
-				patient = null;
 				break;
 			case 1:
-				if (patient == null) {
-					patient = ((Patient) command);
-				}
 				break;
 			case 2:
 				
@@ -143,23 +147,21 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
 				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
 				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "preferred");
-				if (ids != null || idTypes != null || preferredIds != null) {
+				if (ids != null || idTypes != null) {
 					int maxIds = 0;
 					if (ids != null && ids.length > maxIds)
 						maxIds = ids.length;
 					if (idTypes != null && idTypes.length > maxIds)
 						maxIds = idTypes.length;
-					if (preferredIds != null && preferredIds.length > maxIds)
-						maxIds = preferredIds.length;
 					
 					for (int j = 0; j < maxIds; j++) {
 	                    PatientIdentifier identifier = new PatientIdentifier();
 	                    identifier.setIdentifier(ids[j]);
 	                    identifier.setIdentifierType(patientService.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
-						if (preferredIds != null && preferredIds.length > j)
-							identifier.setPreferred(new Boolean(true));
-						else
-							identifier.setPreferred(new Boolean(false));
+//						if (preferredIds != null && preferredIds.length > j)
+//							identifier.setPreferred(new Boolean(true));
+//						else
+//							identifier.setPreferred(new Boolean(false));
 						patient.addIdentifier(identifier);
                     }
 				}
@@ -177,7 +179,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				if (givenNames != null || middleNames != null ||
 						familyNamePrefixes != null || familyNames != null ||
 						familyName2s != null || familyNameSuffixes != null ||
-						degrees != null || prefixes != null || preferredNames != null) {
+						degrees != null || prefixes != null) {
 					int maxNames = 0;
 					if (givenNames != null && givenNames.length > maxNames)
 						maxNames = givenNames.length;
@@ -195,14 +197,13 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxNames = degrees.length;
 					if (prefixes != null && prefixes.length > maxNames)
 						maxNames = prefixes.length;
-					if (preferredNames != null && preferredNames.length > maxNames)
-						maxNames = preferredNames.length;
+					
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
-						if (preferredNames != null && preferredNames.length > j)
-							name.setPreferred(new Boolean(true));
-						else
-							name.setPreferred(new Boolean(false));
+//						if (preferredNames != null && preferredNames.length > j)
+//							name.setPreferred(new Boolean(true));
+//						else
+//							name.setPreferred(new Boolean(false));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
 						name.setFamilyNamePrefix(familyNamePrefixes[j]);
@@ -226,14 +227,14 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion");
 				String[] countries = ServletRequestUtils.getStringParameters(request, "country");
 				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
-				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
+//				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||
 						townships != null || counties != null ||
 						states != null || regions != null ||
 						subregions != null || countries != null ||
-						postalCodes != null || preferredAddress != null) {
+						postalCodes != null) {
 					int maxAddress = 0;
 					if(address1s != null && address1s.length > maxAddress)
 						maxAddress = address1s.length;
@@ -257,8 +258,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxAddress = countries.length;
 					if(postalCodes != null && postalCodes.length > maxAddress)
 						maxAddress = postalCodes.length;
-					if(preferredAddress != null && preferredAddress.length > maxAddress)
-						maxAddress = preferredAddress.length;
 					
 					for (int j = 0; j < maxAddress; j++) {
 						PersonAddress pa = new PersonAddress();
@@ -274,10 +273,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						pa.setCountry(countries[j]);
 						pa.setPostalCode(postalCodes[j]);
 						pa.setCountyDistrict(counties[j]);
-						if (preferredAddress != null && preferredAddress.length > j)
-							pa.setPreferred(new Boolean(true));
-						else
-							pa.setPreferred(new Boolean(false));
+//						if (preferredAddress != null && preferredAddress.length > j)
+//							pa.setPreferred(new Boolean(true));
+//						else
+//							pa.setPreferred(new Boolean(false));
 						patient.addAddress(pa);
 					}
 				}

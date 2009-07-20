@@ -1,3 +1,7 @@
+<%@ include file="/WEB-INF/template/include.jsp" %>
+
+<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/start.form" />
+
 <b class="boxHeader"><spring:message code="amrsregistration.edit.name"/> </b>
 <table class="box" border="0" cellspacing="2" cellpadding="2">
     <tr>
@@ -30,6 +34,7 @@
             <spring:message code="PersonName.degree"/>
         </th>
     </tr>
+    <tbody id="nameContent">
     <tr>
         <spring:bind path="personNameId">
             <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
@@ -48,7 +53,7 @@
         <td align="left" valign="top">
             <spring:bind path="givenName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="16" value="${status.value}"
-                       onkeyup="patientSearch(this.value)"/>
+                       onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
@@ -67,7 +72,7 @@
         <td align="left" valign="top">
             <spring:bind path="familyName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="16" value="${status.value}"
-                       onkeyup="patientSearch(this.value)"/>
+                       onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
         <td align="left" valign="top">
@@ -88,4 +93,5 @@
             </spring:bind>
         </td>
     </tr>
+    </tbody>
 </table>

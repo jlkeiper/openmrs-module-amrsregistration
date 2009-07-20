@@ -1,38 +1,82 @@
-<c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
-	<tr>
-		<td><spring:message code="Person.gender"/></td>
-		<td><spring:bind path="patient.gender">
-				<openmrs:forEachRecord name="gender">
-					<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
-						<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
-				</openmrs:forEachRecord>
-			<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-			</spring:bind>
-		</td>
-	</tr>
-</c:if>
-<tr>
-	<td>
-		<spring:message code="Person.birthdate"/><br/>
-		<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
-	</td>
-	<td valign="top">
-		<input type="text" name="addBirthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" />
-		<spring:message code="Person.age.or"/>
-		<input type="text" name="addAge" id="age" size="5" value="" />
-	</td>
-</tr>
-<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
-	<tr>
-		<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
-		<td>
-			<spring:bind path="attributeMap">
-				<openmrs:fieldGen 
-					type="${attrType.format}" 
-					formFieldName="${attrType.personAttributeTypeId}" 
-					val="${status.value[attrType.name].hydratedObject}" 
-					parameters="optionHeader=[blank]|showAnswers=${attrType.foreignKey}" />
-			</spring:bind>
-		</td>
-	</tr>
-</openmrs:forEachDisplayAttributeType>
+<%@ include file="/WEB-INF/template/include.jsp" %>
+
+<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/start.form" />
+
+<b class="boxHeader">Patient Data</b>
+<div class="box">
+	<table>
+		<tr>
+			<th>Name:</th>
+	    	<c:forEach items="${patient.names}" var="name" varStatus="varStatus">
+					<td>&nbsp</td>
+	    			<td colspan="2">
+	    				<!-- One object of name goes here -->
+	    				${name.prefix}&nbsp;
+	    				${name.givenName}&nbsp;
+	    				${name.middleName}&nbsp;
+	    				${name.familyNamePrefix}&nbsp;
+	    				${name.familyName}&nbsp;
+	    				${name.familyName2}&nbsp;
+	    				${name.familyNameSuffix}&nbsp;
+	    				${name.degree}
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<th>&nbsp</th>
+	    	</c:forEach>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+		</tr>
+		<tr>
+			<th>Birthdate</th>
+			<td>&nbsp</td>
+			<td colspan="2">${patient.birthdate}</td>
+		</tr>
+		<tr>
+			<th>Gender</th>
+			<td>&nbsp</td>
+			<td colspan="2">${patient.gender}</td>
+		</tr>
+		<tr>
+			<th>Address</th>
+	    	<c:forEach items="${patient.addresses}" var="address" varStatus="varStatus">
+					<td>&nbsp</td>
+					<td colspan="2">
+	    				<!-- One object of address goes here -->
+	    				${address.address1}&nbsp;
+	    				${address.address2}&nbsp;
+	    				${address.neighborhoodCell}&nbsp;
+	    				<br />
+	    				${address.cityVillage} &nbsp;
+	    				${address.townshipDivision} &nbsp;
+	    				${address.countyDistrict} &nbsp;
+	    				<br />
+	    				${address.region}&nbsp;
+	    				${address.subregion}&nbsp;
+	    				<br />
+	    				${address.stateProvince}&nbsp;
+	    				${address.country}&nbsp;
+	    				${address.postalCode}&nbsp;
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<th>&nbsp</th>
+	    	</c:forEach>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+		</tr>
+		<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+			<tr>
+				<th>
+					<spring:message text="${attrType.name}"/>
+				</th>
+				<td>&nbsp</td>
+				<td colspan="2">
+					<spring:message text="${patient.attributeMap[attrType.name].hydratedObject}" />
+				</td>
+			</tr>
+	    </openmrs:forEachDisplayAttributeType>
+	</table>
+</div>

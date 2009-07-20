@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
@@ -43,5 +44,10 @@ public class DWRAmrsRegistrationService extends DWRPersonService {
             return localPerson.getPersonName();
         }
         return null;
+    }
+    
+    public Patient getPatientByIdentifier(String identifier) {
+		List<Patient> patients = Context.getPatientService().getPatients("", identifier, new ArrayList<PatientIdentifierType>(), true);
+		return patients.get(0);
     }
 }

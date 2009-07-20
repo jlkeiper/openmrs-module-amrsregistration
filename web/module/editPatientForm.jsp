@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
-<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/admin/amrsregistration/start.form"/>
+<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/start.form"/>
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
@@ -9,21 +9,197 @@
 <openmrs:htmlInclude file="/dwr/engine.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/dwr/util.js"></openmrs:htmlInclude>
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 
 <script type="text/javascript">
 
     // Number of objects stored.  Needed for 'add new' purposes.
     // starts at -1 due to the extra 'blank' data div in the *Boxes dib
     var numObjs = new Array();
-    numObjs["identifier"] = -1;
-    numObjs["name"] = -1;
-    numObjs["address"] = -1;
+    numObjs["identifier"] = 0;
+    numObjs["name"] = 0;
+    numObjs["address"] = 0;
+    
+	searchTimeout = null;
+	searchDelay = 1000;
     
     var attributes = null;
+	
+	// Jquery part for the modal dialog
+	// modification script from queness.com
+	$j = jQuery.noConflict();
+	$j(document).ready(function() {
+		
+		//if close button is clicked
+		$j('#clear').click(function (e) {
+			//Cancel the link behavior
+			e.preventDefault();
+			
+			$j('#mask').hide();
+			$j('.window').hide();
+		});
+		
+		//if mask is clicked
+		$j('#mask').click(function () {
+			$j(this).hide();
+			$j('.window').hide();
+		});
+		
+		$j(window).bind('resize', function() {
+			//Get the screen height and width
+			var maskHeight = $j(document).height();
+			var maskWidth = $j(window).width();
+			 
+			//Set heigth and width to mask to fill up the whole screen
+			$j('#mask').css({'width':maskWidth,'height':maskHeight});
+			
+			//Get the window height and width
+			var winH = $j(window).height();
+			var winW = $j(window).width();
+			
+			var id = "#dialog";
+			
+			//Set the popup window to center
+			$j(id).css('top',  winH/2-(($j(id).height()/4) * 3));
+			$j(id).css('left', winW/2-(($j(id).width()/4) * 3));
+		});
+		
+	});
+	
+	function parseDate(d) {
+		var str = '';
+		if (d != null) {
+			
+			// get the month, day, year values
+			var month = "";
+			var day = "";
+			var year = "";
+			var date = d.getDate();
+			
+			if (date < 10)
+				day += "0";
+			day += date;
+			var m = d.getMonth() + 1;
+			if (m < 10)
+				month += "0";
+			month += m;
+			if (d.getYear() < 1900)
+				year = (d.getYear() + 1900);
+			else
+				year = d.getYear();
+		
+			var datePattern = '<openmrs:datePattern />';
+			var sep = datePattern.substr(2,1);
+			var datePatternStart = datePattern.substr(0,1).toLowerCase();
+			
+			if (datePatternStart == 'm') /* M-D-Y */
+				str = month + sep + day + sep + year
+			else if (datePatternStart == 'y') /* Y-M-D */
+				str = year + sep + month + sep + day
+			else /* (datePatternStart == 'd') D-M-Y */
+				str = day + sep + month + sep + year
+			
+		}
+		return str;
+	}
+	
+	function replaceNull(nullInput) {
+		if (nullInput == null)
+			return "";
+		else
+			return nullInput
+	}
+	
+    function renderPatientData(patient) {
+    	// better using this one or using dom?
+    	var content = '<table>';
+    	    // name section
+    	    content = content + '<tr><th>Name:</th>';
+    	    var names = patient.names;
+    	    for(i=0; i<names.length; i++) {
+    	        var name = i + '. ' + replaceNull(names[i].prefix) + ' ' + replaceNull(names[i].givenName) + ' ';
+    	            name = name + replaceNull(names[i].middleName) + ' ' + replaceNull(names[i].familyNamePrefix) + ' ';
+    	            name = name + replaceNull(names[i].familyName) + ' ' + replaceNull(names[i].familyName2) + ' ';
+	    			name = name + replaceNull(names[i].familyNameSuffix) + ' ' + replaceNull(names[i].degree);
+    	        content = content + '<td>&nbsp</td>';
+    	        content = content + '<td colspan="2">'+ name +'<td>';
+    	        content = content + '</tr><tr><th>&nbsp</th>';
+    	    }
+    	    content = content + '<td>&nbsp</td><td>&nbsp</td><td>&nbsp</td></tr>';
+    	    // birthday section
+    	    content = content + '<tr><th>Birthdate:</th><td>&nbsp</td><td colspan="2">' + parseDate(patient.birthdate) + '</td></tr>';
+    	    // gender section
+    	    content = content + '<tr><th>Gender:</th><td>&nbsp</td><td colspan="2">' + patient.gender + '</td></tr>';
+    	    // address section
+    	    content = content + '<tr><th>Address:</th>';
+    	    var addresses = patient.addresses;
+    	    for(i=0; i<addresses.length; i++) {
+    	    	var address = i + '. ' + replaceNull(addresses[i].address1) + ' ' + replaceNull(addresses[i].address2) + ' ' + replaceNull(addresses[i].neighborhoodCell) + '<br />';
+	    			address = address + replaceNull(addresses[i].cityVillage) + ' ' + replaceNull(addresses[i].townshipDivision) + ' ' + replaceNull(addresses[i].countyDistrict) + '<br />';
+	    			address = address + replaceNull(addresses[i].region) + ' ' + replaceNull(addresses[i].subregion) + '<br />';
+	    			address = address + replaceNull(addresses[i].stateProvince) + ' ' + replaceNull(addresses[i].country) + ' ' + replaceNull(addresses[i].postalCode);
+    	        content = content + '<td>&nbsp</td>';
+    	        content = content + '<td colspan="2">'+ address +'<td>';
+    	        content = content + '</td></tr><tr><th>&nbsp</th>';
+    	    }
+    	    
+    	    // attributes section
+    	
+    	document.getElementById("personContent").innerHTML = content;
+        // create anchor tag to update the data
+        var anchor = document.createElement("a");
+        anchor.innerHTML="Apply Data";
+		anchor.href="javascript:updateData('" + patient.identifiers[0].identifier + "')";
+        document.getElementById("personContent").appendChild(anchor);
+		
+		// fancy stuff to create modal dialog
+		
+		//Get the window height and width
+		var winH = $j(window).height();
+		var winW = $j(window).width();
+		
+		var id = "#dialog";
+		
+		//Set the popup window to center
+		$j(id).css('top',  winH/2-(($j(id).height()/4) * 3));
+		$j(id).css('left', winW/2-(($j(id).width()/4) * 3));
+		
+		//transition effect
+		$j(id).fadeIn(1000);
+		
+		//Get the screen height and width
+		var maskHeight = $j(document).height();
+		var maskWidth = $j(window).width();
+		
+		//Set heigth and width to mask to fill up the whole screen
+		$j('#mask').css({'width':maskWidth,'height':maskHeight});
+		
+		//transition effect		
+		$j('#mask').fadeIn(500);	
+		$j('#mask').fadeTo("slow",0.8);
+    }
+    
+    function getPatientByIdentifier(identifier) {
+    	DWRAmrsRegistrationService.getPatientByIdentifier(identifier, renderPatientData);
+    }
     
     function hidDiv() {
-		floating = document.getElementById("floatingResult");
+		floating = document.getElementById("floating");
 		floating.style.display = "none";
+    }
+    
+    function updateData(identifier) {
+    	$j(document.forms[0].reset());
+    	$j(':submit[name!=_cancel]').attr("name", "_target1");
+    	
+    	var hiddenInput = $j(document.createElement("input"));
+    	hiddenInput.attr("type", "hidden");
+    	hiddenInput.attr("name", "idCardInput");
+    	hiddenInput.attr("id", "idCardInput");
+    	hiddenInput.attr("value", identifier);
+    	$j('#pIds').append(hiddenInput);
+    	
+    	$j(document.forms[0].submit());
     }
 
     function addNew(type) {
@@ -39,12 +215,6 @@
         }
     }
     
-    function handleSetResult(result) {
-        alert(result[0].patientId + ", " + result[0].identifier);
-        var tmpResult = document.getElementById("tmpResult");
-        tmpResult.value = result[1].identifier;
-    }
-    
     function createColumn(tr, value) {
     	var td = document.createElement("td");
     	tr.appendChild(td);
@@ -58,12 +228,12 @@
 
     function handlePatientResult(result) {
         if (result.length > 0) {
-            floating = document.getElementById("floatingResult");
-            floating.style.display = "";
             
             var tbody = document.getElementById("resultTable");
-            for (i=0; i<tbody.childNodes.length; i ++) {
-            	tbody.removeChild();
+            var childNodes = tbody.childNodes;
+            for (i=childNodes.length - 1; i >= 0; i --) {
+            	e = childNodes.item(i);
+            	tbody.removeChild(e);
             }
             
             for (i=0; i < result.length; i ++) {
@@ -73,8 +243,19 @@
             	createColumn(tr, result[i].identifiers[0].identifier);
             	createColumn(tr, result[i].personName.givenName);
             	createColumn(tr, result[i].personName.familyName);
-            	createColumn(tr, result[i].birthdate);
+            	createColumn(tr, parseDate(result[i].birthdate));
+            	
+            	// create link to get patient data and apply it to the page
+            	var td = document.createElement("td");
+            	tr.appendChild(td);
+            	var anchor = document.createElement("a");
+            	anchor.innerHTML="Use Data";
+				anchor.href="javascript: getPatientByIdentifier(\'" + result[i].identifiers[0].identifier + "\')";
+            	td.appendChild(anchor);
             }
+            document.getElementById("floating").style.display = "block";
+        } else {
+            document.getElementById("floating").style.display = "none";
         }
     }
 	
@@ -88,6 +269,11 @@
 		obj = document.getElementById("addressData");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
+	}
+	
+	function timeOutSearch(thing) {
+		clearTimeout(searchTimeout);
+		searchTimeout = setTimeout("patientSearch(\'thing\')", searchDelay);
 	}
 
     function patientSearch(thing) {
@@ -190,14 +376,16 @@
 			}
 		}
 	}
+
+
 </script>
 <style>
-    .staticElement {
+
+    #floating {
     	background-color: #ffffff;
-        margin-left: 35%;
+    	top: 50px;
+    	right: 50px;
         position: fixed;
-        float: right;
-        top: 10%;
         border: 1px double black
     }
 
@@ -215,67 +403,85 @@
     .close {
         right: 5px;
         top: 5px;
-        position:absolute;
-        float: left;
         font-size: 10px;
-        float: left;
         cursor: pointer;
+    }
+    
+    #mask {
+        position:absolute;
+        left:0;
+        top:0;
+        z-index:9000;
+        background-color:#000;
+        display:none;
+    }
+
+    #boxes .window {
+        position:absolute;
+        left:0;
+        top:0;
+        display:none;
+        z-index:9999;
+        padding:20px;
+    }
+
+    #boxes #dialog {
+        padding:10px;
+        background-color:#ffffff;
+    }
+    
+    #main {
+    	position: relative;
     }
 
 </style>
+
+<div id="mask"></div>
+<div id="main">
 
 <h2><spring:message code="amrsregistration.edit.start"/></h2>
 <span><spring:message code="amrsregistration.edit.details"/></span>
 <br/>
 
-<div id="floatingResult" class="staticElement" style="display: none;">
-    <div>
-        <table border="0" cellspacing="2" cellpadding="2">
-            <tr>
-            	<th>Identifier</th>
-            	<th>First Name</th>
-            	<th>Last Name</th>
-            	<th>DOB</th>
-            </tr>
-            <tbody id="resultTable"></tbody>
-        </table>
-        <span class="close"><a href="javascript:;" onclick="hidDiv()">close</a></span>
-    </div>
-</div>
-<br/>
+<spring:hasBindErrors name="patient">
+	<c:forEach items="${errors.allErrors}" var="error">
+		<span class="error"><spring:message code="${error.code}"/></span>
+	</c:forEach>
+</spring:hasBindErrors>
 
-<form id="identifierForm" method="post" onSubmit="removeBlankData()">
 
-    <h3><spring:message code="Patient.identifiers"/></h3>
-    <spring:hasBindErrors name="patient.identifiers">
-        <span class="error">${error.errorMessage}</span><br/>
-    </spring:hasBindErrors>
-    <div id="pIds">
-        <div class="tabBoxes" id="identifierDataBoxes">
-            <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
-                <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
-                    <div id="identifier${varStatus.index}Data" class="tabBox">
-                    	<%@ include file="portlets/patientIdentifier.jsp" %>
-                    </div>
-                </spring:nestedPath>
-            </c:forEach>
-        </div>
-        <div id="identifierData" class="tabBoxes" style="display:none">
-            <spring:nestedPath path="emptyIdentifier">
-                <%@ include file="portlets/patientIdentifier.jsp" %>
-            </spring:nestedPath>
-        </div>
-        <div class="tabBar" id="pIdTabBar">
-            <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier"
-                   value="Add New Identifier"/>
-        </div>
-    </div>
-    <br style="clear: both"/>
+<form id="patientForm" method="post" onSubmit="removeBlankData()">
+
+	<div id="floating" style="display: none;">
+	    <div>
+	        <table border="0" cellspacing="2" cellpadding="2">
+	            <tr>
+	            	<th>Identifier</th>
+	            	<th>First Name</th>
+	            	<th>Last Name</th>
+	            	<th>DOB</th>
+	            	<th>Action</th>
+	            </tr>
+	            <tbody id="resultTable"></tbody>
+	            <tr>
+	            	<td>
+	            		<span class="close"><a href="javascript:;" onclick="hidDiv()">close</a></span>
+	            	</td>
+	            <tr>
+	        </table>
+	    </div>
+	</div>
+	<br/>
+	
+	<div id="boxes"> 
+		<div id="dialog" class="window">
+			Patient Data | 
+			<a href="#" id="clear">Close</a>
+			<div id="personContent"></div>
+		</div>
+	</div>
 
     <h3><spring:message code="Patient.names"/></h3>
-    <spring:hasBindErrors name="patient.names">
-        <span class="error">${error.errorMessage}</span><br/>
-    </spring:hasBindErrors>
     <div id="pNames">
         <div class="tabBoxes" id="nameDataBoxes">
             <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
@@ -296,11 +502,43 @@
         </div>
     </div>
     <br style="clear: both"/>
+    
+    <h3><spring:message code="Patient.information"/></h3>
+    <div class="tabBoxes">
+	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
+	    <div class="box">
+	    	<table>
+				<spring:nestedPath path="patient">
+					<c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
+						<tr>
+							<td><spring:message code="Person.gender"/></td>
+							<td><spring:bind path="patient.gender">
+									<openmrs:forEachRecord name="gender">
+										<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
+											<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
+									</openmrs:forEachRecord>
+								</spring:bind>
+							</td>
+						</tr>
+					</c:if>
+					<tr>
+						<td>
+							<spring:message code="Person.birthdate"/><br/>
+							<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
+						</td>
+						<td valign="top">
+							<input type="text" name="addBirthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" />
+							<spring:message code="Person.age.or"/>
+							<input type="text" name="addAge" id="age" size="5" value="" />
+						</td>
+					</tr>
+				</spring:nestedPath>
+			</table>
+		</div>
+	</div>
+    <br style="clear: both"/>
 
     <h3><spring:message code="Patient.addresses"/></h3>
-    <spring:hasBindErrors name="patient.addresses">
-        <span class="error">${error.errorMessage}</span><br/>
-    </spring:hasBindErrors>
     <div id="pAddresses">
         <div class="tabBoxes" id="addressDataBoxes">
             <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
@@ -323,20 +561,54 @@
     </div>
     <br style="clear: both"/>
     
-    <h3><spring:message code="Patient.information"/></h3>
-    <spring:hasBindErrors name="patient">
-        <span class="error">${error.errorMessage}</span><br/>
-    </spring:hasBindErrors>
+    <h3><spring:message code="Patient.attributes"/></h3>
     <div class="tabBoxes">
 	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
 	    <div class="box">
 	    	<table>
 				<spring:nestedPath path="patient">
-					<%@ include file="portlets/personInfo.jsp" %>
+					<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+						<tr>
+							<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
+							<td>
+								<spring:bind path="attributeMap">
+									<openmrs:fieldGen 
+										type="${attrType.format}" 
+										formFieldName="${attrType.personAttributeTypeId}" 
+										val="${status.value[attrType.name].hydratedObject}" 
+										parameters="optionHeader=[blank]|showAnswers=${attrType.foreignKey}" />
+								</spring:bind>
+							</td>
+						</tr>
+					</openmrs:forEachDisplayAttributeType>
 				</spring:nestedPath>
 			</table>
 		</div>
 	</div>
+    <br style="clear: both"/>
+
+    <h3><spring:message code="Patient.identifiers"/></h3>
+    <div id="pIds">
+        <div class="tabBoxes" id="identifierDataBoxes">
+            <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
+                <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
+                    <div id="identifier${varStatus.index}Data" class="tabBox">
+                    	<%@ include file="portlets/patientIdentifier.jsp" %>
+                    </div>
+                </spring:nestedPath>
+            </c:forEach>
+        </div>
+        <div id="identifierData" class="tabBoxes" style="display:none">
+            <spring:nestedPath path="emptyIdentifier">
+                <%@ include file="portlets/patientIdentifier.jsp" %>
+            </spring:nestedPath>
+        </div>
+        <div class="tabBar" id="pIdTabBar">
+            <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier"
+                   value="Add New Identifier"/>
+        </div>
+    </div>
+    <br style="clear: both"/>
 
     <br/>
     <input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
@@ -346,5 +618,6 @@
 <br/>
 
 <br/>
+</div>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
