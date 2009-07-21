@@ -20,6 +20,9 @@ public interface AmrsRegistrationService {
 
     public List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
-            String paramString, Date paramDate, Integer paramInteger)
+            String paramString, Date paramDate, Integer paramInteger, Integer limit)
             throws APIException;
+    public String sayHello() throws APIException;
+
+    public List<Person> getPersons();
 }

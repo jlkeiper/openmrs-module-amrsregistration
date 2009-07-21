@@ -15,4 +15,5 @@ public interface AmrsRemoteRegistrationDAO {
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger)
             throws DAOException;
+    public List<Person> getPersons() throws DAOException;
 }

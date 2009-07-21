@@ -48,7 +48,7 @@ public class AmrsSearchManager {
         }
         // TODO: Add limit to AmrsRegistrationService.getPersons()
         return getAmrsRegistrationService().getPersons(personName, personAddress,
-                personAttributes, gender, birthDate, age);
+                personAttributes, gender, birthDate, age, -1);
     }
     
     public List<Patient> getPatients(PersonName personName,

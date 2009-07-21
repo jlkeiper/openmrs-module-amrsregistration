@@ -521,7 +521,7 @@
                 <%@ include file="portlets/patientName.jsp" %>
             </spring:nestedPath>
         </div>
-        <div class="tabBar" id="pIdTabBar">
+        <div class="tabBar" id="pNmTabBar">
             <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
         </div>
     </div>
@@ -652,7 +652,7 @@
                 <%@ include file="portlets/patientAddress.jsp" %>
             </spring:nestedPath>
         </div>
-        <div class="tabBar" id="pIdTabBar">
+        <div class="tabBar" id="pAdTabBar">
             <input type="button" onClick="return addNew('address');" class="addNew" id="address"
                    value="Add New Addresses"/>
         </div>

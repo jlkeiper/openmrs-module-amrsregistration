@@ -97,9 +97,17 @@ public class AmrsRegistrationServiceImpl implements AmrsRegistrationService {
 
     public List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
-            String paramString, Date paramDate, Integer paramInteger)
+            String paramString, Date paramDate, Integer paramInteger, Integer limit)
             throws APIException {
         return this.daoAmrs.getPersons(paramPersonName, paramPersonAddress,
                 paramSet, paramString, paramDate, paramInteger);
+    }
+
+    public String sayHello() {
+        return "Hello";
+    }
+
+    public List<Person> getPersons() throws APIException {
+        return daoAmrs.getPersons();
     }
 }

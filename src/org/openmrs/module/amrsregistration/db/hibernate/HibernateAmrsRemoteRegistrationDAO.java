@@ -204,7 +204,17 @@ public class HibernateAmrsRemoteRegistrationDAO implements AmrsRemoteRegistratio
         }
 
         localCriteria.addOrder(Order.asc("names.familyName"));
+        //if (limit != null && limit > 0 && limit < 101) {
+        //    localCriteria.setMaxResults(limit);
+        //}
 
         return localCriteria.list();
+    }
+
+    public List<Person> getPersons() throws DAOException {
+        Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(org.openmrs.Person.class, "person")
+                .add(Expression.eq("person.personId", Integer.valueOf(364)))
+                .setMaxResults(2);
+        return criteria.list();
     }
 }
