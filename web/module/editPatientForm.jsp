@@ -103,6 +103,11 @@
 		return str;
 	}
 	
+	function cancel() {
+		$j('#mask').hide();
+		$j('.window').hide();
+	}
+	
 	function replaceNull(nullInput) {
 		if (nullInput == null)
 			return "";
@@ -259,6 +264,7 @@
             	createColumn(tr, result[i].identifiers[0].identifier);
             	createColumn(tr, result[i].personName.givenName);
             	createColumn(tr, result[i].personName.familyName);
+            	createColumn(tr, result[i].gender);
             	createColumn(tr, parseDate(result[i].birthdate));
             	
             	// create link to get patient data and apply it to the page
@@ -402,7 +408,8 @@
     	top: 50px;
     	right: 50px;
         position: fixed;
-        border: 1px double black
+        border: 1px double black;
+    	font-size: 11px;
     }
 
     .tabBoxes {
@@ -433,6 +440,7 @@
     }
 
     #boxes .window {
+    	font-size: 11px;
         position:absolute;
         left:0;
         top:0;
@@ -442,6 +450,7 @@
     }
 
     #boxes #dialog {
+    	font-size: 11px;
         padding:10px;
         background-color:#ffffff;
     }
@@ -473,6 +482,7 @@
 	            	<th>Identifier</th>
 	            	<th>First Name</th>
 	            	<th>Last Name</th>
+	            	<th>Gender</th>
 	            	<th>DOB</th>
 	            	<th>Action</th>
 	            </tr>
