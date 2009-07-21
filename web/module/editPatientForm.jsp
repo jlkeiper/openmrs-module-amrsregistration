@@ -264,8 +264,8 @@
             	createColumn(tr, result[i].identifiers[0].identifier);
             	createColumn(tr, result[i].personName.givenName);
             	createColumn(tr, result[i].personName.familyName);
-            	createColumn(tr, result[i].gender);
             	createColumn(tr, parseDate(result[i].birthdate));
+            	createColumn(tr, result[i].gender);
             	
             	// create link to get patient data and apply it to the page
             	var td = document.createElement("td");

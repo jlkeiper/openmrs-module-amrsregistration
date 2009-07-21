@@ -99,6 +99,7 @@
 		            	<th>Identifier</th>
 		            	<th>First Name</th>
 		            	<th>Last Name</th>
+		            	<th>Gender</th>
 		            	<th>DOB</th>
 		            </tr>
 		    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
@@ -119,6 +120,9 @@
 		    				</td>
 		    				<td>
 		    					<input type="text" name="matchedLastname" value="${person.personName.familyName}" disabled />
+		    				</td>
+		    				<td>
+		    					<input type="text" name="matchedGender" value="${person.gender}" disabled />
 		    				</td>
 		    				<td>
 		    					<input type="text" name="matchedDob" value="<openmrs:formatDate date="${person.birthdate}" />" disabled />
