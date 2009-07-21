@@ -64,8 +64,14 @@
 	}
 	
 	function updatePatient(element) {
-		var form = element.form;
-		form.submit();
+		if (confirm("Are you sure you would like to use this patient instead of the one you've entered? \n" +
+					"[Warning: This will replace all data you've entered with the one from the server]\n" +
+					"[Warning: You will be redirected to confirmation page if the selected patient already have AMRS ID]")) {
+			var form = element.form;
+			form.submit();
+		} else {
+			$('input:radio').removeAttr("checked");
+		}
 	}
 </script>
 <style>
