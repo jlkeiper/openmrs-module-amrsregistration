@@ -4,8 +4,27 @@
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 
 <script type="text/javascript">
+
+	$(document).ready(function() {
+		$('#amrsIdToggle').click(function() {
+			if ($(this).attr("checked")) {
+				// disable all radio button
+				$('input:radio').attr("disabled", "disabled");
+				// enable amrs id
+				$('input:text[name=amrsIdentifier]').attr("disabled", "");
+				$('input:text[name=amrsIdentifier]').attr("value", "");
+			} else {
+				// enable all radio button
+				$('input:radio').attr("disabled", "");
+				// disable amrs id
+				$('input:text[name=amrsIdentifier]').attr("disabled", "disabled");
+				$('input:text[name=amrsIdentifier]').attr("value", "disabled");
+			}
+		});
+	});
 	
 	function parseDate(d) {
 		var str = '';
@@ -49,7 +68,19 @@
 		form.submit();
 	}
 </script>
-
+<style>
+	input[type="text"]{
+		 background-color: white;
+		 font-weight: bold;
+	}
+</style>
+<spring:hasBindErrors name="patient">
+	<c:forEach items="${errors.allErrors}" var="error">
+		<br />
+		<span class="error"><spring:message code="${error.code}"/></span>
+	</c:forEach>
+</spring:hasBindErrors>
+<br />
 <b class="boxHeader">Possible Matched Patient Data</b>
 <div class="box">
 <form id="switchPatient" method="post">
@@ -74,21 +105,22 @@
 	            				</td>
 			    				<td>
 	            				</c:if>
-			    					<input type="text" name="matchedIdentifier" value="${identifier.identifier}" />
+			    					<input type="text" name="matchedIdentifier" value="${identifier.identifier}" disabled />
 		    				</c:forEach>
 			    				</td>
 		    				<td>
-		    					<input type="text" name="matchedGivenname" value="${person.personName.givenName}" />
+		    					<input type="text" name="matchedGivenname" value="${person.personName.givenName}" disabled />
 		    				</td>
 		    				<td>
-		    					<input type="text" name="matchedLastname" value="${person.personName.familyName}" />
+		    					<input type="text" name="matchedLastname" value="${person.personName.familyName}" disabled />
 		    				</td>
 		    				<td>
-		    					<input type="text" name="matchedDob" value="${person.birthdate}" />
+		    					<input type="text" name="matchedDob" value="<openmrs:formatDate date="${person.birthdate}" />" disabled />
 		    				</td>
 		    			</tr>
 		    		</c:forEach>
 		        </table>
+		        <input type="checkbox" id="amrsIdToggle" value="true" /> I certify that none of the above is the patient that I'm looking for
 		    </div>
 		</c:when>
 		<c:otherwise>
@@ -101,7 +133,25 @@
 <form id="patientForm" method="post">
 	<%@ include file="portlets/personInfo.jsp" %>
 	<br />
-    <input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
+	<b class="boxHeader">AMRS Identifier Section</b>
+	<div class="box">
+		<table>
+			<tr>
+				<th>AMRS Identifier</th>
+				<td>
+					<input style="background-color: inherit;"
+						type="text"
+						name="amrsIdentifier"
+						<c:if test="${fn:length(potentialMatches) > 0}">
+							value="disabled" disabled
+						</c:if>
+					/>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br />
+	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
     &nbsp; &nbsp;
 	<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 	&nbsp; &nbsp;

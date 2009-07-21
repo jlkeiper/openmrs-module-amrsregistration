@@ -52,6 +52,21 @@
 <%@ include file="portlets/personInfo.jsp" %>
 <br />
 
+	<b class="boxHeader">AMRS Identifier Section</b>
+	<div class="box">
+		<table>
+			<tr>
+				<th>AMRS Identifier:</th>
+            	<c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
+                    <c:if test="${amrsIdType == identifier.identifierType.name}">
+						<td><span style="font-weight: bold;">${identifier.identifier}</span></td>
+                    </c:if>
+            	</c:forEach>
+			</tr>
+		</table>
+	</div>
+	<br />
+
 &nbsp;
 <input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 &nbsp; &nbsp;

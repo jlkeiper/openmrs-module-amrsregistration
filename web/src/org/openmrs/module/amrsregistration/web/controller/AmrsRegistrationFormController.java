@@ -324,7 +324,13 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		        }
 				break;
 			case 3:
-				break;
+    			boolean foundRequiredId = false;
+    			for (PatientIdentifier identifier : patient.getIdentifiers())
+	                if (identifier.getIdentifierType().getName().equals(idType))
+	                	foundRequiredId = true;
+    			if (!foundRequiredId)
+    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
+    			break;
 			
 		}
 		
@@ -352,13 +358,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     			}
     			break;
     		case 2:
-    			boolean foundRequiredId = false;
-    			for (PatientIdentifier identifier : patient.getIdentifiers())
-	                if (identifier.getIdentifierType().getName().equals(idType))
-	                	foundRequiredId = true;
-    			if (!foundRequiredId)
-    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
-    			break;
     		case 3:
     			break;
     	}

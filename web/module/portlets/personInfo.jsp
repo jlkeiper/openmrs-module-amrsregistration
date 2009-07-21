@@ -31,7 +31,10 @@
 		<tr>
 			<th>Birthdate</th>
 			<td>&nbsp</td>
-			<td colspan="2">${patient.birthdate}</td>
+			<td colspan="2">
+				<openmrs:formatDate date="${patient.birthdate}" />
+                <c:if test="${patient.birthdateEstimated}"> [Estimated] </c:if>
+            </td>
 		</tr>
 		<tr>
 			<th>Gender</th>
