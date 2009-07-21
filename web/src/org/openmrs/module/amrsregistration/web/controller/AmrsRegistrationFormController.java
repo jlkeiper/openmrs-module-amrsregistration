@@ -146,6 +146,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 				break;
 			case 2:
+    			if (patient.getFamilyName() == null || patient.getFamilyName().length() <= 0) {
+    				errors.reject("Please insert a family name for the patient.");
+    			}
+    			if (patient.getGender() == null) {
+    				errors.reject("Please assign a gender for the patient");
+    			}
 				String birthdate = (patient.getBirthdate() == null) ? null : Context.getDateFormat().format(patient.getBirthdate());
 				String date = ServletRequestUtils.getStringParameter(request, "birthdate", birthdate);
 				String age = ServletRequestUtils.getStringParameter(request, "age", null);
@@ -324,44 +330,36 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		        }
 				break;
 			case 3:
-    			boolean foundRequiredId = false;
-    			for (PatientIdentifier identifier : patient.getIdentifiers())
-	                if (identifier.getIdentifierType().getName().equals(idType))
-	                	foundRequiredId = true;
-    			if (!foundRequiredId)
-    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
+				String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
+    			boolean foundAmrsId = false;
+    			// search if the id is already there
+    			// if it is there, then update it
+    			for (PatientIdentifier identifier : patient.getIdentifiers()) {
+	                if (identifier.getIdentifierType().getName().equals(idType)) {
+	                	foundAmrsId = true;
+	                	if (amrsId != null && amrsId.length() > 0) {
+	                		identifier.setIdentifier(amrsId);
+	                	}
+	                }
+    			}
+				if (!foundAmrsId) {
+					if (amrsId != null && amrsId.length() > 0) {
+						PatientIdentifier identifier = new PatientIdentifier();
+						identifier.setIdentifier(amrsId);
+						PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
+						identifier.setIdentifierType(type);
+						patient.addIdentifier(identifier);
+					}
+					else {
+	    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
+					}
+				}
     			break;
 			
 		}
 		
 		return targetPage;
 	}
-	
-	
-	
-	/**
-     * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#validatePage(java.lang.Object, org.springframework.validation.Errors, int, boolean)
-     */
-    @Override
-    protected void validatePage(Object command, Errors errors, int page) {
-    	Patient patient = (Patient) command;
-		String idType = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
-    	switch(page) {
-    		case 0:
-    			break;
-    		case 1:
-    			if (patient.getFamilyName() == null || patient.getFamilyName().length() <= 0) {
-    				errors.reject("Please insert a family name for the patient.");
-    			}
-    			if (patient.getGender() == null) {
-    				errors.reject("Please assign a gender for the patient");
-    			}
-    			break;
-    		case 2:
-    		case 3:
-    			break;
-    	}
-    }
 
 	/**
 	 * Allows for other Objects to be used as values in input tags. Normally, only strings and lists

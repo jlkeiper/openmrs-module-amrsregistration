@@ -162,6 +162,8 @@
 	<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 	&nbsp; &nbsp;
     <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
+	<br />
+	<br />
 </form>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

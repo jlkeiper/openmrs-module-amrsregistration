@@ -206,7 +206,7 @@
     
     function updateData(identifier) {
     	$j(document.forms[0].reset());
-    	$j(':submit[name!=_cancel]').attr("name", "_target1");
+    	// $j(':submit[name!=_cancel]').attr("name", "_target1");
     	
     	var hiddenInput = $j(document.createElement("input"));
     	hiddenInput.attr("type", "hidden");
