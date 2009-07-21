@@ -1,6 +1,11 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +29,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.amrsregistration.AmrsSearchManager;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
 import org.openmrs.propertyeditor.PatientIdentifierTypeEditor;
@@ -58,57 +64,62 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		localHashMap.put("emptyIdentifier", new PatientIdentifier());
 		localHashMap.put("emptyName", new PersonName());
 		localHashMap.put("emptyAddress", new PersonAddress());
+		localHashMap.put("amrsIdType", Context.getAdministrationService().getGlobalProperty("amrsregistration.idType"));
+		
+		Patient patient = (Patient) command;
+		
+		switch (page) {
+			case 2:
+				AmrsSearchManager searchManager = new AmrsSearchManager();
+				List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(),
+					patient.getAttributes(), null, null, null, 10);
+				// remove the exact match from the possible match (to prevent patient selected from the list to show again in the list)
+				persons.remove(patient);
+				localHashMap.put("potentialMatches", persons);
+				break;
+		}
+		
 		return localHashMap;
 	}
 	
 	protected int getTargetPage(HttpServletRequest request, Object command, Errors errors, int page) {
+		String idType = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
 		
 		Patient patient = (Patient) command;
-		Patient patientSearched = patient;
+		Patient patientSearched = null;
 		
 		int targetPage = super.getTargetPage(request, command, errors, page);
 		int currentPage = super.getCurrentPage(request);
 		
 		PatientService patientService = Context.getPatientService();
 		String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
-		boolean foundPatient = false;
 		
 		// only do search if the id card is not null and not empty
 		if (idCard != null) {
 			// get the scanned id and search for patients with that id
-			List<Patient> patients = patientService.getPatients(null, idCard, null, true);
-			// This needs to be exactly match a single patient. if more then one patient are found, then the id
-			// card possibly has a null value.
-			if (patients.size() == 1) {
-				// mark that this search is coming from first page
-				if (currentPage == 0) {
-					foundPatient = true;
-				}
+			String emptyString = "";
+			List<PatientIdentifierType> types = new ArrayList<PatientIdentifierType>();
+			List<Patient> patients = patientService.getPatients(emptyString, idCard, types, true);
+			if (patients != null && patients.size() > 0) {
+				// patient with matching id are found
 				patientSearched = patients.get(0);
-				
-				// hacky way to get all the patient data. need further research on this
-				for (PatientIdentifier identifier : patientSearched.getIdentifiers()) {
-	                patient.addIdentifier(identifier);
-                }
 				copyPatient(patient, patientSearched);
 				patient.getAttributeMap();
-				
 			} else {
-				errors.reject("No patient with specified ID is found");
+				// no patient found with the matching id
+				if (log.isDebugEnabled()) {
+					log.debug("Searched for id: " + idCard + ", but no patient are found");
+				}
+				errors.reject("No patient with specified id are found in the system");
 			}
-		}
-		
-		if (idCard != null && foundPatient) {
-			// patient with matching id are found, take to the review page
-			targetPage = 2;
 		}
 		
 		// Check if it is really a back request, not a refresh page
 		// This is done because in the "start page" the name of the "GO" button is "_target1" which told the controller
 		// that the next page is the "edit page" (default behavior). But above code changes the flow from "start page" to
 		// "review page", but the "_target1" is still inside the parameter.		
-		if ((currentPage == getPageCount() - 1) && (targetPage == getPageCount() - 2)) {
-			String back = ServletRequestUtils.getStringParameter(request, "_target1", null);
+		if (targetPage < currentPage) {
+			String back = ServletRequestUtils.getStringParameter(request, "_target" + targetPage, null);
 			if (!"Edit Patient".equalsIgnoreCase(back)) {
 				targetPage = currentPage;
 			}
@@ -118,8 +129,30 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			case 0:
 				break;
 			case 1:
+				// coming from first page and not a get patient data
+				if (idCard != null && targetPage != currentPage) {
+					// found a patient
+					if (patientSearched != null){
+						// default to found patient, but no required id type
+						targetPage = 2;
+						for (PatientIdentifier identifier : patient.getIdentifiers()) {
+							if (identifier.getIdentifierType().getName().equals(idType)) {
+								// found the required id type, go to confirmation page
+								targetPage = 3;
+								break;
+							}
+				        }
+					}
+				}
 				break;
 			case 2:
+				String birthdate = (patient.getBirthdate() == null) ? null : Context.getDateFormat().format(patient.getBirthdate());
+				String date = ServletRequestUtils.getStringParameter(request, "birthdate", birthdate);
+				String age = ServletRequestUtils.getStringParameter(request, "age", null);
+				if ((date == null || date.length() <= 0) && (age == null || age.length() <= 0)) {
+					errors.reject("Please assign birthdate or age for this patient");
+				}
+				updateBirthdate(patient, date, age);
 				
 				// remove from this list elements that already in the person attribute (list.remove(personattributeType)
 		        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
@@ -227,7 +260,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion");
 				String[] countries = ServletRequestUtils.getStringParameters(request, "country");
 				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
-//				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
+				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||
@@ -281,12 +314,56 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					}
 				}
 				
+				// jump to page 3 when the identifier is found
+				for (PatientIdentifier identifier : patient.getIdentifiers()) {
+					if (identifier.getIdentifierType().getName().equals(idType)) {
+						// found the required id type, go to confirmation page
+						targetPage = 3;
+						break;
+					}
+		        }
 				break;
+			case 3:
+				break;
+			
 		}
 		
 		return targetPage;
 	}
 	
+	
+	
+	/**
+     * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#validatePage(java.lang.Object, org.springframework.validation.Errors, int, boolean)
+     */
+    @Override
+    protected void validatePage(Object command, Errors errors, int page) {
+    	Patient patient = (Patient) command;
+		String idType = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
+    	switch(page) {
+    		case 0:
+    			break;
+    		case 1:
+    			if (patient.getFamilyName() == null || patient.getFamilyName().length() <= 0) {
+    				errors.reject("Please insert a family name for the patient.");
+    			}
+    			if (patient.getGender() == null) {
+    				errors.reject("Please assign a gender for the patient");
+    			}
+    			break;
+    		case 2:
+    			boolean foundRequiredId = false;
+    			for (PatientIdentifier identifier : patient.getIdentifiers())
+	                if (identifier.getIdentifierType().getName().equals(idType))
+	                	foundRequiredId = true;
+    			if (!foundRequiredId)
+    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
+    			break;
+    		case 3:
+    			break;
+    	}
+    }
+
 	/**
 	 * Allows for other Objects to be used as values in input tags. Normally, only strings and lists
 	 * are expected
@@ -372,5 +449,46 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     	to.setPersonVoidReason(from.getPersonVoidReason());
 		to.setPatientId(from.getPatientId());
 		to.setIdentifiers(from.getIdentifiers());
+    }
+    
+    private void updateBirthdate(Patient patient, String date, String age) {
+    	Date birthdate = null;
+		boolean birthdateEstimated = false;
+		if (date != null && !date.equals("")) {
+			try {
+				// only a year was passed as parameter
+				if (date.length() < 5) {
+					Calendar c = Calendar.getInstance();
+					c.set(Calendar.YEAR, Integer.valueOf(date));
+					c.set(Calendar.MONTH, 0);
+					c.set(Calendar.DATE, 1);
+					birthdate = c.getTime();
+					birthdateEstimated = true;
+				}
+				// a full birthdate was passed as a parameter
+				else {
+					birthdate = Context.getDateFormat().parse(date);
+					birthdateEstimated = false;
+				}
+			}
+			catch (ParseException e) {
+				log.debug("Error getting date from birthdate", e);
+			}
+		} else if (age != null && !age.equals("")) {
+			Calendar c = Calendar.getInstance();
+			c.setTime(new Date());
+			Integer d = c.get(Calendar.YEAR);
+			d = d - Integer.parseInt(age);
+			try {
+				birthdate = DateFormat.getDateInstance(DateFormat.SHORT).parse("01/01/" + d);
+				birthdateEstimated = true;
+			}
+			catch (ParseException e) {
+				log.debug("Error getting date from age", e);
+			}
+		}
+		if (birthdate != null)
+			patient.setBirthdate(birthdate);
+		patient.setBirthdateEstimated(birthdateEstimated);
     }
 }

@@ -10,6 +10,7 @@
             <props>
                 <prop key="module/amrsregistration/start.form">remoteRegistrationWizardForm</prop>
                 <prop key="module/amrsregistration/editPatient.form">remoteRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/assignId.form">remoteRegistrationWizardForm</prop>
                 <prop key="module/amrsregistration/viewPatient.form">remoteRegistrationWizardForm</prop>
 	    </props>
         </property>
@@ -58,6 +59,7 @@
             <list>
                 <value>/module/amrsregistration/startForm</value>
                 <value>/module/amrsregistration/editPatientForm</value>
+                <value>/module/amrsregistration/assignIdForm</value>
                 <value>/module/amrsregistration/viewPatientForm</value>
             </list>
         </property>

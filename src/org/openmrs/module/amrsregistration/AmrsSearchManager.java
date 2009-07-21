@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
@@ -48,6 +49,20 @@ public class AmrsSearchManager {
         // TODO: Add limit to AmrsRegistrationService.getPersons()
         return getAmrsRegistrationService().getPersons(personName, personAddress,
                 personAttributes, gender, birthDate, age);
+    }
+    
+    public List<Patient> getPatients(PersonName personName,
+        PersonAddress personAddress, Set<PersonAttribute> personAttributes,
+        String gender, Date birthDate, Integer age, Integer limit) {
+    	List<Person> persons = getPersons(personName,
+            personAddress, personAttributes,
+            gender, birthDate, age, limit);
+    	List<Patient> patients = new ArrayList<Patient>();
+    	for (Person person : persons) {
+	        Patient patient = (Patient) person;
+	        patients.add(patient);
+        }
+    	return patients;
     }
 
     /**

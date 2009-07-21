@@ -43,6 +43,13 @@
             Directory for AMRS remote regisration data
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>amrsregistration.idType</property>
+        <defaultValue>OpenMRS Identification Number</defaultValue>
+        <description>
+            AMRS Patient Identifier Type
+        </description>
+    </globalProperty>
 <!-- /Required Global Properties -->
 
 <!-- Servlets -->

@@ -9,7 +9,6 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		var allInput = $(":input");
-		allInput.css("font-size", "150%");
 	});
     function focusOnTextBox() {
         var idCardInput = document.getElementById("idCardInput");

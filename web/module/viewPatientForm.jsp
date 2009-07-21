@@ -4,6 +4,45 @@
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
+<script type="text/javascript">
+	
+	function parseDate(d) {
+		var str = '';
+		if (d != null) {
+			
+			// get the month, day, year values
+			var month = "";
+			var day = "";
+			var year = "";
+			var date = d.getDate();
+			
+			if (date < 10)
+				day += "0";
+			day += date;
+			var m = d.getMonth() + 1;
+			if (m < 10)
+				month += "0";
+			month += m;
+			if (d.getYear() < 1900)
+				year = (d.getYear() + 1900);
+			else
+				year = d.getYear();
+		
+			var datePattern = '<openmrs:datePattern />';
+			var sep = datePattern.substr(2,1);
+			var datePatternStart = datePattern.substr(0,1).toLowerCase();
+			
+			if (datePatternStart == 'm') /* M-D-Y */
+				str = month + sep + day + sep + year
+			else if (datePatternStart == 'y') /* Y-M-D */
+				str = year + sep + month + sep + day
+			else /* (datePatternStart == 'd') D-M-Y */
+				str = day + sep + month + sep + year
+			
+		}
+		return str;
+	}
+</script>
 
 <h2><spring:message code="amrsregistration.start.title"/></h2>
 <span><spring:message code="amrsregistration.start.review"/></span>
