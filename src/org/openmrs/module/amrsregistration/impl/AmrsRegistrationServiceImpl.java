@@ -21,25 +21,33 @@ import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsregistration.AmrsRegistrationService;
-import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
+import org.openmrs.module.amrsregistration.db.AmrsRegistrationDAO;
 import org.openmrs.reporting.export.DataExportFunctions;
 import org.openmrs.util.OpenmrsUtil;
 
 public class AmrsRegistrationServiceImpl implements AmrsRegistrationService {
     private static Log log = LogFactory
             .getLog(AmrsRegistrationServiceImpl.class);
-    private AmrsRemoteRegistrationDAO daoAmrs;
+    private AmrsRegistrationDAO daoAmrs;
 
     public void setRemoteRegistrationDAO(
-            AmrsRemoteRegistrationDAO paramAmrsRemoteRegistrationDAO) {
-        this.daoAmrs = paramAmrsRemoteRegistrationDAO;
+            AmrsRegistrationDAO paramAmrsRegistrationDAO) {
+        this.daoAmrs = paramAmrsRegistrationDAO;
     }
 
     @SuppressWarnings("unused")
-    private AmrsRemoteRegistrationDAO getRemoteRegistrationDAO() {
+    private AmrsRegistrationDAO getRemoteRegistrationDAO() {
         return this.daoAmrs;
     }
 
+    /**
+     * This method will be used for remote registration.  Registered patient
+     * information will be placed into an xml file for the FormEntry processor.
+     * @param paramPatient
+     * @param paramString1
+     * @param paramString2
+     * @throws APIException
+     */
     public void registerPatient(Patient paramPatient, String paramString1,
             String paramString2) throws APIException {
         File localFile1 = OpenmrsUtil
@@ -100,7 +108,7 @@ public class AmrsRegistrationServiceImpl implements AmrsRegistrationService {
             String paramString, Date paramDate, Integer paramInteger, Integer limit)
             throws APIException {
         return this.daoAmrs.getPersons(paramPersonName, paramPersonAddress,
-                paramSet, paramString, paramDate, paramInteger);
+                paramSet, paramString, paramDate, paramInteger, limit);
     }
 
     public String sayHello() {

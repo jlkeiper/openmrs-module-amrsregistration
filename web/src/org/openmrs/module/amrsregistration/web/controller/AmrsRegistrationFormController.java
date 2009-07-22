@@ -386,7 +386,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             BindException bindException) throws Exception {
         return new ModelAndView(new RedirectView(request
                 .getContextPath()
-                + "/module/amrsregistration/start.form"));
+                + "/module/amrsregistration/registration.form"));
     }
 
     protected ModelAndView processFinish(
@@ -399,7 +399,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         }
         return new ModelAndView(new RedirectView(request
                 .getContextPath()
-                + "/module/amrsregistration/start.form"));
+                + "/module/amrsregistration/registration.form"));
     }
 
     private Patient getNewPatient() {

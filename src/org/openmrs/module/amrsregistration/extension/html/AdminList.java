@@ -16,10 +16,8 @@ public class AdminList extends AdministrationSectionExt {
 
     public Map<String, String> getLinks() {
         Map<String, String> localHashMap = new HashMap<String, String>();
-        localHashMap.put("module/amrsregistration/start.form",
+        localHashMap.put("module/amrsregistration/registration.form",
                 "amrsregistration.start.title");
-        localHashMap.put("module/amrsregistration/login.htm",
-                "amrsregistration.login");
         return localHashMap;
     }
 }

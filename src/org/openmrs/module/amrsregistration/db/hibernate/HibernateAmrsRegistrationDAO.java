@@ -18,9 +18,9 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.db.DAOException;
-import org.openmrs.module.amrsregistration.db.AmrsRemoteRegistrationDAO;
+import org.openmrs.module.amrsregistration.db.AmrsRegistrationDAO;
 
-public class HibernateAmrsRemoteRegistrationDAO implements AmrsRemoteRegistrationDAO {
+public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
     protected final Log log = LogFactory.getLog(super.getClass());
     private SessionFactory sessionFactory;
 
@@ -31,7 +31,7 @@ public class HibernateAmrsRemoteRegistrationDAO implements AmrsRemoteRegistratio
     @SuppressWarnings("unchecked")
     public List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
-            String paramString, Date paramDate, Integer paramInteger)
+            String paramString, Date paramDate, Integer paramInteger, Integer limit)
             throws DAOException {
         Object localObject2;
         Criteria localCriteria = this.sessionFactory.getCurrentSession()
@@ -204,13 +204,18 @@ public class HibernateAmrsRemoteRegistrationDAO implements AmrsRemoteRegistratio
         }
 
         localCriteria.addOrder(Order.asc("names.familyName"));
-        //if (limit != null && limit > 0 && limit < 101) {
-        //    localCriteria.setMaxResults(limit);
-        //}
+        if (limit != null && limit > 0 && limit < 101) {
+            localCriteria.setMaxResults(limit);
+        }
 
         return localCriteria.list();
     }
 
+    /**
+     * Temporary method for test purposes only.
+     * @return
+     * @throws DAOException
+     */
     public List<Person> getPersons() throws DAOException {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(org.openmrs.Person.class, "person")
                 .add(Expression.eq("person.personId", Integer.valueOf(364)))

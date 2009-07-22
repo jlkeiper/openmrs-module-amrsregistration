@@ -10,10 +10,10 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.db.DAOException;
 
-public interface AmrsRemoteRegistrationDAO {
+public interface AmrsRegistrationDAO {
     public List<Person> getPersons(PersonName paramPersonName,
             PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
-            String paramString, Date paramDate, Integer paramInteger)
+            String paramString, Date paramDate, Integer paramInteger, Integer limit)
             throws DAOException;
     public List<Person> getPersons() throws DAOException;
 }

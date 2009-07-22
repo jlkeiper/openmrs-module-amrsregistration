@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
-<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/start.form" />
+<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/registration.form" />
 
 <table class="box" border="0" cellspacing="2" cellpadding="2">
     <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>

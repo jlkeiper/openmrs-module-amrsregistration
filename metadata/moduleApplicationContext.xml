@@ -9,7 +9,7 @@
         <property name="mappings">
             <props>
                 <prop key="module/amrsregistration/login.htm">amrsRegistrationLogin</prop>
-                <prop key="module/amrsregistration/start.form">amrsRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/registration.form">amrsRegistrationWizardForm</prop>
                 <prop key="module/amrsregistration/editPatient.form">amrsRegistrationWizardForm</prop>
                 <prop key="module/amrsregistration/assignId.form">amrsRegistrationWizardForm</prop>
                 <prop key="module/amrsregistration/viewPatient.form">amrsRegistrationWizardForm</prop>
@@ -26,7 +26,7 @@
                     <property name="target">
                         <bean class="org.openmrs.module.amrsregistration.impl.AmrsRegistrationServiceImpl">
                             <property name="remoteRegistrationDAO">
-                                <bean class="org.openmrs.module.amrsregistration.db.hibernate.HibernateAmrsRemoteRegistrationDAO">
+                                <bean class="org.openmrs.module.amrsregistration.db.hibernate.HibernateAmrsRegistrationDAO">
                                     <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                                 </bean>
                             </property>
@@ -58,7 +58,7 @@
 -->
         <property name="pages">
             <list>
-                <value>/module/amrsregistration/startForm</value>
+                <value>/module/amrsregistration/registrationForm</value>
                 <value>/module/amrsregistration/editPatientForm</value>
                 <value>/module/amrsregistration/assignIdForm</value>
                 <value>/module/amrsregistration/viewPatientForm</value>

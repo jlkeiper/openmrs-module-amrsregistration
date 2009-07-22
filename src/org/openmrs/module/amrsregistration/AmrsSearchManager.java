@@ -23,12 +23,31 @@ import org.openmrs.api.context.Context;
  */
 public class AmrsSearchManager {
 
+    Integer limit = -1;
+
     private AmrsRegistrationService getAmrsRegistrationService() {
         return (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
     }
 
     /**
+     * Set the limit on number of results returned.
+     * @param limit
+     */
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    /**
+     * Get the limit for number of results to be returned.
+     * @return
+     */
+    public Integer getLimit() {
+        return this.limit;
+    }
+
+    /**
      * Manages search order and valid criteria for AmrsRegistrationService.getPersons()
+     * Ignores class property getLimit() for limiting number of resurn results.
      * 
      * @param personName
      * @param personAddress
@@ -46,11 +65,38 @@ public class AmrsSearchManager {
         if (getSearchablePersonName(personName) == null) {
             return persons;
         }
-        // TODO: Add limit to AmrsRegistrationService.getPersons()
         return getAmrsRegistrationService().getPersons(personName, personAddress,
-                personAttributes, gender, birthDate, age, -1);
+                personAttributes, gender, birthDate, age, limit);
     }
-    
+
+    /**
+     * Get Persons limiting the results by #getLimit()
+     * @param personName
+     * @param personAddress
+     * @param personAttributes
+     * @param gender
+     * @param birthDate
+     * @param age
+     * @return
+     */
+    public List<Person> getPersons(PersonName personName,
+            PersonAddress personAddress, Set<PersonAttribute> personAttributes,
+            String gender, Date birthDate, Integer age) {
+        return getPersons(personName, personAddress, personAttributes, gender, birthDate, age, getLimit());
+    }
+
+    /**
+     * Manages search order and valid criteria for AmrsRegistrationService.getPatients()
+     * Ignores class property getLimit() for limiting number of resurn results.
+     * @param personName
+     * @param personAddress
+     * @param personAttributes
+     * @param gender
+     * @param birthDate
+     * @param age
+     * @param limit
+     * @return
+     */
     public List<Patient> getPatients(PersonName personName,
         PersonAddress personAddress, Set<PersonAttribute> personAttributes,
         String gender, Date birthDate, Integer age, Integer limit) {
@@ -64,6 +110,23 @@ public class AmrsSearchManager {
         }
     	return patients;
     }
+
+    /**
+     * Get Patients limiting the results by #getLimit()
+     * @param personName
+     * @param personAddress
+     * @param personAttributes
+     * @param gender
+     * @param birthDate
+     * @param age
+     * @return
+     */
+    public List<Patient> getPatients(PersonName personName,
+        PersonAddress personAddress, Set<PersonAttribute> personAttributes,
+        String gender, Date birthDate, Integer age) {
+        return getPatients(personName, personAddress, personAttributes, gender, birthDate, age, getLimit());
+    }
+
 
     /**
      * Determines whether the PersonName has sufficient information

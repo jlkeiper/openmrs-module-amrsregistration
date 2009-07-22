@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
-<openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/start.form"/>
+<openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/registration.form"/>
 
 <spring:message var="pageTitle" code="login.title" scope="page"/>
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
@@ -35,13 +35,13 @@
 
 	<c:choose>
 		<c:when test="${not empty model.redirect}">
-			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/start.form" />
+			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/registration.form" />
 		</c:when>
 		<c:when test="${redirect != ''}">
-			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/start.form" />
+			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/registration.form" />
 		</c:when>
 		<c:otherwise>
-			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/start.form" />
+			<input type="hidden" name="redirect" value="${pageContext.request.contextPath}/module/amrsregistration/registration.form" />
 		</c:otherwise>
 	</c:choose>
 
