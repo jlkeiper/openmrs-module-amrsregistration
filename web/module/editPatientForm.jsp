@@ -365,7 +365,12 @@
         }
         
         for(i=0; i<attributes.length; i++) {
-        	attributes[i].value = DWRUtil.getValue(attributes[i].attributeType.personAttributeTypeId).toString();
+            if (attributes[i].value == null || attributes[i].value == "") {
+                continue;
+            }
+        	else {
+                attributes[i].value = DWRUtil.getValue(attributes[i].attributeType.personAttributeTypeId).toString();
+            }
         }
         // alert("Attributes: " + DWRUtil.toDescriptiveString(attributes, 2));
         

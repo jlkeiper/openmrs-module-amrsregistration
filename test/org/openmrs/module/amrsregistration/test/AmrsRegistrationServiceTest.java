@@ -43,11 +43,11 @@ public class AmrsRegistrationServiceTest extends
     @Test
     public void shouldGetPatientsUsingAmrsSearchManager() {
         //List<Patient> patients = Context.getPatientService().getPatients("Testarius");
-        //AmrsSearchManager mgr = new AmrsSearchManager();
-        AmrsRegistrationService mgr = (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
+        AmrsSearchManager mgr = new AmrsSearchManager();
+        //AmrsRegistrationService mgr = (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
         Person person = Context.getPersonService().getPerson(Integer.valueOf(364));
         System.out.println(person.getPersonName());
-        System.out.println(mgr.sayHello());
+        //System.out.println(mgr.sayHello());
         List<Person> persons = mgr.getPersons(person.getPersonName(), null, null, person.getGender(), null, person.getAge(), 500);
         //List<Person> persons = mgr.getPersons();
         for (Person p : persons) {
