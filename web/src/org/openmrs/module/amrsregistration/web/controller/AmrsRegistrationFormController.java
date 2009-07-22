@@ -393,6 +393,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             HttpServletRequest request,
             HttpServletResponse response, Object command,
             BindException bindException) throws Exception {
+        Patient patient = (Patient)command;
+        if (patient != null) {
+            Context.getPatientService().savePatient(patient);
+        }
         return new ModelAndView(new RedirectView(request
                 .getContextPath()
                 + "/module/amrsregistration/start.form"));
