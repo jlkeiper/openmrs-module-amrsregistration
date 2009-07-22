@@ -4,7 +4,7 @@
 	</li>
 	<li>
 		<span id="userLogout">
-			<a href='${pageContext.request.contextPath}/logout'><spring:message code="header.logout" /></a>
+			<a href='${pageContext.request.contextPath}/module/amrsregistration/login.htm'><spring:message code="header.logout" /></a>
 		</span>
 	</li>
 </ul>

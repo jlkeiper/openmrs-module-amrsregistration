@@ -5,13 +5,14 @@
   
 <beans>
 
-    <bean id="remoteRegistrationUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <bean id="amrsRegistrationUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="module/amrsregistration/start.form">remoteRegistrationWizardForm</prop>
-                <prop key="module/amrsregistration/editPatient.form">remoteRegistrationWizardForm</prop>
-                <prop key="module/amrsregistration/assignId.form">remoteRegistrationWizardForm</prop>
-                <prop key="module/amrsregistration/viewPatient.form">remoteRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/login.htm">amrsRegistrationLogin</prop>
+                <prop key="module/amrsregistration/start.form">amrsRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/editPatient.form">amrsRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/assignId.form">amrsRegistrationWizardForm</prop>
+                <prop key="module/amrsregistration/viewPatient.form">amrsRegistrationWizardForm</prop>
 	    </props>
         </property>
     </bean>
@@ -46,7 +47,7 @@
 
 
     <!-- Controllers -->
-    <bean id="remoteRegistrationWizardForm" class="org.openmrs.module.amrsregistration.web.controller.AmrsRegistrationFormController">
+    <bean id="amrsRegistrationWizardForm" class="org.openmrs.module.amrsregistration.web.controller.AmrsRegistrationFormController">
         <!--property name="sessionForm"><value>true</value></property -->
         <!-- property name="bindOnNewForm"><value>false</value></property -->
         <property name="commandName"><value>patient</value></property>
@@ -63,6 +64,10 @@
                 <value>/module/amrsregistration/viewPatientForm</value>
             </list>
         </property>
+    </bean>
+    <bean id="amrsRegistrationLogin" class="org.openmrs.module.amrsregistration.web.controller.AmrsRegistrationLoginController">
+        <property name="formView"><value>login.htm</value></property>    
+        <property name="successView"><value>login.htm</value></property>
     </bean>
     <!-- </Controllers -->
 </beans>

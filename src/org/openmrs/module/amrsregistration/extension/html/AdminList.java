@@ -11,13 +11,15 @@ public class AdminList extends AdministrationSectionExt {
     }
 
     public String getTitle() {
-        return "AMRS Remote Registration Module";
+        return "AMRS Registration Module";
     }
 
     public Map<String, String> getLinks() {
         Map<String, String> localHashMap = new HashMap<String, String>();
         localHashMap.put("module/amrsregistration/start.form",
                 "amrsregistration.start.title");
+        localHashMap.put("module/amrsregistration/login.htm",
+                "amrsregistration.login");
         return localHashMap;
     }
 }

@@ -12,10 +12,10 @@ public class AmrsRegistrationActivator implements Activator {
     }
 
     public void startup() {
-        this.log.info("Starting Remote Registration Module");
+        this.log.info("Starting AMRS Registration Module");
     }
 
     public void shutdown() {
-        this.log.info("Shutting down Remote Registration Module");
+        this.log.info("Stopping AMRS Registration Module");
     }
 }
