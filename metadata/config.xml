@@ -54,6 +54,10 @@
 
 <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
+    <servlet>
+        <servlet-name>amrsRegistrationLogout</servlet-name>
+        <servlet-class>org.openmrs.module.amrsregistration.web.AmrsRegistrationLogoutServlet</servlet-class>
+    </servlet>
 <!-- /Servlets -->
 
     <dwr>

@@ -19,6 +19,7 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.module.amrsregistration.db.AmrsRegistrationDAO;
+import org.openmrs.module.amrsregistration.db.OverabundantResultSetException;
 
 public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
     protected final Log log = LogFactory.getLog(super.getClass());
@@ -208,7 +209,11 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
             localCriteria.setMaxResults(limit);
         }
 
-        return localCriteria.list();
+        List<Person> persons = localCriteria.list();
+        if (persons.size() > 200 ) {
+            throw new OverabundantResultSetException("AmrsRegistration Search ResultSet is greater than 200.");
+        }
+        return persons;
     }
 
     /**

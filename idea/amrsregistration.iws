@@ -2,27 +2,15 @@
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsRegistrationService.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsRegistrationService.java" />
+      <change type="NEW" beforePath="" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/AmrsRegistrationLogoutServlet.java" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/login.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/login.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationLoginController.java" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationLoginController.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/build.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/build.xml" />
-      <change type="MOVED" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/startForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java" />
-      <change type="MOVED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRemoteRegistrationDAO.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/extension/html/AdminList.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/extension/html/AdminList.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" afterPath="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/AmrsRegistrationServiceImpl.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/AmrsRegistrationServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.iws" afterPath="$PROJECT_DIR$/amrsregistration.iws" />
-      <change type="MOVED" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRemoteRegistrationDAO.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRegistrationDAO.java" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientAddress.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientAddress.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/personInfo.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/personInfo.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/metadata/messages.properties" afterPath="/home/brian/IdeaProjects/amrsregistration/metadata/messages.properties" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/build.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/build.xml" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp" />
+      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java" afterPath="/home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <ignored path="amrsregistration.iws" />
@@ -76,22 +64,50 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="AmrsRegistrationFormController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
+      <file leaf-file-name="AmrsRegistrationDAO.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRegistrationDAO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="74" column="65" selection-start="3113" selection-end="3113" vertical-scroll-proportion="-78.0">
+            <state line="12" column="17" selection-start="304" selection-end="304" vertical-scroll-proportion="-30.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AmrsRegistrationLoginController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationLoginController.java">
+      <file leaf-file-name="AmrsSearchManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="22" selection-start="351" selection-end="351" vertical-scroll-proportion="-60.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="15" column="10" selection-start="354" selection-end="354" vertical-scroll-proportion="-37.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.jsp" pinned="false" current="true" current-in-tab="true">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/login.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="21" column="21" selection-start="807" selection-end="807" vertical-scroll-proportion="0.28169015">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="messages.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/messages.properties">
+          <provider editor-type-id="ResourceBundle">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="0" selection-start="1047" selection-end="1047" vertical-scroll-proportion="-19.736841">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="localHeader.jsp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="-6.25">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -102,53 +118,28 @@
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="51" selection-start="536" selection-end="536" vertical-scroll-proportion="-8.684211">
+            <state line="11" column="51" selection-start="536" selection-end="536" vertical-scroll-proportion="19.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AmrsRegistrationDAO.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRegistrationDAO.java">
+      <file leaf-file-name="config.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="83" selection-start="549" selection-end="549" vertical-scroll-proportion="-52.5">
+            <state line="61" column="63" selection-start="2268" selection-end="2268" vertical-scroll-proportion="-142.5">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AmrsRegistrationServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/impl/AmrsRegistrationServiceImpl.java">
+      <file leaf-file-name="AmrsRegistrationLogoutServlet.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/AmrsRegistrationLogoutServlet.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="79" selection-start="1554" selection-end="1554" vertical-scroll-proportion="286.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AmrsRegistrationService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsRegistrationService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="70" selection-start="1231" selection-end="1231" vertical-scroll-proportion="-202.5">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AmrsSearchManager.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="77" column="41" selection-start="2323" selection-end="2323" vertical-scroll-proportion="1.5204237">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DWRAmrsRegistrationService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="39" selection-start="1016" selection-end="1016" vertical-scroll-proportion="-97.5">
-              <folding />
+            <state line="0" column="44" selection-start="8" selection-end="47" vertical-scroll-proportion="-0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -156,16 +147,16 @@
       <file leaf-file-name="HibernateAmrsRegistrationDAO.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="83" selection-start="1268" selection-end="1268" vertical-scroll-proportion="-112.5">
+            <state line="215" column="23" selection-start="10827" selection-end="10827" vertical-scroll-proportion="-230.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AdminList.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/extension/html/AdminList.java">
+      <file leaf-file-name="OverabundantResultSetException.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/OverabundantResultSetException.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="0" selection-start="687" selection-end="687" vertical-scroll-proportion="-127.5">
+            <state line="18" column="13" selection-start="650" selection-end="650" vertical-scroll-proportion="-45.0">
               <folding />
             </state>
           </provider>
@@ -623,6 +614,28 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
       </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="metadata" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Resource Bundle 'messages'" />
+          <option name="myItemType" value="com.intellij.lang.properties.projectView.ResourceBundleNode" />
+        </PATH_ELEMENT>
+      </PATH>
     </subPane>
   </component>
   <component name="ProjectReloadState">
@@ -816,7 +829,7 @@
     <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration: Added module login page." />
+    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration: Renamed wizard url to registration.form.  Added ability to limit search results by the AmrsSearchManager." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -836,6 +849,7 @@
     <MESSAGE value="amrsregistration: Fixed bug in editPatientForm causing patient search to fail." />
     <MESSAGE value="amrsregistration: save Patient command object on processFinish in controller." />
     <MESSAGE value="amrsregistration: Added module login page." />
+    <MESSAGE value="amrsregistration: Renamed wizard url to registration.form.  Added ability to limit search results by the AmrsSearchManager." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -857,48 +871,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientAddress.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="105" selection-start="158" selection-end="158" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="105" selection-start="158" selection-end="158" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="105" selection-start="158" selection-end="158" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/personInfo.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="105" selection-start="158" selection-end="158" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="129" selection-start="182" selection-end="182" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="129" selection-start="182" selection-end="182" vertical-scroll-proportion="-1.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/extension/html/AdminList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="0" selection-start="687" selection-end="687" vertical-scroll-proportion="-127.5">
@@ -912,30 +884,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml">
-      <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="51" selection-start="536" selection-end="536" vertical-scroll-proportion="-8.684211">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="83" selection-start="1268" selection-end="1268" vertical-scroll-proportion="-112.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRegistrationDAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="83" selection-start="549" selection-end="549" vertical-scroll-proportion="-52.5">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -967,9 +915,80 @@
         </state>
       </provider>
     </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/AmrsRegistrationDAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="17" selection-start="304" selection-end="304" vertical-scroll-proportion="-30.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/OverabundantResultSetException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="13" selection-start="650" selection-end="650" vertical-scroll-proportion="-45.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/db/hibernate/HibernateAmrsRegistrationDAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="215" column="23" selection-start="10827" selection-end="10827" vertical-scroll-proportion="-230.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="41" selection-start="2323" selection-end="2323" vertical-scroll-proportion="1.5204237">
+        <state line="15" column="10" selection-start="354" selection-end="354" vertical-scroll-proportion="-37.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml">
+      <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="51" selection-start="536" selection-end="536" vertical-scroll-proportion="19.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/AmrsRegistrationLogoutServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="44" selection-start="8" selection-end="47" vertical-scroll-proportion="-0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="63" selection-start="2268" selection-end="2268" vertical-scroll-proportion="-142.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="-6.25">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/messages.properties">
+      <provider editor-type-id="ResourceBundle">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="1047" selection-end="1047" vertical-scroll-proportion="-19.736841">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/login.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="21" selection-start="807" selection-end="807" vertical-scroll-proportion="0.28169015">
           <folding />
         </state>
       </provider>

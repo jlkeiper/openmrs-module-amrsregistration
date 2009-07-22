@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
-<openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/registration.form"/>
 
 <spring:message var="pageTitle" code="login.title" scope="page"/>
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
@@ -9,11 +8,23 @@
 	pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
 	session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR);
 %>
-
 <br/>
 
 <form method="post" action="${pageContext.request.contextPath}/loginServlet" style="padding:15px; width: 300px;" autocomplete="off">
 	<table>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+           <td style="font-size:20px; font-weight:bold">
+               <spring:message code="amrsregistration.start.title"/>
+           </td>
+        </tr>
+     </table>
+     <table>
+         <tr>
+            <td style="font-size:18px; font-weight:bold">
+                <spring:message code="auth.login"/>:
+            </td>
+         </tr>
 		<tr>
 			<td><spring:message code="User.username"/>:</td>
 			<td><input type="text" name="uname" value="<request:parameter name="username" />" id="username" size="25" maxlength="50" /></td>

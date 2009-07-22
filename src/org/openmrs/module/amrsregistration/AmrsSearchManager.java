@@ -23,7 +23,7 @@ import org.openmrs.api.context.Context;
  */
 public class AmrsSearchManager {
 
-    Integer limit = -1;
+    Integer limit = 200;
 
     private AmrsRegistrationService getAmrsRegistrationService() {
         return (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
