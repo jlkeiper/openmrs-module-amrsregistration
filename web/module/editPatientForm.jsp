@@ -4,67 +4,47 @@
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
-<openmrs:htmlInclude file="/dwr/interface/DWRPatientService.js"></openmrs:htmlInclude>
-<openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js"></openmrs:htmlInclude>
-<openmrs:htmlInclude file="/dwr/engine.js"></openmrs:htmlInclude>
-<openmrs:htmlInclude file="/dwr/util.js"></openmrs:htmlInclude>
+<openmrs:htmlInclude file="/dwr/interface/DWRPatientService.js" />
+<openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js" />
+<openmrs:htmlInclude file="/dwr/engine.js" />
+<openmrs:htmlInclude file="/dwr/util.js" />
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/css/amrsregistration.css" />
 
+<%@ include file="portlets/dialogContent.jsp" %>
 <script type="text/javascript">
 
     // Number of objects stored.  Needed for 'add new' purposes.
     // starts at -1 due to the extra 'blank' data div in the *Boxes dib
     var numObjs = new Array();
-    numObjs["identifier"] = 0;
-    numObjs["name"] = 0;
-    numObjs["address"] = 0;
+    numObjs["identifier"] = ${fn:length(patient.identifiers)};
+    numObjs["name"] = ${fn:length(patient.names)};
+    numObjs["address"] = ${fn:length(patient.addresses)};
     
 	searchTimeout = null;
 	searchDelay = 1000;
     
     var attributes = null;
-	
-	// Jquery part for the modal dialog
-	// modification script from queness.com
-	$j = jQuery.noConflict();
-	$j(document).ready(function() {
 		
-		//if close button is clicked
-		$j('#clear').click(function (e) {
-			//Cancel the link behavior
-			e.preventDefault();
-			
-			$j('#mask').hide();
-			$j('.window').hide();
-		});
-		
-		//if mask is clicked
-		$j('#mask').click(function () {
-			$j(this).hide();
-			$j('.window').hide();
-		});
-		
-		$j(window).bind('resize', function() {
-			//Get the screen height and width
-			var maskHeight = $j(document).height();
-			var maskWidth = $j(window).width();
-			 
-			//Set heigth and width to mask to fill up the whole screen
-			$j('#mask').css({'width':maskWidth,'height':maskHeight});
-			
-			//Get the window height and width
-			var winH = $j(window).height();
-			var winW = $j(window).width();
-			
-			var id = "#dialog";
-			
-			//Set the popup window to center
-			$j(id).css('top',  winH/2-(($j(id).height()/4) * 3));
-			$j(id).css('left', winW/2-(($j(id).width()/4) * 3));
-		});
-		
+	$j('.match').click(function(){
+		var tr = $j(this).parent();
+		var input = $j(tr + ':first-child');
+		alert($(input).html());
+		getPatientByIdentifier($(input).html());
 	});
+	
+	$j('.match').hover(
+		function() {
+			var parent = $j(this).parent();
+			$j(parent).addClass("searchHighlight");
+		},
+		function() {
+			var parent = $j(this).parent();
+			$j(parent).removeClass("searchHighlight");
+		}
+	);
 	
 	function parseDate(d) {
 		var str = '';
@@ -102,195 +82,171 @@
 		}
 		return str;
 	}
-	
-	function cancel() {
-		$j('#mask').hide();
-		$j('.window').hide();
-	}
-	
-	function replaceNull(nullInput) {
-		if (nullInput == null)
-			return "";
-		else
-			return nullInput
-	}
-	
-    function renderPatientData(patient) {
-    	// better using this one or using dom?
-    	var content = '<table>';
-    	    // name section
-    	    content = content + '<tr><th>Name:</th>';
-    	    var names = patient.names;
-    	    for(i=0; i<names.length; i++) {
-    	        var name = i + '. ' + replaceNull(names[i].prefix) + ' ' + replaceNull(names[i].givenName) + ' ';
-    	            name = name + replaceNull(names[i].middleName) + ' ' + replaceNull(names[i].familyNamePrefix) + ' ';
-    	            name = name + replaceNull(names[i].familyName) + ' ' + replaceNull(names[i].familyName2) + ' ';
-	    			name = name + replaceNull(names[i].familyNameSuffix) + ' ' + replaceNull(names[i].degree);
-    	        content = content + '<td>&nbsp</td>';
-    	        content = content + '<td colspan="2">'+ name +'<td>';
-    	        content = content + '</tr><tr><th>&nbsp</th>';
-    	    }
-    	    content = content + '<td>&nbsp</td><td>&nbsp</td><td>&nbsp</td></tr>';
-    	    // birthday section
-    	    content = content + '<tr><th>Birthdate:</th><td>&nbsp</td><td colspan="2">' + parseDate(patient.birthdate) + '</td></tr>';
-    	    // gender section
-    	    content = content + '<tr><th>Gender:</th><td>&nbsp</td><td colspan="2">' + patient.gender + '</td></tr>';
-    	    // address section
-    	    content = content + '<tr><th>Address:</th>';
-    	    var addresses = patient.addresses;
-    	    for(i=0; i<addresses.length; i++) {
-    	    	var address = i + '. ' + replaceNull(addresses[i].address1) + ' ' + replaceNull(addresses[i].address2) + ' ' + replaceNull(addresses[i].neighborhoodCell) + '<br />';
-	    			address = address + replaceNull(addresses[i].cityVillage) + ' ' + replaceNull(addresses[i].townshipDivision) + ' ' + replaceNull(addresses[i].countyDistrict) + '<br />';
-	    			address = address + replaceNull(addresses[i].region) + ' ' + replaceNull(addresses[i].subregion) + '<br />';
-	    			address = address + replaceNull(addresses[i].stateProvince) + ' ' + replaceNull(addresses[i].country) + ' ' + replaceNull(addresses[i].postalCode);
-    	        content = content + '<td>&nbsp</td>';
-    	        content = content + '<td colspan="2">'+ address +'<td>';
-    	        content = content + '</td></tr><tr><th>&nbsp</th>';
-    	    }
-    	    
-    	    // attributes section
-    	
-    	document.getElementById("personContent").innerHTML = content;
-    	
-    	blankSpan = document.createElement("span");
-    	blankSpan.innerHTML = "&nbsp;";
-    	
-    	textNode = document.createTextNode("Is this the correct patient?");
-        document.getElementById("personContent").appendChild(textNode);
-        
-        document.getElementById("personContent").appendChild(blankSpan);
-    	
-        // create anchor tag to update the data
-        var anchor = document.createElement("a");
-        anchor.innerHTML="Yes";
-		anchor.href="javascript:updateData('" + patient.identifiers[0].identifier + "')";
-        document.getElementById("personContent").appendChild(anchor);
-        
-        document.getElementById("personContent").appendChild(blankSpan);
-        
-        var cancel = document.createElement("a");
-        cancel.innerHTML="No";
-		cancel.href="javascript:cancel()";
-        document.getElementById("personContent").appendChild(cancel );
-		
-		// fancy stuff to create modal dialog
-		
-		//Get the window height and width
-		var winH = $j(window).height();
-		var winW = $j(window).width();
-		
-		var id = "#dialog";
-		
-		//Set the popup window to center
-		$j(id).css('top',  winH/2-(($j(id).height()/4) * 3));
-		$j(id).css('left', winW/2-(($j(id).width()/4) * 3));
-		
-		//transition effect
-		$j(id).fadeIn(1000);
-		
-		//Get the screen height and width
-		var maskHeight = $j(document).height();
-		var maskWidth = $j(window).width();
-		
-		//Set heigth and width to mask to fill up the whole screen
-		$j('#mask').css({'width':maskWidth,'height':maskHeight});
-		
-		//transition effect		
-		$j('#mask').fadeIn(500);	
-		$j('#mask').fadeTo("slow",0.8);
-    }
     
     function getPatientByIdentifier(identifier) {
     	DWRAmrsRegistrationService.getPatientByIdentifier(identifier, renderPatientData);
     }
     
     function hidDiv() {
-		floating = document.getElementById("floating");
-		floating.style.display = "none";
+    	$j('#floating').hide();
     }
+	
+	function cancel() {
+		$j('#mask').hide();
+		$j('.window').hide();
+	}
     
     function updateData(identifier) {
     	$j(document.forms[0].reset());
-    	// $j(':submit[name!=_cancel]').attr("name", "_target1");
     	
     	var hiddenInput = $j(document.createElement("input"));
-    	hiddenInput.attr("type", "hidden");
-    	hiddenInput.attr("name", "idCardInput");
-    	hiddenInput.attr("id", "idCardInput");
-    	hiddenInput.attr("value", identifier);
-    	$j('#pIds').append(hiddenInput);
+    	$j(hiddenInput).attr("type", "hidden");
+    	$j(hiddenInput).attr("name", "idCardInput");
+    	$j(hiddenInput).attr("id", "idCardInput");
+    	$j(hiddenInput).attr("value", identifier);
+    	$j('#boxes').append($j(hiddenInput));
     	
     	$j(document.forms[0].submit());
     }
 
     function addNew(type) {
-        var newData = document.getElementById(type + "Data");
-        if (newData != null) {
-            var dataClone = newData.cloneNode(true);
-            dataClone.id = type + numObjs[type] + "Data";
-            dataClone.style.display = "";
-            parent = newData.parentNode;
-            parent.insertBefore(dataClone, newData);
-
+        $j('#' + type + 'Error').empty();
+        
+    	var idSufix = numObjs[type] - 1;
+    	
+    	var allowCreate = false;
+    	if (idSufix > 0) {
+    		var allInputType = $j('#' + type + 'Content' + idSufix + ' input[type=text]');
+    		
+	    	for (i = 0; i < allInputType.length; i ++) {
+	    		var o = allInputType[i];
+	    		str = jQuery.trim(o.value);
+	    		if (str.length > 0) {
+	    			// allow creating new object when a non blank element is found
+	    			allowCreate = true;
+	    			break;
+	    		}
+	    	}
+    	} else {
+    		allowCreate = true;
+    	}
+    	
+        var typeHolder = $j('#' + type + 'Content');
+        if ($j(typeHolder) != null && allowCreate) {
+            var cloneHolder = $j(typeHolder).clone(true);
+            $j(cloneHolder).attr('id', type + 'Content' + numObjs[type]);
+            $j('#' + type + 'Position').append($j(cloneHolder));
+            
+            // focus to the first element
+            ele = $j('#' + type + 'Content' + numObjs[type] + ' input[type=text]:eq(0)');
+            ele.focus();
+            
             numObjs[type] = numObjs[type] + 1;
+        }
+        
+        if (!allowCreate){
+        	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' are blank');
         }
     }
     
-    function createColumn(tr, value) {
-    	var td = document.createElement("td");
-    	tr.appendChild(td);
-    	
-    	var input = document.createElement("input");
-    	input.type = "text";
-    	input.value = value;
-    	
-    	td.appendChild(input);
-    }
-
     function handlePatientResult(result) {
-        if (result.length > 0) {
-            
-            var tbody = document.getElementById("resultTable");
-            var childNodes = tbody.childNodes;
-            for (i=childNodes.length - 1; i >= 0; i --) {
-            	e = childNodes.item(i);
-            	tbody.removeChild(e);
-            }
-            
-            for (i=0; i < result.length; i ++) {
-            	var tr = document.createElement("tr");
-            	tbody.appendChild(tr);
-            	
-            	createColumn(tr, result[i].identifiers[0].identifier);
-            	createColumn(tr, result[i].personName.givenName);
-            	createColumn(tr, result[i].personName.familyName);
-            	createColumn(tr, parseDate(result[i].birthdate));
-            	createColumn(tr, result[i].gender);
-            	
-            	// create link to get patient data and apply it to the page
-            	var td = document.createElement("td");
-            	tr.appendChild(td);
-            	var anchor = document.createElement("a");
-            	anchor.innerHTML="Use Data";
-				anchor.href="javascript: getPatientByIdentifier(\'" + result[i].identifiers[0].identifier + "\')";
-            	td.appendChild(anchor);
-            }
-            document.getElementById("floating").style.display = "block";
-        } else {
-            document.getElementById("floating").style.display = "none";
-        }
+    	if (result.length > 0) {
+    		
+    		var tbody = $j('#resultTable');
+    		$j(tbody).empty();
+    		
+    		for(i = 0; i < result.length; i ++) {
+    			var tr = $j(document.createElement('tr'));
+    			
+    			if (i % 2 == 0)
+    				$j(tr).addClass("evenRow");
+    			else
+    				$j(tr).addClass("oddRow");
+    			
+    			var value = result[i].identifiers[0].identifier;
+    			
+    			$j(tr).hover(
+    				function() {
+						$j(this).addClass("searchHighlight");
+    				},
+    				function() {
+						$j(this).removeClass("searchHighlight");
+    				}
+    			);
+    			
+    			$j(tr).click(function() {
+    				getPatientByIdentifier(value);
+    			});
+    			
+    			var td = $j(document.createElement('td'));
+    			var data = $j(document.createTextNode(result[i].identifiers[0].identifier));
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			var td = $j(document.createElement('td'));
+    			var data = $j(document.createTextNode(result[i].personName.givenName));
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			var td = $j(document.createElement('td'));
+    			var data = $j(document.createTextNode(result[i].personName.familyName));
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			var td = $j(document.createElement('td'));
+    			var data = $j(document.createTextNode(parseDate(result[i].birthdate)));
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			var td = $j(document.createElement('td'));
+    			var data = $j(document.createTextNode(result[i].gender));
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			$j(tbody).append($j(tr));
+    		}
+    		
+    		$j('#floating').show();
+    		
+    	} else {
+    		$j('#floating').hide();
+    	}
     }
 	
 	function removeBlankData() {
-		var obj = document.getElementById("identifierData");
+		// remove name, id and address template
+		var obj = document.getElementById("identifierContent");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
-		obj = document.getElementById("nameData");
+		obj = document.getElementById("nameContent");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
-		obj = document.getElementById("addressData");
+		obj = document.getElementById("addressContent");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
+		
+		// remove blank name, id and address that is added but never get filled
+		// the check only for the last element because we're not allowing adding
+		// new one when the previous one still blank (see addNew)
+		for (key in numObjs) {
+			var idSufix = numObjs[key] - 1;
+			if (idSufix > 0) {
+				var allInputType = $j('#' + key + 'Content' + idSufix + ' input[type=text]');
+		    	var deleteInputs = true;
+		    	for (i = 0; i < allInputType.length; i ++) {
+		    		var o = allInputType[i];
+		    		str = jQuery.trim(o.value);
+		    		if (str.length > 0) {
+		    			// don't delete if there's a single element with a value
+		    			deleteInputs = false;
+		    			break;
+		    		}
+		    	}
+		    	if (deleteInputs) {
+		    		$j('#' + key + "Content" + idSufix).remove();
+		    	}
+	    	}
+		}
 	}
 	
 	function timeOutSearch(thing) {
@@ -393,7 +349,7 @@
     }
     
 	function preferredBoxClick(obj) {
-		var inputs = document.getElementsByName("input");
+		var inputs = $j('input:checkbox');
 		if (obj.checked == true) {
 			for (var i=0; i<inputs.length; i++) {
 				var input = inputs[i];
@@ -403,68 +359,7 @@
 			}
 		}
 	}
-
-
 </script>
-<style>
-
-    #floating {
-    	background-color: #ffffff;
-    	top: 50px;
-    	right: 50px;
-        position: fixed;
-        border: 1px double black;
-    	font-size: 11px;
-    }
-
-    .tabBoxes {
-        padding: 3px;
-    }
-
-    .addNew {
-        margin-right: 10px;
-        font-size: 10px;
-        float: right;
-        cursor: pointer;
-    }
-
-    .close {
-        right: 5px;
-        top: 5px;
-        font-size: 10px;
-        cursor: pointer;
-    }
-    
-    #mask {
-        position:absolute;
-        left:0;
-        top:0;
-        z-index:9000;
-        background-color:#000;
-        display:none;
-    }
-
-    #boxes .window {
-    	font-size: 11px;
-        position:absolute;
-        left:0;
-        top:0;
-        display:none;
-        z-index:9999;
-        padding:20px;
-    }
-
-    #boxes #dialog {
-    	font-size: 11px;
-        padding:10px;
-        background-color:#ffffff;
-    }
-    
-    #main {
-    	position: relative;
-    }
-
-</style>
 
 <div id="mask"></div>
 <div id="main">
@@ -480,18 +375,55 @@
 	</c:forEach>
 </spring:hasBindErrors>
 <form id="patientForm" method="post" onSubmit="removeBlankData()">
-	<div id="floating" style="display: none;">
+	<c:choose>
+		<c:when test="${fn:length(potentialMatches) > 0}">
+			<div id="floating" style="display: block;">
+		</c:when>
+		<c:otherwise>
+			<div id="floating" style="display: none;">
+		</c:otherwise>
+	</c:choose>
 	    <div>
-	        <table border="0" cellspacing="2" cellpadding="2">
+	        <table class="box">
 	            <tr>
-	            	<th>Identifier</th>
-	            	<th>First Name</th>
-	            	<th>Last Name</th>
-	            	<th>Gender</th>
-	            	<th>DOB</th>
-	            	<th>Action</th>
+	            	<td><spring:message code="amrsregistration.labels.ID" /></td>
+	            	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
+	            	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
+	            	<td><spring:message code="amrsregistration.labels.gender" /></td>
+	            	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
 	            </tr>
-	            <tbody id="resultTable"></tbody>
+	            <tbody id="resultTable">
+		    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
+		    			<c:choose>
+		    				<c:when test="${varStatus.index % 2 == 0}">
+		    					<tr class="evenRow">
+		    				</c:when>
+		    				<c:otherwise>
+		    					<tr class="oddRow">
+		    				</c:otherwise>
+		    			</c:choose>
+		    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
+		    					<c:if test="${varStatus.index == 0}">
+				    				<td class="match">
+				    					<c:out value="${identifier.identifier}" />
+				    				</td>
+	            				</c:if>
+		    				</c:forEach>
+		    				<td class="match">
+		    					<c:out value="${person.personName.givenName}" />
+		    				</td>
+		    				<td class="match">
+		    					<c:out value="${person.personName.familyName}" />
+		    				</td>
+		    				<td class="match">
+		    					<c:out value="${person.gender}" />
+		    				</td>
+		    				<td class="match">
+		    					<openmrs:formatDate date="${person.birthdate}" />
+		    				</td>
+		    			</tr>
+		    		</c:forEach>
+	            </tbody>
 	            <tr>
 	            	<td>
 	            		<span class="close"><a href="javascript:;" onclick="hidDiv()">close</a></span>
@@ -510,215 +442,252 @@
 		</div>
 	</div>
 
+	<!-- Patient Names Section -->
     <h3><spring:message code="Patient.names"/></h3>
-    <div id="pNames">
-        <div class="tabBoxes" id="nameDataBoxes">
-            <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-                <spring:nestedPath path="patient.names[${varStatus.index}]">
-                    <div id="name${varStatus.index}Data" class="tabBox">
-                        <%@ include file="portlets/patientName.jsp" %>
-                    </div>
-                </spring:nestedPath>
-            </c:forEach>
-        </div>
-        <div id="nameData" class="tabBoxes" style="display:none">
-            <spring:nestedPath path="emptyName">
-                <%@ include file="portlets/patientName.jsp" %>
-            </spring:nestedPath>
-        </div>
-        <div class="tabBar" id="pNmTabBar">
-            <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
-        </div>
-    </div>
+	<b class="boxHeader"><spring:message code="amrsregistration.edit.name"/> </b>
+	<div class="box">
+		<table class="box">
+			<tr>
+				<td align="left" valign="top">
+				    <spring:message code="general.preferred"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="amrsregistration.labels.prefix"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="PersonName.givenName"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="PersonName.middleName"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="amrsregistration.labels.familyprefix"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="PersonName.familyName"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="PersonName.familyName2"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="amrsregistration.labels.familysufix"/>
+				</td>
+				<td align="left" valign="top">
+				    <spring:message code="PersonName.degree"/>
+				</td>
+			</tr>
+	        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+	            <spring:nestedPath path="patient.names[${varStatus.index}]">
+	            	<%@ include file="portlets/patientName.jsp" %>
+	            </spring:nestedPath>
+	        </c:forEach>
+	    	<tbody id="namePosition">
+		</table>
+		<spring:nestedPath path="emptyName">
+			<table style="display: none;">
+				<%@ include file="portlets/patientName.jsp" %>
+			</table>
+		</spring:nestedPath>
+		<div class="tabBar" id="nameTabBar">
+			<span id="nameError" class="newError"></span>
+			<input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
+		</div>
+	</div>
     <br style="clear: both"/>
+	<!-- End of Patient Names Section -->
     
+    <!-- Gender and Birthdate Section -->
     <h3><spring:message code="Patient.information"/></h3>
-    <div class="tabBoxes">
-	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
-	    <div class="box">
-	    	<table>
-				<spring:nestedPath path="patient">
-					<c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
+    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
+    <div class="box">
+    	<table>
+			<spring:nestedPath path="patient">
+				<c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
+					<tr>
+						<td><spring:message code="Person.gender"/></td>
+						<td><spring:bind path="patient.gender">
+								<openmrs:forEachRecord name="gender">
+									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
+										<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
+								</openmrs:forEachRecord>
+							</spring:bind>
+						</td>
+					</tr>
+				</c:if>
+				<c:choose>
+					<c:when test="${patient.birthdate == null}">
 						<tr>
-							<td><spring:message code="Person.gender"/></td>
-							<td><spring:bind path="patient.gender">
-									<openmrs:forEachRecord name="gender">
-										<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
-											<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
-									</openmrs:forEachRecord>
-								</spring:bind>
-							</td>
-						</tr>
-					</c:if>
-					<c:choose>
-						<c:when test="${patient.birthdate == null}">
-							<tr>
-								<td>
-									<spring:message code="Person.birthdate"/><br/>
-									<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
-								</td>
-								<td valign="top">
-									<input type="text" name="birthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" />
-									<spring:message code="Person.age.or"/>
-									<input type="text" name="age" id="age" size="5" value="" />
-								</td>
-							</tr>
-						</c:when>
-						<c:otherwise>
-							<tr>
-								<td>
-									<spring:message code="Person.birthdate"/><br/>
-									<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
-								</td>
-								<td>
-									<script type="text/javascript">
-										function updateEstimated(txtbox) {
-											var input = document.getElementById("birthdateEstimatedInput");
-											if (input) {
-												input.checked = false;
-												input.parentNode.className = "";
-											}
-											else if (txtbox)
-												txtbox.parentNode.className = "listItemChecked";
-										}
-										
-										function updateAge() {
-											var birthdateBox = document.getElementById('birthdate');
-											var ageBox = document.getElementById('age');
-											try {
-												var birthdate = parseSimpleDate(birthdateBox.value, '<openmrs:datePattern />');
-												var age = getAge(birthdate);
-												if (age > 0)
-													ageBox.innerHTML = "(" + age + ' <spring:message code="Person.age.years"/>)';
-												else if (age == 1)
-													ageBox.innerHTML = '(1 <spring:message code="Person.age.year"/>)';
-												else if (age == 0)
-													ageBox.innerHTML = '( < 1 <spring:message code="Person.age.year"/>)';
-												else
-													ageBox.innerHTML = '( ? )';
-												ageBox.style.display = "";
-											} catch (err) {
-												ageBox.innerHTML = "";
-												ageBox.style.display = "none";
-											}
-										}
-									</script>
-									<spring:bind path="birthdate">			
-										<input type="text" 
-												name="birthdate" size="10" id="birthdate"
-												value="${status.value}"
-												onChange="updateAge(); updateEstimated(this);"
-												onClick="showCalendar(this)" />
-										<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
-									</spring:bind>
-									
-									<span id="age"></span> &nbsp; 
-									
-									<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
-										<spring:bind path="birthdateEstimated">
-											<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
-											<input type="hidden" name="_birthdateEstimated">
-											<input type="checkbox" name="birthdateEstimated" value="true" 
-												   <c:if test="${status.value == true}">checked</c:if> 
-												   id="birthdateEstimatedInput" 
-												   onclick="if (!this.checked) updateEstimated()" />
-											<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-										</spring:bind>
-									</span>
-									
-									<script type="text/javascript">
-										if (document.getElementById("birthdateEstimatedInput").checked == false)
-											updateEstimated();
-										updateAge();
-									</script>
-								</td>
-							</tr>
-						</c:otherwise>
-					</c:choose>
-				</spring:nestedPath>
-			</table>
-		</div>
-	</div>
-    <br style="clear: both"/>
-
-    <h3><spring:message code="Patient.addresses"/></h3>
-    <div id="pAddresses">
-        <div class="tabBoxes" id="addressDataBoxes">
-            <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
-                <spring:nestedPath path="patient.addresses[${varStatus.index}]">
-                    <div id="address${varStatus.index}Data" class="tabBox">
-                        <%@ include file="portlets/patientAddress.jsp" %>
-                    </div>
-                </spring:nestedPath>
-            </c:forEach>
-        </div>
-        <div id="addressData" class="tabBoxes" style="display:none">
-            <spring:nestedPath path="emptyAddress">
-                <%@ include file="portlets/patientAddress.jsp" %>
-            </spring:nestedPath>
-        </div>
-        <div class="tabBar" id="pAdTabBar">
-            <input type="button" onClick="return addNew('address');" class="addNew" id="address"
-                   value="Add New Addresses"/>
-        </div>
-    </div>
-    <br style="clear: both"/>
-    
-    <h3><spring:message code="Patient.attributes"/></h3>
-    <div class="tabBoxes">
-	    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
-	    <div class="box">
-	    	<table>
-				<spring:nestedPath path="patient">
-					<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
-						<tr>
-							<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
 							<td>
-								<spring:bind path="attributeMap">
-									<openmrs:fieldGen 
-										type="${attrType.format}" 
-										formFieldName="${attrType.personAttributeTypeId}" 
-										val="${status.value[attrType.name].hydratedObject}" 
-										parameters="optionHeader=[blank]|showAnswers=${attrType.foreignKey}" />
-								</spring:bind>
+								<spring:message code="Person.birthdate"/><br/>
+								<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
+							</td>
+							<td valign="top">
+								<input type="text" name="birthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" onkeyup="timeOutSearch(this.value)"/>
+								<spring:message code="Person.age.or"/>
+								<input type="text" name="age" id="age" size="5" value="" />
 							</td>
 						</tr>
-					</openmrs:forEachDisplayAttributeType>
-				</spring:nestedPath>
-			</table>
-		</div>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td>
+								<spring:message code="Person.birthdate"/><br/>
+								<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
+							</td>
+							<td>
+								<script type="text/javascript">
+									function updateEstimated(txtbox) {
+										var input = document.getElementById("birthdateEstimatedInput");
+										if (input) {
+											input.checked = false;
+											input.parentNode.className = "";
+										}
+										else if (txtbox)
+											txtbox.parentNode.className = "listItemChecked";
+									}
+									
+									function updateAge() {
+										var birthdateBox = document.getElementById('birthdate');
+										var ageBox = document.getElementById('age');
+										try {
+											var birthdate = parseSimpleDate(birthdateBox.value, '<openmrs:datePattern />');
+											var age = getAge(birthdate);
+											if (age > 0)
+												ageBox.innerHTML = "(" + age + ' <spring:message code="Person.age.years"/>)';
+											else if (age == 1)
+												ageBox.innerHTML = '(1 <spring:message code="Person.age.year"/>)';
+											else if (age == 0)
+												ageBox.innerHTML = '( < 1 <spring:message code="Person.age.year"/>)';
+											else
+												ageBox.innerHTML = '( ? )';
+											ageBox.style.display = "";
+										} catch (err) {
+											ageBox.innerHTML = "";
+											ageBox.style.display = "none";
+										}
+									}
+								</script>
+								<spring:bind path="birthdate">			
+									<input type="text" 
+											name="birthdate" size="10" id="birthdate"
+											value="${status.value}"
+											onChange="updateAge(); updateEstimated(this);"
+											onClick="showCalendar(this)" />
+									<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
+								</spring:bind>
+								
+								<span id="age"></span> &nbsp; 
+								
+								<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
+									<spring:bind path="birthdateEstimated">
+										<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
+										<input type="hidden" name="_birthdateEstimated">
+										<input type="checkbox" name="birthdateEstimated" value="true" 
+											   <c:if test="${status.value == true}">checked</c:if> 
+											   id="birthdateEstimatedInput" 
+											   onclick="if (!this.checked) updateEstimated()" />
+										<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+									</spring:bind>
+								</span>
+								
+								<script type="text/javascript">
+									if (document.getElementById("birthdateEstimatedInput").checked == false)
+										updateEstimated();
+									updateAge();
+								</script>
+							</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</spring:nestedPath>
+		</table>
 	</div>
     <br style="clear: both"/>
+    <!-- End of Gender and Birthdate Section -->
 
+	<!-- Patient Identifier Section -->
     <h3><spring:message code="Patient.identifiers"/></h3>
-    <div id="pIds">
-        <div class="tabBoxes" id="identifierDataBoxes">
-            <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
-                <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
-                    <div id="identifier${varStatus.index}Data" class="tabBox">
-                    	<c:if test="${amrsIdType != identifier.identifierType.name}">
-                    		<%@ include file="portlets/patientIdentifier.jsp" %>
-                    	</c:if>
-                    </div>
-                </spring:nestedPath>
-            </c:forEach>
-        </div>
-        <div id="identifierData" class="tabBoxes" style="display:none">
-            <spring:nestedPath path="emptyIdentifier">
-                <%@ include file="portlets/patientIdentifier.jsp" %>
-            </spring:nestedPath>
-        </div>
-        <div class="tabBar" id="pIdTabBar">
+    <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>
+	<div class="box">
+		<table class="box">
+	        <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
+	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
+	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
+	            		<%@ include file="portlets/patientIdentifier.jsp" %>
+	            	</c:if>
+	    			<tbody id="identifierPosition">
+	            </spring:nestedPath>
+	        </c:forEach>
+      	</table>
+        <spring:nestedPath path="emptyIdentifier">
+			<table style="display: none;">
+            	<%@ include file="portlets/patientIdentifier.jsp" %>
+            </table>
+        </spring:nestedPath>
+        <div class="tabBar" id="identifierTabBar">
+			<span id="identifierError" class="newError"></span>
             <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier"
                    value="Add New Identifier"/>
         </div>
     </div>
     <br style="clear: both"/>
+	<!-- End of Patient Identifier Section -->
+
+	<!-- Patient Address Section -->
+    <h3><spring:message code="Patient.addresses"/></h3>
+	<b class="boxHeader"><spring:message code="amrsregistration.edit.address"/></b>
+	<div class="box">
+		<table class="box" id="addressPosition">
+	        <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+	            <spring:nestedPath path="patient.addresses[${varStatus.index}]">
+	                <%@ include file="portlets/patientAddress.jsp" %>
+	            </spring:nestedPath>
+	        </c:forEach>
+		</table>
+		<spring:nestedPath path="emptyAddress">
+			<table style="display: none;">
+	        	<%@ include file="portlets/patientAddress.jsp" %>
+			</table>
+		</spring:nestedPath>
+	    <div class="tabBar" id="addressTabBar">
+			<span id="addressError" class="newError"></span>
+	        <input type="button" onClick="return addNew('address');" class="addNew" id="address"
+	               value="Add New Addresses"/>
+	    </div>
+    </div>
+    <br style="clear: both"/>
+	<!-- End of Patient Address Section -->
+    
+    <!-- Patient Attributes Section -->
+    <h3><spring:message code="amrsregistration.patient.attributes"/></h3>
+    <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
+    <div class="box">
+    	<table>
+			<spring:nestedPath path="patient">
+				<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+					<tr>
+						<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
+						<td>
+							<spring:bind path="attributeMap">
+								<openmrs:fieldGen 
+									type="${attrType.format}" 
+									formFieldName="${attrType.personAttributeTypeId}" 
+									val="${status.value[attrType.name].hydratedObject}" 
+									parameters="optionHeader=[blank]|showAnswers=${attrType.foreignKey}" />
+							</spring:bind>
+						</td>
+					</tr>
+				</openmrs:forEachDisplayAttributeType>
+			</spring:nestedPath>
+		</table>
+	</div>
+    <br style="clear: both"/>
+    <!-- End of Patient Attributes Section -->
 
     <br/>
     <input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
     &nbsp; &nbsp;
-    <input type="submit" name="_target2" value="<spring:message code='amrsregistration.button.save'/>">
+    <input type="submit" name="_target2" value="<spring:message code='amrsregistration.button.continue'/>">
 </form>
 <br/>
 

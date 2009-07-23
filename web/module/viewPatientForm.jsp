@@ -49,30 +49,82 @@
 <br/><br/>
 
 <form id="identifierForm" method="post">
-<%@ include file="portlets/personInfo.jsp" %>
-<br />
-
-	<b class="boxHeader">AMRS Identifier Section</b>
+	<div id="patientHeader" class="boxHeader">
+	<div id="patientHeaderPatientName">${patient.personName}</div>
+	<div id="patientHeaderPreferredIdentifier">
+		<c:if test="${fn:length(patient.activeIdentifiers) > 0}">
+			<c:forEach var="identifier" items="${patient.activeIdentifiers}">
+				<c:if test="${amrsIdType == identifier.identifierType.name}">
+					<span class="patientHeaderPatientIdentifier">
+						<span id="patientHeaderPatientIdentifierType">
+							${identifier.identifierType.name}:
+						</span>
+						${identifier.identifier}
+					</span>
+				</c:if>
+			</c:forEach>
+		</c:if>
+	</div>
+	<%@ include file="portlets/personInfo.jsp" %>
+	</div>
+	<br />
+	
+	<div class="boxHeader"><spring:message code="Patient.title"/></div>
 	<div class="box">
-		<table>
-			<tr>
-				<th>AMRS Identifier:</th>
-            	<c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
-                    <c:if test="${amrsIdType == identifier.identifierType.name}">
-						<td><span style="font-weight: bold;">${identifier.identifier}</span></td>
-                    </c:if>
-            	</c:forEach>
-			</tr>
+		<table class="personName">
+			<thead>
+				<tr>
+					<th><spring:message code="Person.names"/></th>
+					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
+						<th><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></th>
+					</openmrs:forEachDisplayAttributeType>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td valign="top">
+						<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+							<c:if test="${!name.voided}">
+								<spring:nestedPath path="patient.names[${varStatus.index}]">
+									<openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
+								</spring:nestedPath>
+							</c:if>
+						</c:forEach>
+					</td>
+					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
+						<td valign="top">${patient.attributeMap[attrType.name]}</td>
+					</openmrs:forEachDisplayAttributeType>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<br/>
+	
+	<div class="boxHeader"><spring:message code="Person.addresses"/></div>
+	<div class="box">
+		<table class="personAddress">
+			<thead>
+				<openmrs:portlet url="addressLayout" id="addressPortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=true" />
+			</thead>
+			<tbody>
+				<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+					<c:if test="${!address.voided}">
+						<spring:nestedPath path="patient.addresses[${varStatus.index}]">
+							<openmrs:portlet url="addressLayout" id="addressPortlet" size="inOneRow" parameters="layoutMode=view|layoutShowTable=false|layoutShowExtended=true" />
+						</spring:nestedPath>
+					</c:if>
+				</c:forEach>
+			</tbody>
 		</table>
 	</div>
 	<br />
-
-&nbsp;
-<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
-&nbsp; &nbsp;
-<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
-&nbsp; &nbsp;
-<input type="submit" name="_finish" value="<spring:message code='amrsregistration.button.register'/>">
+	&nbsp;
+	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
+	&nbsp; &nbsp;
+	<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
+	&nbsp; &nbsp;
+	<input type="submit" name="_finish" value="<spring:message code='amrsregistration.button.register'/>">
 </form>
 <br/>
 <br />

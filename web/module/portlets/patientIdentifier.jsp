@@ -1,30 +1,24 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
-
-<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/registration.form" />
-
-<table class="box" border="0" cellspacing="2" cellpadding="2">
-    <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>
-    <tr>
-        <th align="left" valign="top">
+    <tr id="identifierContent${varStatus.index}">
+        <td align="left" valign="top">
             <spring:message code="general.preferred"/>?
-        </th>
+        </td>
         <td align="left" valign="top">
             <spring:bind path="preferred">
 				<input type="hidden" name="_${status.expression}">
 				<input type="checkbox" name="${status.expression}" value="true" alt="patientIdentifier" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == true}">checked</c:if> />
             </spring:bind>
         </td>
-        <th align="right" valign="top">
-            Identifier
-        </th>
+        <td align="right" valign="top">
+            <spring:message code="amrsregistration.labels.ID"/>
+        </td>
         <td>
             <spring:bind path="identifier">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="PatientIdentifier.identifierType"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="identifierType">
                 <select id="${status.expression}" name="${status.expression}">
@@ -39,7 +33,7 @@
                 </select>
             </spring:bind>
         </td>
-		<th align="right"><spring:message code="PatientIdentifier.location"/></th>
+		<td align="right"><spring:message code="PatientIdentifier.location"/></td>
 		<td>
 			<spring:bind path="location">
 				<select id="${status.expression}" name="${status.expression}">
@@ -53,4 +47,3 @@
 			</spring:bind>
 		</td>
 	</tr>
-</table>

@@ -1,0 +1,66 @@
+
+    #floating {
+    	width: 30%;
+    	background-color: #ffffff;
+    	top: 50px;
+    	right: 50px;
+        position: fixed;
+    	font-size: 11px;
+    }
+
+    .tabBoxes {
+        padding: 3px;
+    }
+
+    .addNew {
+        margin-right: 10px;
+        font-size: 10px;
+        float: right;
+        cursor: pointer;
+    }
+    
+    .newError {
+        right: 10px;
+        font-size: 10px;
+    }
+
+    .close {
+        right: 5px;
+        top: 5px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    
+    #mask {
+        position:absolute;
+        left:0;
+        top:0;
+        z-index:9000;
+        background-color:#000;
+        display:none;
+    }
+
+    #boxes .window {
+    	font-size: 11px;
+        position:absolute;
+        left:0;
+        top:0;
+        display:none;
+        z-index:9999;
+        padding:20px;
+    }
+
+    #boxes #dialog {
+    	font-size: 11px;
+        padding:10px;
+        background-color:#ffffff;
+    }
+    
+    #main {
+    	position: relative;
+    }
+	
+    #searchHighlight {
+	cursor: pointer;
+	background-color: #F0E68C;
+    }

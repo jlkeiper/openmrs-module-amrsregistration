@@ -1,13 +1,8 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
-
-<openmrs:require privilege="Register Patients" otherwise="/login.htm" redirect="/module/amrsregistration/registration.form" />
-
-<table class="box" border="0" cellspacing="2" cellpadding="2">
-    <b class="boxHeader"><spring:message code="amrsregistration.edit.address"/></b>
+<tbody id="addressContent${varStatus.index}">
     <tr>
-        <th>
-            Preferred
-        </th>
+        <td>
+            <spring:message code="general.preferred"/>
+        </td>
         <td align="left" valign="top">
             <spring:bind path="personAddressId">
                 <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
@@ -24,99 +19,102 @@
         </td>
     </tr>
     <tr>
-        <th>
+        <td>
             <spring:message code="PersonAddress.address1"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="address1">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="PersonAddress.address2"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="address2">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
-            Neighborhood Cell <!-- spring:message code="PersonAddress.neighborhoodCell"/ -->
-        </th>
+        <td align="right">
+            <spring:message code="amrsregistration.address.neighborhoodCell" />
+        </td>
         <td>
             <spring:bind path="neighborhoodCell">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
     <tr>
-        <th>
+        <td>
             <spring:message code="PersonAddress.cityVillage"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="cityVillage">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="Location.township"/>/<spring:message code="Location.division"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="townshipDivision">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="Location.county"/>/<spring:message code="Location.district"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="countyDistrict">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
     <tr>
-        <th>
-            Sub-Region<!-- spring:message code="PersonAddress.subregion"/ -->
-        </th>
+        <td>
+            <spring:message code="PersonAddress.subregion" />
+        </td>
         <td>
             <spring:bind path="subregion">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="Location.region"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="region">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
     <tr>
-        <th>
+        <td>
             <spring:message code="PersonAddress.stateProvince"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="stateProvince">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="PersonAddress.country"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="country">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <th align="right">
+        <td align="right">
             <spring:message code="PersonAddress.postalCode"/>
-        </th>
+        </td>
         <td>
             <spring:bind path="postalCode">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="patientSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
     </tr>
-</table>
+    <tr>
+    	<td>&nbsp;</td>
+    </tr>
+</tbody>

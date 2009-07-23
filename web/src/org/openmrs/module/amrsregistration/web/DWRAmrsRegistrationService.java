@@ -24,7 +24,7 @@ public class DWRAmrsRegistrationService extends DWRPersonService {
             String paramString, Date paramDate, Integer paramInteger) {
     	List<Person> localList = searchManager.getPersons(
                 paramPersonName, paramPersonAddress, paramSet, paramString,
-                paramDate, paramInteger);
+                paramDate, paramInteger, 10);
         ArrayList<Patient> localArrayList = new ArrayList<Patient>();
         for (Person localPerson : localList) {
             if (!(localPerson.isUser())) {

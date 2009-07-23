@@ -67,17 +67,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		localHashMap.put("amrsIdType", Context.getAdministrationService().getGlobalProperty("amrsregistration.idType"));
 		
 		Patient patient = (Patient) command;
-		
-		switch (page) {
-			case 2:
-				AmrsSearchManager searchManager = new AmrsSearchManager();
-				List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(),
-					patient.getAttributes(), null, null, null, 10);
-				// remove the exact match from the possible match (to prevent patient selected from the list to show again in the list)
-				persons.remove(patient);
-				localHashMap.put("potentialMatches", persons);
-				break;
-		}
+		AmrsSearchManager searchManager = new AmrsSearchManager();
+		List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(),
+			patient.getAttributes(), null, null, null, 10);
+		// remove the exact match from the possible match (to prevent patient selected from the list to show again in the list)
+		persons.remove(patient);
+		localHashMap.put("potentialMatches", persons);
 		
 		return localHashMap;
 	}
