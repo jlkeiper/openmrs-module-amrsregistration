@@ -82,15 +82,6 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td valign="top">
-						<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-							<c:if test="${!name.voided}">
-								<spring:nestedPath path="patient.names[${varStatus.index}]">
-									<openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
-								</spring:nestedPath>
-							</c:if>
-						</c:forEach>
-					</td>
 					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
 						<td valign="top">${patient.attributeMap[attrType.name]}</td>
 					</openmrs:forEachDisplayAttributeType>

@@ -3,55 +3,72 @@
 <openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/registration.form" />
 
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
 <script type="text/javascript">
-	$(document).ready(function(){
-		var allInput = $(":input");
-	});
+
     function focusOnTextBox() {
         var idCardInput = document.getElementById("idCardInput");
         idCardInput.focus();
     }
 </script>
 
-<h2><spring:message code="amrsregistration.start.title"/></h2>
-<span><spring:message code="amrsregistration.start.details"/></span>
-<br/><br/>
-
-<spring:hasBindErrors name="patient">
-	<c:forEach items="${errors.allErrors}" var="error">
-		<span class="error"><spring:message code="${error.code}"/></span>
-	</c:forEach>
-</spring:hasBindErrors>
-<b class="boxHeader"><spring:message code="amrsregistration.start"/> </b>
-<div class="box">
-	<form id="identifierForm" method="post">
-	    <table name="initialMrn" align="center">
-	        <tr id="initMrn" name="initMrn">
-	            <td align="center" valign="top">
-	                <input type="hidden" id="scannedPatientId" name="scannedPatientId"/>
-	                <input type="text" id="idCardInput" size="20" name="idCardInput"/>
-	            </td>
-				<td align="center" valign="top">
-					<input type="submit" name="_target1" value="<spring:message code="amrsregistration.button.go"/>">
-				</td>
-	        </tr>
-		</table>
-	</form>
-	<form id="newIdentifierForm" method="post">
-	    <table name="newMrn" align="center">
-			<tr>
-				<td align="center" valign="top">
-					<input type="submit" name="_target1" value="<spring:message code="amrsregistration.button.nocard"/>">
-				</td>
-			</tr>
-		</table>
-	</form>
+<div id="amrsTitle">
+	<h2><spring:message code="amrsregistration.start.title"/></h2>
 </div>
-<br/>
-<script type="text/javascript">
-    focusOnTextBox();
-</script>
+
+<style>
+
+	input[type='text'] {
+		font-size: 3em;
+		text-align: right;
+	}
+	
+	input[type='submit'] {
+		font-size: 2em;
+		padding: 5px;
+		font-weight: bold;
+		vertical-align:super;
+	}
+	
+	#amrsForm {
+		text-align: center;
+	}
+	
+	#centeredForm {
+		position: absolute;
+		height: 200px;
+		margin-top: -100px;
+		top: 50%;
+		width: 100%;
+	}
+	
+</style>
+
+<div id="amrsContent">
+	<span><spring:message code="amrsregistration.start.details"/></span>
+	<div id="amrsForm">
+		<div id="centeredForm">
+			<spring:hasBindErrors name="patient">	
+				<c:forEach items="${errors.allErrors}" var="error">
+					<span class="error"><spring:message code="${error.code}"/></span>
+				</c:forEach>
+			</spring:hasBindErrors>
+			<form id="identifierForm" method="post">
+		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
+		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" />
+				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " />
+			</form>
+			<form id="newIdentifierForm" method="post">
+					<input type="submit" name="_target1" value="No Id Card" />
+			</form>
+		</div>
+	</div>
+	<br/>
+	<script type="text/javascript">
+	    focusOnTextBox();
+	</script>
+</div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

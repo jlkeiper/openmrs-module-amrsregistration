@@ -125,7 +125,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				break;
 			case 1:
 				// coming from first page and not a get patient data
-				if (idCard != null && targetPage != currentPage) {
+				if (idCard != null) {
 					// found a patient
 					if (patientSearched != null){
 						// default to found patient, but no required id type

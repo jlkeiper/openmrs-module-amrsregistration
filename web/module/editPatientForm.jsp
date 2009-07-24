@@ -11,7 +11,6 @@
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/css/amrsregistration.css" />
 
 <%@ include file="portlets/dialogContent.jsp" %>
 <script type="text/javascript">
@@ -22,6 +21,13 @@
     numObjs["identifier"] = ${fn:length(patient.identifiers)};
     numObjs["name"] = ${fn:length(patient.names)};
     numObjs["address"] = ${fn:length(patient.addresses)};
+    	
+	nonRequiredIdType = 0;
+    <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
+        <c:if test="${amrsIdType != identifier.identifierType.name}">
+        	nonRequiredIdType ++;
+        </c:if>
+    </c:forEach>
     
 	searchTimeout = null;
 	searchDelay = 1000;
@@ -115,21 +121,26 @@
     	var idSufix = numObjs[type] - 1;
     	
     	var allowCreate = false;
-    	if (idSufix > 0) {
-    		var allInputType = $j('#' + type + 'Content' + idSufix + ' input[type=text]');
-    		
-	    	for (i = 0; i < allInputType.length; i ++) {
-	    		var o = allInputType[i];
-	    		str = jQuery.trim(o.value);
-	    		if (str.length > 0) {
-	    			// allow creating new object when a non blank element is found
-	    			allowCreate = true;
-	    			break;
-	    		}
-	    	}
-    	} else {
+    	
+    	if (numObjs[type] == 0) {
     		allowCreate = true;
-    	}
+    	} else {
+    		if (nonRequiredIdType == 0 && type == 'identifier')
+    			allowCreate = true;
+    		else {
+	    		var allInputType = $j('#' + type + 'Content' + idSufix + ' input[type=text]');
+	    		
+		    	for (i = 0; i < allInputType.length; i ++) {
+		    		var o = allInputType[i];
+		    		str = jQuery.trim(o.value);
+		    		if (str.length > 0) {
+		    			// allow creating new object when a non blank element is found
+		    			allowCreate = true;
+		    			break;
+		    		}
+		    	}
+		    }
+		}
     	
         var typeHolder = $j('#' + type + 'Content');
         if ($j(typeHolder) != null && allowCreate) {
@@ -142,6 +153,9 @@
             ele.focus();
             
             numObjs[type] = numObjs[type] + 1;
+            if (type == 'identifier') {
+            	nonRequiredIdType ++;
+            }
         }
         
         if (!allowCreate){
@@ -150,6 +164,8 @@
     }
     
     function handlePatientResult(result) {
+		clearTimeout(searchTimeout);
+		
     	if (result.length > 0) {
     		
     		var tbody = $j('#resultTable');
@@ -257,23 +273,13 @@
     function patientSearch(thing) {
         var gName = document.getElementById("names[0].givenName");
         var mName = document.getElementById("names[0].middleName");
-        var fNamePrefix = document.getElementById("names[0].familyNamePrefix");
         var fName = document.getElementById("names[0].familyName");
-        var fName2 = document.getElementById("names[0].familyName2");
-        var fNameSuffix = document.getElementById("names[0].familyNameSuffix");
         var deg = document.getElementById("names[0].degree");
-        var pref = document.getElementById("names[0].prefix");
-        var prefName = document.getElementById("names[0].preferred");
 
         var personName = {
-        	preferred: prefName.checked,
-        	prefix: pref.value,
         	givenName: gName.value,
         	middleName: mName.value,
-        	familyNamePrefix: fNamePrefix.value,
         	familyName: fName.value,
-        	familyName2: fName2.value,
-        	familyNameSuffix: fNameSuffix.value,
         	degree: deg.value
         }
         // alert(DWRUtil.toDescriptiveString(personName, 2));
@@ -437,22 +443,17 @@
 	<div id="boxes"> 
 		<div id="dialog" class="window">
 			Patient Data |
-			<a href="#" id="clear">Close</a>
 			<div id="personContent"></div>
 		</div>
 	</div>
 
 	<!-- Patient Names Section -->
-    <h3><spring:message code="Patient.names"/></h3>
 	<b class="boxHeader"><spring:message code="amrsregistration.edit.name"/> </b>
 	<div class="box">
-		<table class="box">
+		<table>
 			<tr>
 				<td align="left" valign="top">
 				    <spring:message code="general.preferred"/>
-				</td>
-				<td align="left" valign="top">
-				    <spring:message code="amrsregistration.labels.prefix"/>
 				</td>
 				<td align="left" valign="top">
 				    <spring:message code="PersonName.givenName"/>
@@ -461,16 +462,7 @@
 				    <spring:message code="PersonName.middleName"/>
 				</td>
 				<td align="left" valign="top">
-				    <spring:message code="amrsregistration.labels.familyprefix"/>
-				</td>
-				<td align="left" valign="top">
 				    <spring:message code="PersonName.familyName"/>
-				</td>
-				<td align="left" valign="top">
-				    <spring:message code="PersonName.familyName2"/>
-				</td>
-				<td align="left" valign="top">
-				    <spring:message code="amrsregistration.labels.familysufix"/>
 				</td>
 				<td align="left" valign="top">
 				    <spring:message code="PersonName.degree"/>
@@ -497,7 +489,6 @@
 	<!-- End of Patient Names Section -->
     
     <!-- Gender and Birthdate Section -->
-    <h3><spring:message code="Patient.information"/></h3>
     <b class="boxHeader"><spring:message code="amrsregistration.edit.information"/></b>
     <div class="box">
     	<table>
@@ -606,10 +597,9 @@
     <!-- End of Gender and Birthdate Section -->
 
 	<!-- Patient Identifier Section -->
-    <h3><spring:message code="Patient.identifiers"/></h3>
     <b class="boxHeader"><spring:message code="amrsregistration.edit.identifier"/></b>
 	<div class="box">
-		<table class="box">
+		<table>
 	        <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
 	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
@@ -634,10 +624,9 @@
 	<!-- End of Patient Identifier Section -->
 
 	<!-- Patient Address Section -->
-    <h3><spring:message code="Patient.addresses"/></h3>
 	<b class="boxHeader"><spring:message code="amrsregistration.edit.address"/></b>
 	<div class="box">
-		<table class="box" id="addressPosition">
+		<table id="addressPosition">
 	        <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.addresses[${varStatus.index}]">
 	                <%@ include file="portlets/patientAddress.jsp" %>

@@ -9,11 +9,6 @@
             </spring:bind>
         </td>
         <td align="left" valign="top">
-            <spring:bind path="prefix">
-                <input type="text" id="${status.expression}" name="${status.expression}" size="3" value="${status.value}" onkeyup="timeOutSearch(this.value)" />
-            </spring:bind>
-        </td>
-        <td align="left" valign="top">
             <spring:bind path="givenName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="16" value="${status.value}"
                        onkeyup="timeOutSearch(this.value)"/>
@@ -26,26 +21,8 @@
             </spring:bind>
         </td>
         <td align="left" valign="top">
-            <spring:bind path="familyNamePrefix">
-                <input type="text" id="${status.expression}" name="${status.expression}" size="3" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
-            </spring:bind>
-        </td>
-        <td align="left" valign="top">
             <spring:bind path="familyName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="16" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
-            </spring:bind>
-        </td>
-        <td align="left" valign="top">
-            <spring:bind path="familyName2">
-                <input type="text" id="${status.expression}" name="${status.expression}" size="16" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
-            </spring:bind>
-        </td>
-        <td align="left" valign="top">
-            <spring:bind path="familyNameSuffix">
-                <input type="text" id="${status.expression}" name="${status.expression}" size="3" value="${status.value}"
                        onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>

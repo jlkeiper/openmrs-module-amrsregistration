@@ -1,4 +1,25 @@
-
+	#amrsTitle{
+		float: left;
+		text-align: left;
+		margin: 5px;
+	}
+    
+    #amrsUserBar {
+    	float: right;
+		text-align: right;
+		padding: 0px 3px 0px 3px;
+		margin: 0px;
+		color: #333333;
+		background-color: #ffffff;
+	}
+	
+	#amrsContent{
+		position: relative;
+		clear: both;
+		margin: 5px;
+		height: 80%;
+	}
+	
     #floating {
     	width: 30%;
     	background-color: #ffffff;
@@ -7,6 +28,11 @@
         position: fixed;
     	font-size: 11px;
     }
+	
+	h2 {
+		margin-top: 0px;
+		margin-bottom: 0px;
+	}
 
     .tabBoxes {
         padding: 3px;
@@ -61,6 +87,6 @@
     }
 	
     #searchHighlight {
-	cursor: pointer;
-	background-color: #F0E68C;
+		cursor: pointer;
+		background-color: #F0E68C;
     }

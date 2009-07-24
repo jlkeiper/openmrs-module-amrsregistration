@@ -10,7 +10,6 @@
 <openmrs:htmlInclude file="/dwr/util.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/css/amrsregistration.css" />
 
 <script type="text/javascript">
 	$j = jQuery.noConflict();
@@ -205,7 +204,6 @@
 	<div id="boxes"> 
 		<div id="dialog" class="window">
 			Patient Data |
-			<a href="#" id="clear">Close</a>
 			<div id="personContent"></div>
 		</div>
 	</div>

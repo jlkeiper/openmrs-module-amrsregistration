@@ -135,19 +135,27 @@ function renderPatientData(patient) {
     document.getElementById("personContent").appendChild(textNode);
     
     document.getElementById("personContent").appendChild(blankSpan);
+    document.getElementById("personContent").appendChild(blankSpan);
 	
-    // create anchor tag to update the data
-    var anchor = document.createElement("a");
-    anchor.innerHTML="Yes";
-	anchor.href="javascript:updateData('" + patient.identifiers[0].identifier + "')";
-    document.getElementById("personContent").appendChild(anchor);
+    // create button tag to update the data
+    var yesButton = document.createElement("input");
+    yesButton.type = "button";
+    yesButton.value="Yes";
+	$j(yesButton).bind('click', function() {
+		updateData(patient.identifiers[0].identifier);
+	});
+    document.getElementById("personContent").appendChild(yesButton);
     
     document.getElementById("personContent").appendChild(blankSpan);
+    document.getElementById("personContent").appendChild(blankSpan);
     
-    var cancel = document.createElement("a");
-    cancel.innerHTML="No";
-	cancel.href="javascript:cancel()";
-    document.getElementById("personContent").appendChild(cancel );
+    var noButton = document.createElement("input");
+    noButton.type = "button";
+    noButton.value="No";
+	$j(noButton).bind('click', function() {
+		cancel();
+	});
+    document.getElementById("personContent").appendChild(noButton);
 	
 	animatePatientData();
 }
