@@ -202,35 +202,38 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 
 				String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName");
 				String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName");
-				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix");
+//				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix");
 				String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName");
-				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2");
-				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix");
+//				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2");
+//				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix");
 				String[] degrees = ServletRequestUtils.getStringParameters(request, "degree");
-				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix");
+//				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix");
 				String[] preferredNames = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (givenNames != null || middleNames != null ||
-						familyNamePrefixes != null || familyNames != null ||
-						familyName2s != null || familyNameSuffixes != null ||
-						degrees != null || prefixes != null) {
+//						familyNamePrefixes != null || 
+						familyNames != null ||
+//						familyName2s != null || familyNameSuffixes != null ||
+						degrees != null) {
+//					|| prefixes != null) {
+					
 					int maxNames = 0;
 					if (givenNames != null && givenNames.length > maxNames)
 						maxNames = givenNames.length;
 					if (middleNames != null && middleNames.length > maxNames)
 						maxNames = middleNames.length;
-					if (familyNamePrefixes != null && familyNamePrefixes.length > maxNames)
-						maxNames = familyNamePrefixes.length;
+//					if (familyNamePrefixes != null && familyNamePrefixes.length > maxNames)
+//						maxNames = familyNamePrefixes.length;
 					if (familyNames != null && familyNames.length > maxNames)
 						maxNames = familyNames.length;
-					if (familyName2s != null && familyName2s.length > maxNames)
-						maxNames = familyName2s.length;
-					if (familyNameSuffixes != null && familyNameSuffixes.length > maxNames)
-						maxNames = familyNameSuffixes.length;
+//					if (familyName2s != null && familyName2s.length > maxNames)
+//						maxNames = familyName2s.length;
+//					if (familyNameSuffixes != null && familyNameSuffixes.length > maxNames)
+//						maxNames = familyNameSuffixes.length;
 					if (degrees != null && degrees.length > maxNames)
 						maxNames = degrees.length;
-					if (prefixes != null && prefixes.length > maxNames)
-						maxNames = prefixes.length;
+//					if (prefixes != null && prefixes.length > maxNames)
+//						maxNames = prefixes.length;
 					
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
@@ -240,11 +243,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 //							name.setPreferred(new Boolean(false));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
-						name.setFamilyNamePrefix(familyNamePrefixes[j]);
+//						name.setFamilyNamePrefix(familyNamePrefixes[j]);
 						name.setFamilyName(familyNames[j]);
-						name.setFamilyName2(familyName2s[j]);
-						name.setFamilyNameSuffix(familyNameSuffixes[j]);
-						name.setDegree(prefixes[j]);
+//						name.setFamilyName2(familyName2s[j]);
+//						name.setFamilyNameSuffix(familyNameSuffixes[j]);
+//						name.setDegree(prefixes[j]);
 						name.setDegree(degrees[j]);
 						patient.addName(name);
                     }

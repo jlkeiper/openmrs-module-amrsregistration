@@ -18,16 +18,21 @@ function renderPatientData(patient) {
 		age = age + '(';
 		if (patient.birthdateEstimated)
 			age = age + '~'
-		age = age + parseDate(patient.birthdate);
+		age = age + parseDate(patient.birthdate, '<openmrs:datePattern />');
+		age = age + ')';
 	} else {
 		age = age + '<spring:message code="Person.age.unknown"/>';
+		age = age + ')';
 	}
 	
 	age = age + '</span>';
 	
-	var identifier = "";
+	var identifier = '';
 	var identifiers = patient.identifiers;
 	for (i = 0; i < identifiers.length; i ++) {
+		if (identifier != '') {
+			identifier = identifier +  + '<br />';
+		}
 		if (identifiers[i].identifierType.name != '${amrsIdType}') {
 			identifier = identifier + identifiers[i].identifierType.name + ': ' + identifiers[i].identifier;
 		}
@@ -75,55 +80,34 @@ function renderPatientData(patient) {
 		personName = personName + preferedName.familyName;
 	
 	var content = 
-	'<div id="patientHeader" class="boxHeader">' + 
-		'<div id="patientHeaderPatientName" style="font-size: 12px;">' + personName + '</div>' +
-		'<div id="patientHeaderPreferredIdentifier">' +
-			'<span class="patientHeaderPatientIdentifier" style="font-size: 12px;">' +
-					'${amrsIdType}: 12345-RG6' +
-			'</span>' +
+	'<div id="summaryHeading" style="width: 100%; padding: 2px; margin: 2px;">' + 
+		'<div id="headingName">' + personName + '</div>' +
+		'<div id="headingPreferredIdentifier">' +
+			'<span>' + '12345-RG6' + '</span>' +
 		'</div>' +
-		'<table id="patientHeaderGeneralInfo">' +
+		'<table width="100%">' +
 			'<tr>' +
-				'<td id="patientHeaderPatientGender">' + gender +
+				'<td class="headingElement" style="padding: 0px;">' + gender +
 				'</td>' +
-				'<td id="patientHeaderPatientAge">' + age +
+				'<td class="headingElement">' + age +
 				'</td>' +
-				'<td style="width: 30%;">&nbsp;</td>' +
-				'<td id="patientHeaderOtherIdentifiers">' + identifier +
+				'<td style="width: 40%;">&nbsp;</td>' +
+				'<td class="headingElement">' + identifier +
 				'</td>' +
 			'</tr>' +
 		'</table>' +
 	'</div>' +
-	'<br />' +
-	'<div class="boxHeader"><spring:message code="Patient.title"/></div>' +
-	'<div class="box">' +
-		'<table class="personName">' +
-			'<thead>' +
-				'<tr>' +
-					'<th><spring:message code="Person.names"/></th>' +
-					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
-						<th><spring:message text="${attrType.name}"/></th>
-					</openmrs:forEachDisplayAttributeType>
-				'</tr>' +
-			'</thead>' +
-			'<tbody>' +
-				'<tr>' +
-					'<td valign="top">' + name +
-					'</td>' +
-					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
-						'<td valign="top">' + patient.attributeMap[${attrType.name}] + '</td>' +
-					</openmrs:forEachDisplayAttributeType>
-				'</tr>' +
-			'</tbody>' +
+	'<div class="summaryInfo" style="width: 100%; padding: 2px; margin: 2px;">' +
+		'<div class="infoHeading">Name(s)</div>' +
+		'<table>' +
+			'<tr>' +
+				'<td valign="top">' + name + '</td>' +
+			'</tr>' +
 		'</table>' +
 	'</div>' +
-	'<br/>' +
-	'<div class="boxHeader"><spring:message code="Person.addresses"/></div>' +
-	'<div class="box">' +
-		'<table class="personAddress">' +
-			'<tbody>' + address +
-			'</tbody>' +
-		'</table>' +
+	'<div class="summaryInfo" style="width: 100%; padding: 2px; margin: 2px;">' +
+		'<div class="infoHeading">Address(es)</div>' +
+		'<table>' + address + '</table>' +
 	'</div>';
     	
 	document.getElementById("personContent").innerHTML = content;

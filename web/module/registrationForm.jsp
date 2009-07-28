@@ -2,18 +2,9 @@
 
 <openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/registration.form" />
 
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
-
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
-<%@ include file="localHeader.jsp" %>
-<script type="text/javascript">
 
-    function focusOnTextBox() {
-        var idCardInput = document.getElementById("idCardInput");
-        idCardInput.focus();
-    }
-</script>
+<%@ include file="localHeader.jsp" %>
 
 <div id="amrsTitle">
 	<h2><spring:message code="amrsregistration.start.title"/></h2>
@@ -29,6 +20,7 @@
 	input[type='submit'] {
 		font-size: 2em;
 		padding: 5px;
+		margin-bottom: 10px;
 		font-weight: bold;
 		vertical-align:super;
 	}
@@ -38,11 +30,7 @@
 	}
 	
 	#centeredForm {
-		position: absolute;
-		height: 200px;
-		margin-top: -100px;
-		top: 50%;
-		width: 100%;
+		margin-top: 10%;
 	}
 	
 </style>
@@ -58,17 +46,17 @@
 			</spring:hasBindErrors>
 			<form id="identifierForm" method="post">
 		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
-		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" />
-				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " />
+		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
+				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " tabindex="2"/>
 			</form>
 			<form id="newIdentifierForm" method="post">
-					<input type="submit" name="_target1" value="No Id Card" />
+					<input type="submit" name="_target1" value="Do Not Have ID Card" tabindex="3"/>
 			</form>
 		</div>
 	</div>
 	<br/>
 	<script type="text/javascript">
-	    focusOnTextBox();
+	    focusOnTextBox("idCardInput");
 	</script>
 </div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

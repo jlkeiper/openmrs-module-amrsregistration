@@ -1,9 +1,6 @@
 <tbody id="addressContent${varStatus.index}">
     <tr>
-        <td>
-            <spring:message code="general.preferred"/>
-        </td>
-        <td align="left" valign="top">
+        <td colspan="2">
             <spring:bind path="personAddressId">
                 <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
             </spring:bind>
@@ -16,6 +13,7 @@
                     onclick="if (preferredBoxClick) preferredBoxClick(this)"
                     <c:if test="${status.value == 'true'}">checked</c:if>/>
             </spring:bind>
+            <spring:message code="general.preferred"/>
         </td>
     </tr>
     <tr>
@@ -72,7 +70,7 @@
     </tr>
     <tr>
         <td>
-            <spring:message code="PersonAddress.subregion" />
+            <spring:message code="amrsregistration.label.address.subregion" />
         </td>
         <td>
             <spring:bind path="subregion">

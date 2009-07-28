@@ -1,25 +1,10 @@
     <tr id="identifierContent${varStatus.index}">
-        <td align="left" valign="top">
-            <spring:message code="general.preferred"/>?
-        </td>
-        <td align="left" valign="top">
-            <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}">
-				<input type="checkbox" name="${status.expression}" value="true" alt="patientIdentifier" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == true}">checked</c:if> />
-            </spring:bind>
-        </td>
-        <td align="right" valign="top">
-            <spring:message code="amrsregistration.labels.ID"/>
-        </td>
-        <td>
+        <td class="spacing">
             <spring:bind path="identifier">
                 <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
             </spring:bind>
         </td>
-        <td align="right">
-            <spring:message code="PatientIdentifier.identifierType"/>
-        </td>
-        <td>
+        <td class="spacing">
             <spring:bind path="identifierType">
                 <select id="${status.expression}" name="${status.expression}">
                     <openmrs:forEachRecord name="patientIdentifierType">
@@ -33,8 +18,7 @@
                 </select>
             </spring:bind>
         </td>
-		<td align="right"><spring:message code="PatientIdentifier.location"/></td>
-		<td>
+		<td class="spacing">
 			<spring:bind path="location">
 				<select id="${status.expression}" name="${status.expression}">
 					<openmrs:forEachRecord name="location">
@@ -46,4 +30,10 @@
 				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 			</spring:bind>
 		</td>
+        <td class="spacing">
+            <spring:bind path="preferred">
+				<input type="hidden" name="_${status.expression}">
+				<input type="checkbox" name="${status.expression}" value="true" alt="patientIdentifier" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == true}">checked</c:if> />
+            </spring:bind>
+        </td>
 	</tr>

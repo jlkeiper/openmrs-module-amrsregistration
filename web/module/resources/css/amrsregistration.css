@@ -17,16 +17,15 @@
 		position: relative;
 		clear: both;
 		margin: 5px;
-		height: 80%;
 	}
 	
     #floating {
     	width: 30%;
     	background-color: #ffffff;
-    	top: 50px;
-    	right: 50px;
+    	top: 25px;
+    	right: 5px;
         position: fixed;
-    	font-size: 11px;
+    	font-size: 12px;
     }
 	
 	h2 {
@@ -39,7 +38,6 @@
     }
 
     .addNew {
-        margin-right: 10px;
         font-size: 10px;
         float: right;
         cursor: pointer;
@@ -67,7 +65,7 @@
     }
 
     #boxes .window {
-    	font-size: 11px;
+    	font-size: 14px;
         position:absolute;
         left:0;
         top:0;
@@ -77,7 +75,7 @@
     }
 
     #boxes #dialog {
-    	font-size: 11px;
+    	font-size: 14px;
         padding:10px;
         background-color:#ffffff;
     }
@@ -90,3 +88,44 @@
 		cursor: pointer;
 		background-color: #F0E68C;
     }
+	
+	#summaryHeading {
+		border: 1px solid lightgray;
+		margin: 5px;
+		padding: 5px;
+		width: 60%;
+	}
+	
+	#headingName {
+		font: bold 2.3em verdana;
+		border-bottom: 1px solid lightgray;
+		margin-left: 5px;
+		float: left;
+	}
+	
+	.headingElement {
+		white-space: nowrap;
+		vertical-align: top;
+		padding: 5px;
+		font: bold 0.8em verdana;
+	}
+	
+	.summaryInfo {
+		border: 1px solid lightgray;
+		margin: 5px;
+		padding: 5px;
+		width: 60%;
+	}
+	
+	.infoHeading {
+		font-weight: bold;
+		border-bottom: 1px solid lightgray;
+	}
+	
+	#headingPreferredIdentifier{
+		font: bold 1.6em verdana;
+		margin:10px;
+		vertical-align: middle;
+		text-align: left;
+		float: right;
+	}

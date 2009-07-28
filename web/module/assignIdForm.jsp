@@ -17,35 +17,9 @@
 	$j(document).ready(function() {
 		$j('#amrsIdToggle').click(function() {
 			if ($j(this).attr("checked")) {
-				// disable all radio button
-				$j('input:radio').attr('disabled', 'disabled');
-				// enable amrs id
-				$j('input:text[name=amrsIdentifier]').attr('disabled', '');
-				$j('input:text[name=amrsIdentifier]').attr('value', '');
-				$j('.match').unbind();
-			} else {
-				// enable all radio button
-				$j('input:radio').attr('disabled', '');
-				// disable amrs id
-				$j('input:text[name=amrsIdentifier]').attr('disabled', 'disabled');
-				$j('input:text[name=amrsIdentifier]').attr('value', 'disabled');
-		
-				$j('.match').click(function(){
-					var tr = $j(this).parent();
-					var input = $j(tr + ':input[type=radio]');
-					getPatientByIdentifier($(input).attr('value'));
-				});
-				
-				$j('.match').hover(
-					function() {
-						var parent = $j(this).parent();
-						$j(parent).addClass("searchHighlight");
-					},
-					function() {
-						var parent = $j(this).parent();
-						$j(parent).removeClass("searchHighlight");
-					}
-				);
+				$j("#matchesSection").hide();
+				$j("#patientSection").show();
+				$j("#amrsIdentifier").focus();
 			}
 		});
 		
@@ -82,47 +56,10 @@
     	$j(hiddenInput).attr("name", "idCardInput");
     	$j(hiddenInput).attr("id", "idCardInput");
     	$j(hiddenInput).attr("value", identifier);
-    	$j('#boxes').append($j(hiddenInput));
+    	$j('.match').append($j(hiddenInput));
     	
     	document.forms[formName].submit();
     }
-	
-	function parseDate(d) {
-		var str = '';
-		if (d != null) {
-			
-			// get the month, day, year values
-			var month = "";
-			var day = "";
-			var year = "";
-			var date = d.getDate();
-			
-			if (date < 10)
-				day += "0";
-			day += date;
-			var m = d.getMonth() + 1;
-			if (m < 10)
-				month += "0";
-			month += m;
-			if (d.getYear() < 1900)
-				year = (d.getYear() + 1900);
-			else
-				year = d.getYear();
-		
-			var datePattern = '<openmrs:datePattern />';
-			var sep = datePattern.substr(2,1);
-			var datePatternStart = datePattern.substr(0,1).toLowerCase();
-			
-			if (datePatternStart == 'm') /* M-D-Y */
-				str = month + sep + day + sep + year
-			else if (datePatternStart == 'y') /* Y-M-D */
-				str = year + sep + month + sep + day
-			else /* (datePatternStart == 'd') D-M-Y */
-				str = day + sep + month + sep + year
-			
-		}
-		return str;
-	}
     
     function getPatientByIdentifier(identifier) {
     	DWRAmrsRegistrationService.getPatientByIdentifier(identifier, renderPatientData);
@@ -134,29 +71,58 @@
 		 background-color: white;
 		 font-weight: bold;
 	}
+	
+	.border {
+		border: 1px solid lightgray;
+	}
+	
+	.spacing {
+		padding-right: 5em;
+	}
+	
+	#idFormSection {
+		text-align: center;
+		width: 60%;
+		border-bottom: 1px solid lightgray;
+		margin-bottom: 5px;
+	}
+
+	#idFormSection input[type='text'] {
+		font-size: 3em;
+		text-align: right;
+	}
+	
 </style>
+
+<div id="amrsTitle">
+	<h2>Assign AMRS ID<!--spring:message code="amrsregistration.edit.start"/--></h2>
+</div>
+
 <div id="mask"></div>
-<spring:hasBindErrors name="patient">
-	<c:forEach items="${errors.allErrors}" var="error">
-		<br />
-		<span class="error"><spring:message code="${error.code}"/></span>
-	</c:forEach>
-</spring:hasBindErrors>
-<br />
-<b class="boxHeader">Possible Matched Patient Data</b>
-<div class="box">
-<form id="switchPatient" name="switchPatient" method="post">
-	<c:choose>
-		<c:when test="${fn:length(potentialMatches) > 0}">
-		    <div>
-		        <table border="0" cellspacing="2" cellpadding="2">
+
+<div id="amrsContent">
+<div id="boxes"> 
+	<div id="dialog" class="window">
+		| Patient Data |
+		<div id="personContent"></div>
+	</div>
+</div>
+
+<c:choose>
+	<c:when test="${fn:length(potentialMatches) > 0}">
+		<div id="matchesSection">
+			<span>The system have determine that the following patient look similar to the one you are entering</span>
+			<br />
+			<br />
+			<form id="switchPatient" name="switchPatient" method="post">
+		        <table border="0" cellspacing="2" cellpadding="2" class="border">
 		            <tr>
-		            	<th>Use this patient?</th>
-		            	<th>Identifier</th>
-		            	<th>First Name</th>
-		            	<th>Last Name</th>
-		            	<th>Gender</th>
-		            	<th>DOB</th>
+		            	<td>Use this patient?</td>
+		            	<td>Identifier</td>
+		            	<td>First Name</td>
+		            	<td>Last Name</td>
+		            	<td>Gender</td>
+		            	<td>DOB</td>
 		            </tr>
 		    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
 		    			<c:choose>
@@ -169,85 +135,59 @@
 		    			</c:choose>
 		    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
 		    					<c:if test="${varStatus.index == 0}">
-			    					<td align="center">
+			    					<td>
 										<input type="hidden" name="_idCardInput">
 										<input type="radio" name="idCardInput" value="${identifier.identifier}" onclick="getPatientByIdentifier(this.value)" />
 	            					</td>
-				    				<td class="match">
+				    				<td class="match spacing">
 				    					<c:out value="${identifier.identifier}" />
 				    				</td>
 	            				</c:if>
 		    				</c:forEach>
-		    				<td class="match">
+		    				<td class="match spacing">
 		    					<c:out value="${person.personName.givenName}" />
 		    				</td>
-		    				<td class="match">
+		    				<td class="match spacing">
 		    					<c:out value="${person.personName.familyName}" />
 		    				</td>
-		    				<td class="match">
+		    				<td class="match spacing">
 		    					<c:out value="${person.gender}" />
 		    				</td>
-		    				<td class="match">
+		    				<td class="match spacing">
 		    					<openmrs:formatDate date="${person.birthdate}" />
 		    				</td>
 		    			</tr>
 		    		</c:forEach>
 		        </table>
+		        <br />
 		        <input type="checkbox" id="amrsIdToggle" value="true" /> I certify that none of the above is the patient that I'm looking for
-		    </div>
-		</c:when>
-		<c:otherwise>
-			No potential matches found
-		</c:otherwise>
-	</c:choose>
-	
-	<div id="boxes"> 
-		<div id="dialog" class="window">
-			Patient Data |
-			<div id="personContent"></div>
+			</form>
+			<br />
 		</div>
-	</div>
-	
-</form>
-</div>
-<br />
-
-<form id="patientForm" method="post">
-	<div id="patientHeader" class="boxHeader">
-		<div id="patientHeaderPatientName">${patient.personName}</div>
-		<div id="patientHeaderPreferredIdentifier">
-			<span class="patientHeaderPatientIdentifier">
-				<span id="patientHeaderPatientIdentifierType">
-					${amrsIdType}:
-				</span>
-				<input style="background-color: inherit;"
-					size="10"
-					type="text"
-					name="amrsIdentifier"
-					<c:if test="${fn:length(potentialMatches) > 0}">
-						value="disabled" disabled
-					</c:if>
-				/>
-			</span>
-		</div>
-		<%@ include file="portlets/personInfo.jsp" %>
-	</div>
+		<div id=patientSection style="display: none">
+	</c:when>
+	<c:otherwise>
+		<div id=patientSection style="display: block">
+	</c:otherwise>
+</c:choose>
+	<span>Please assign an ID for the following patient</span>
 	<br />
-	
-	<div class="boxHeader"><spring:message code="Patient.title"/></div>
-	<div class="box">
-		<table class="personName">
-			<thead>
+	<spring:hasBindErrors name="patient">
+		<c:forEach items="${errors.allErrors}" var="error">
+			<br />
+			<span class="error"><spring:message code="${error.code}"/></span>
+		</c:forEach>
+	</spring:hasBindErrors>
+	<form id="patientForm" method="post">
+		<div id="summaryHeading">
+			<div id="headingName">${patient.personName}</div>
+			<%@ include file="portlets/personInfo.jsp" %>
+		</div>
+		<div class="summaryInfo">
+			<div class="infoHeading">Name</div>
+			<table>
 				<tr>
-					<th><spring:message code="Person.names"/></th>
-					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
-						<th><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></th>
-					</openmrs:forEachDisplayAttributeType>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td valign="top">
+					<td>
 						<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
 							<c:if test="${!name.voided}">
 								<spring:nestedPath path="patient.names[${varStatus.index}]">
@@ -256,41 +196,48 @@
 							</c:if>
 						</c:forEach>
 					</td>
-					<openmrs:forEachDisplayAttributeType personType="patient" displayType="viewing" var="attrType">
-						<td valign="top">${patient.attributeMap[attrType.name]}</td>
-					</openmrs:forEachDisplayAttributeType>
 				</tr>
-			</tbody>
-		</table>
-	</div>
+			</table>
+		</div>
 	
-	<br/>
-	
-	<div class="boxHeader"><spring:message code="Person.addresses"/></div>
-	<div class="box">
-		<table class="personAddress">
-			<thead>
-				<openmrs:portlet url="addressLayout" id="addressPortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=true" />
-			</thead>
-			<tbody>
-				<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
-					<c:if test="${!address.voided}">
-						<spring:nestedPath path="patient.addresses[${varStatus.index}]">
-							<openmrs:portlet url="addressLayout" id="addressPortlet" size="inOneRow" parameters="layoutMode=view|layoutShowTable=false|layoutShowExtended=true" />
-						</spring:nestedPath>
-					</c:if>
-				</c:forEach>
-			</tbody>
-		</table>
-	</div>
+		<div class="summaryInfo">
+			<div class="infoHeading"><spring:message code="Person.addresses"/></div>
+			<table>
+				<tr>
+					<td>
+						<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+							<c:if test="${!address.voided}">
+								<spring:nestedPath path="patient.addresses[${varStatus.index}]">
+									<openmrs:portlet url="addressLayout" id="addressPortlet" size="inOneRow" parameters="layoutMode=view|layoutShowTable=false|layoutShowExtended=false" />
+								</spring:nestedPath>
+							</c:if>
+						</c:forEach>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="clear: both">&nbsp;</div>
+		<div id="idFormSection">
+			<span style="font: bold 2em verdana;">Assign New ID: </span><br />
+			<input size="10" type="text" name="amrsIdentifier" id="amrsIdentifier" /><br />
+			<span style="font: bold 0.8em verdana">(${amrsIdType})</span>
+		<br />
+		<br />
+		<div style="clear: both">&nbsp;</div>
+		</div>
+		<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
+	    &nbsp; &nbsp;
+		<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
+		&nbsp; &nbsp;
+	    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
+	</form>
 	<br />
-	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
-    &nbsp; &nbsp;
-	<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
-	&nbsp; &nbsp;
-    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
-</form>
-<br />
-<br />
+	<br />
+</div>
+</div>
+
+<script type="text/javascript">
+    focusOnTextBox("amrsIdentifier");
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
