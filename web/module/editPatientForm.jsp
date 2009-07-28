@@ -176,12 +176,17 @@
     			$j(tr).append($j(td));
     			
     			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(parseDate(result[i].birthdate, '<openmrs:datePattern />')));
+    			$j(td).css('text-align', 'center');
+    			var data = $j(document.createElement('img'));
+    			if (result[i].gender == 'F')
+    				$j(data).attr('src', "${pageContext.request.contextPath}/images/female.gif");
+    			else
+    				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
     			$j(td).append($j(data));
     			$j(tr).append($j(td));
     			
     			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(result[i].gender));
+    			var data = $j(document.createTextNode(parseDate(result[i].birthdate, '<openmrs:datePattern />')));
     			$j(td).append($j(data));
     			$j(tr).append($j(td));
     			
@@ -385,7 +390,6 @@
 	<form id="patientForm" method="post" onSubmit="removeBlankData()">
 	<div id="boxes"> 
 		<div id="dialog" class="window">
-			| Patient Data |
 			<div id="personContent"></div>
 		</div>
 	</div>

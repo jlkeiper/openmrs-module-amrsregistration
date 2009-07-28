@@ -103,7 +103,6 @@
 <div id="amrsContent">
 <div id="boxes"> 
 	<div id="dialog" class="window">
-		| Patient Data |
 		<div id="personContent"></div>
 	</div>
 </div>
@@ -119,8 +118,8 @@
 		            <tr>
 		            	<td>Use this patient?</td>
 		            	<td>Identifier</td>
-		            	<td>First Name</td>
-		            	<td>Last Name</td>
+		            	<td>Given Name</td>
+		            	<td>Family Name</td>
 		            	<td>Gender</td>
 		            	<td>DOB</td>
 		            </tr>
@@ -150,8 +149,9 @@
 		    				<td class="match spacing">
 		    					<c:out value="${person.personName.familyName}" />
 		    				</td>
-		    				<td class="match spacing">
-		    					<c:out value="${person.gender}" />
+		    				<td class="match spacing" style="text-align: center">
+								<c:if test="${patient.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+								<c:if test="${patient.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
 		    				</td>
 		    				<td class="match spacing">
 		    					<openmrs:formatDate date="${person.birthdate}" />

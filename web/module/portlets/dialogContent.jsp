@@ -27,6 +27,7 @@ function renderPatientData(patient) {
 	
 	age = age + '</span>';
 	
+	var amrsIdentifier = '-';
 	var identifier = '';
 	var identifiers = patient.identifiers;
 	for (i = 0; i < identifiers.length; i ++) {
@@ -35,6 +36,8 @@ function renderPatientData(patient) {
 		}
 		if (identifiers[i].identifierType.name != '${amrsIdType}') {
 			identifier = identifier + identifiers[i].identifierType.name + ': ' + identifiers[i].identifier;
+		} else {
+			amrsIdentifier = identifiers[i].identifier;
 		}
 	}
 	
@@ -83,7 +86,7 @@ function renderPatientData(patient) {
 	'<div id="summaryHeading" style="width: 100%; padding: 2px; margin: 2px;">' + 
 		'<div id="headingName">' + personName + '</div>' +
 		'<div id="headingPreferredIdentifier">' +
-			'<span>' + '12345-RG6' + '</span>' +
+			'<span>' + amrsIdentifier + '</span>' +
 		'</div>' +
 		'<table width="100%">' +
 			'<tr>' +
