@@ -4,6 +4,7 @@
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 <openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
 
 <div id="amrsTitle">
