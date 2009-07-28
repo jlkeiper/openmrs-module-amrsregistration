@@ -3,8 +3,8 @@
 <openmrs:require privilege="Register Patients" otherwise="/module/amrsregistration/login.htm" redirect="/module/amrsregistration/registration.form" />
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
-
 <%@ include file="localHeader.jsp" %>
+<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
 
 <div id="amrsTitle">
 	<h2><spring:message code="amrsregistration.start.title"/></h2>
