@@ -125,7 +125,7 @@
         }
         
         if (!allowCreate){
-        	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' are blank');
+        	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' is blank');
         }
     }
     
@@ -245,10 +245,10 @@
 	    		$j('#' + type + "Content" + idSufix).remove();
 	    		numObjs[type] = idSufix;
 	    	} else {
-	    		message = "Removing " + type + " not permitted because deleted element are not empty";
+	    		message = "Removing " + type + " not permitted because deleted element is not empty";
 	    	}
     	} else {
-    		message = "Removing " + type + " not permitted because there only one row left";
+    		message = "Removing " + type + " not permitted because there is only one row left";
     	}
     	
     	if (message.length > 0 && showMessage)

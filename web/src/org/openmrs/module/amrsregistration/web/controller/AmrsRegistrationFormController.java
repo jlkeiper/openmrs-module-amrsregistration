@@ -68,11 +68,18 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		Patient patient = (Patient) command;
 		AmrsSearchManager searchManager = new AmrsSearchManager();
-		List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(),
-			patient.getAttributes(), null, null, null, 10);
+		List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(), patient.getAttributes(), null, null, null, 10);
 		// remove the exact match from the possible match (to prevent patient selected from the list to show again in the list)
 		persons.remove(patient);
-		localHashMap.put("potentialMatches", persons);
+		
+		String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
+		if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {			
+			if (amrsId == null)
+				// don't send potential matches for assign id page
+				localHashMap.put("potentialMatches", persons);
+		} else {
+			localHashMap.put("potentialMatches", persons);
+		}
 		
 		return localHashMap;
 	}
@@ -95,7 +102,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			String emptyString = "";
 			List<PatientIdentifierType> types = new ArrayList<PatientIdentifierType>();
 			List<Patient> patients = patientService.getPatients(emptyString, idCard, types, true);
-			if (patients != null && patients.size() > 0) {
+			if (patients != null && !patients.isEmpty()) {
 				// patient with matching id are found
 				patientSearched = patients.get(0);
 				copyPatient(patient, patientSearched);
@@ -129,11 +136,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					// found a patient
 					if (patientSearched != null){
 						// default to found patient, but no required id type
-						targetPage = 2;
+						targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
 						for (PatientIdentifier identifier : patient.getIdentifiers()) {
 							if (identifier.getIdentifierType().getName().equals(idType)) {
 								// found the required id type, go to confirmation page
-								targetPage = 3;
+								targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 								break;
 							}
 				        }
@@ -322,7 +329,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				for (PatientIdentifier identifier : patient.getIdentifiers()) {
 					if (identifier.getIdentifierType().getName().equals(idType)) {
 						// found the required id type, go to confirmation page
-						targetPage = 3;
+						targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 						break;
 					}
 		        }
