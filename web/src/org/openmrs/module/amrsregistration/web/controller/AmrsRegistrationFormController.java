@@ -27,9 +27,12 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsregistration.AmrsSearchManager;
+import org.openmrs.patient.IdentifierValidator;
+import org.openmrs.patient.UnallowedIdentifierException;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
 import org.openmrs.propertyeditor.PatientIdentifierTypeEditor;
@@ -187,6 +190,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				
 				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
 				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
+				String[] locations = ServletRequestUtils.getStringParameters(request, "location");
 				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "preferred");
 				if (ids != null || idTypes != null) {
 					int maxIds = 0;
@@ -194,11 +198,16 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						maxIds = ids.length;
 					if (idTypes != null && idTypes.length > maxIds)
 						maxIds = idTypes.length;
+					if (locations != null && locations.length > maxIds)
+						maxIds = locations.length;
+					
+					LocationService locationService = Context.getLocationService();
 					
 					for (int j = 0; j < maxIds; j++) {
 	                    PatientIdentifier identifier = new PatientIdentifier();
 	                    identifier.setIdentifier(ids[j]);
 	                    identifier.setIdentifierType(patientService.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
+	                    identifier.setLocation(locationService.getLocation(Integer.valueOf(locations[j])));
 //						if (preferredIds != null && preferredIds.length > j)
 //							identifier.setPreferred(new Boolean(true));
 //						else
@@ -336,29 +345,34 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				break;
 			case 3:
 				String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
-    			boolean foundAmrsId = false;
-    			// search if the id is already there
-    			// if it is there, then update it
-    			for (PatientIdentifier identifier : patient.getIdentifiers()) {
-	                if (identifier.getIdentifierType().getName().equals(idType)) {
-	                	foundAmrsId = true;
-	                	if (amrsId != null && amrsId.length() > 0) {
-	                		identifier.setIdentifier(amrsId);
-	                	}
-	                }
-    			}
-				if (!foundAmrsId) {
-					if (amrsId != null && amrsId.length() > 0) {
+				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
+    			boolean validIdentifier = false;
+				try {
+	                IdentifierValidator validator = Context.getPatientService().getIdentifierValidator(type.getValidator());
+	                validIdentifier = validator.isValid(amrsId);
+                }
+                catch (UnallowedIdentifierException e) {
+					log.error("Bad identifier: '" + amrsId + "'");
+                }
+                
+                if (!validIdentifier) {
+    				errors.reject("AMRS Id assigned is invalid according to the identifier validator.");
+                } else {
+        			boolean foundAmrsId = false;
+        			for (PatientIdentifier identifier : patient.getIdentifiers()) {
+    	                if (identifier.getIdentifierType().equals(type)) {
+    	                	foundAmrsId = true;
+    	                	identifier.setIdentifier(amrsId);
+    	                }
+        			}
+    				if (!foundAmrsId) {
 						PatientIdentifier identifier = new PatientIdentifier();
 						identifier.setIdentifier(amrsId);
-						PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
 						identifier.setIdentifierType(type);
+						identifier.setLocation(Context.getLocationService().getDefaultLocation());
 						patient.addIdentifier(identifier);
-					}
-					else {
-	    				errors.reject("No AMRS id found for this patient. Please assign AMRS id for this patient to proceed.");
-					}
-				}
+    				}
+                }
     			break;
 			
 		}
