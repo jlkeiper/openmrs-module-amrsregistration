@@ -1,7 +1,7 @@
     <tr id="identifierContent${varStatus.index}">
         <td class="spacing">
             <spring:bind path="identifier">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing">
@@ -32,7 +32,7 @@
 		</td>
         <td class="spacing">
             <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}">
+				<input type="hidden" name="_${status.expression}" />
 				<input type="checkbox" name="${status.expression}" value="true" alt="patientIdentifier" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == true}">checked</c:if> />
             </spring:bind>
         </td>

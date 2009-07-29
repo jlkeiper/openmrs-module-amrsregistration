@@ -2,16 +2,16 @@
     <tr>
         <td colspan="2">
             <spring:bind path="personAddressId">
-                <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+                <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}" />
             </spring:bind>
             <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}">
+				<input type="hidden" name="_${status.expression}" />
                 <input type="checkbox"
                 	id="${status.expression}"
                 	name="${status.expression}"
                     value="true" alt="patientAddress"
                     onclick="if (preferredBoxClick) preferredBoxClick(this)"
-                    <c:if test="${status.value == 'true'}">checked</c:if>/>
+                    <c:if test="${status.value == 'true'}">checked</c:if> />
             </spring:bind>
             <spring:message code="general.preferred"/>
         </td>
@@ -22,7 +22,7 @@
         </td>
         <td>
             <spring:bind path="address1">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -30,7 +30,7 @@
         </td>
         <td>
             <spring:bind path="address2">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -38,7 +38,7 @@
         </td>
         <td>
             <spring:bind path="neighborhoodCell">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
     </tr>
@@ -48,7 +48,7 @@
         </td>
         <td>
             <spring:bind path="cityVillage">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -56,7 +56,7 @@
         </td>
         <td>
             <spring:bind path="townshipDivision">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -64,7 +64,7 @@
         </td>
         <td>
             <spring:bind path="countyDistrict">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
     </tr>
@@ -74,7 +74,7 @@
         </td>
         <td>
             <spring:bind path="subregion">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -82,7 +82,7 @@
         </td>
         <td>
             <spring:bind path="region">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
     </tr>
@@ -92,7 +92,7 @@
         </td>
         <td>
             <spring:bind path="stateProvince">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -100,7 +100,7 @@
         </td>
         <td>
             <spring:bind path="country">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td align="right">
@@ -108,7 +108,7 @@
         </td>
         <td>
             <spring:bind path="postalCode">
-                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
     </tr>

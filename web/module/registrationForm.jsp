@@ -15,7 +15,6 @@
 
 	input[type='text'] {
 		font-size: 3em;
-		text-align: right;
 	}
 	
 	input[type='submit'] {
@@ -48,10 +47,12 @@
 			<form id="identifierForm" method="post">
 		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
 		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
+				<input type="hidden" name="_page0" value="true" />
 				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " tabindex="2"/>
 			</form>
 			<form id="newIdentifierForm" method="post">
-					<input type="submit" name="_target1" value="Do Not Have ID Card" tabindex="3"/>
+				<input type="hidden" name="_page0" value="true" />
+				<input type="submit" name="_target1" value="Do Not Have ID Card" tabindex="3"/>
 			</form>
 		</div>
 	</div>

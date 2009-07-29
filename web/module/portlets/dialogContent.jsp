@@ -84,8 +84,8 @@ function renderPatientData(patient) {
 	
 	var content = 
 	'<div id="summaryHeading" style="width: 100%; padding: 2px; margin: 2px;">' + 
-		'<div id="headingName">' + personName + '</div>' +
-		'<div id="headingPreferredIdentifier">' +
+		'<div id="headingName" style="font-size: 1.5em">' + personName + '</div>' +
+		'<div id="headingPreferredIdentifier" style="font-size: 1em">' +
 			'<span>' + amrsIdentifier + '</span>' +
 		'</div>' +
 		'<table width="100%">' +

@@ -71,7 +71,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		Patient patient = (Patient) command;
 		AmrsSearchManager searchManager = new AmrsSearchManager();
-		List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(), patient.getAttributes(), null, null, null, 10);
+		List<Patient> persons = searchManager.getPatients(patient.getPersonName(), patient.getPersonAddress(), patient.getAttributes(), patient.getGender(), patient.getBirthdate(), patient.getAge(), 10);
 		// remove the exact match from the possible match (to prevent patient selected from the list to show again in the list)
 		persons.remove(patient);
 		

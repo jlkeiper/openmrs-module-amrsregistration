@@ -89,7 +89,6 @@
 
 	#idFormSection input[type='text'] {
 		font-size: 3em;
-		text-align: right;
 	}
 	
 </style>
@@ -225,6 +224,8 @@
 		<br />
 		<div style="clear: both">&nbsp;</div>
 		</div>
+		<input type="hidden" name="_page2" value="true" />
+		&nbsp;
 		<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 	    &nbsp; &nbsp;
 		<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">

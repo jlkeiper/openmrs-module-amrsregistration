@@ -5,29 +5,29 @@
         <td class="spacing">
             <spring:bind path="givenName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="20" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
+                       onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing">
             <spring:bind path="middleName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="20" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
+                       onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing">
             <spring:bind path="familyName">
                 <input type="text" id="${status.expression}" name="${status.expression}" size="20" value="${status.value}"
-                       onkeyup="timeOutSearch(this.value)"/>
+                       onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing">
             <spring:bind path="degree">
-                <input type="text" id="${status.expression}" name="${status.expression}" size="4" value="${status.value}" onkeyup="timeOutSearch(this.value)"/>
+                <input type="text" id="${status.expression}" name="${status.expression}" size="4" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing">
             <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}">
+				<input type="hidden" name="_${status.expression}" />
                 <input type="checkbox" id="${status.expression}" name="${status.expression}" value="true" alt="patientName" onclick="preferredBoxClick(this)" <c:if test="${status.value == 'true'}">checked</c:if> />
             </spring:bind>
         </td>

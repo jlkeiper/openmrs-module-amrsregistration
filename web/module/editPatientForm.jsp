@@ -128,77 +128,6 @@
         	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' is blank');
         }
     }
-    
-    function handlePatientResult(result) {
-		clearTimeout(searchTimeout);
-		
-    	if (result.length > 0) {
-    		
-    		var tbody = $j('#resultTable');
-    		$j(tbody).empty();
-    		
-    		for(i = 0; i < result.length; i ++) {
-    			var tr = $j(document.createElement('tr'));
-    			
-    			if (i % 2 == 0)
-    				$j(tr).addClass("evenRow");
-    			else
-    				$j(tr).addClass("oddRow");
-    			
-    			var value = result[i].identifiers[0].identifier;
-    			
-    			$j(tr).hover(
-    				function() {
-						$j(this).addClass("searchHighlight");
-    				},
-    				function() {
-						$j(this).removeClass("searchHighlight");
-    				}
-    			);
-    			
-    			$j(tr).click(function() {
-    				getPatientByIdentifier(value);
-    			});
-    			
-    			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(result[i].identifiers[0].identifier));
-    			$j(td).append($j(data));
-    			$j(tr).append($j(td));
-    			
-    			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(result[i].personName.givenName));
-    			$j(td).append($j(data));
-    			$j(tr).append($j(td));
-    			
-    			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(result[i].personName.familyName));
-    			$j(td).append($j(data));
-    			$j(tr).append($j(td));
-    			
-    			var td = $j(document.createElement('td'));
-    			$j(td).css('text-align', 'center');
-    			var data = $j(document.createElement('img'));
-    			if (result[i].gender == 'F')
-    				$j(data).attr('src', "${pageContext.request.contextPath}/images/female.gif");
-    			else
-    				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
-    			$j(td).append($j(data));
-    			$j(tr).append($j(td));
-    			
-    			var td = $j(document.createElement('td'));
-    			var data = $j(document.createTextNode(parseDate(result[i].birthdate, '<openmrs:datePattern />')));
-    			$j(td).append($j(data));
-    			$j(tr).append($j(td));
-    			
-    			$j(tbody).append($j(tr));
-    		}
-    		
-    		$j('#floating').show();
-    		
-    	} else {
-    		$j('#floating').hide();
-    	}
-    }
 	
 	function removeBlankData() {
 		// remove name, id and address template
@@ -255,12 +184,105 @@
 	    	$j('#' + type + 'Error').html(message);
 	}
 	
-	function timeOutSearch(thing) {
+	function createCell(content, row) {
+		var column = $j(document.createElement('td'));
+		var data = $j(document.createTextNode(content));
+		$j(column).append($j(data));
+		$j(row).append($j(column));
+	}
+    
+    function handlePatientResult(result) {
 		clearTimeout(searchTimeout);
-		searchTimeout = setTimeout("patientSearch(\'thing\')", searchDelay);
+		
+    	if (result.length > 0) {
+    		
+    		var tbody = $j('#resultTable');
+    		$j(tbody).empty();
+    		
+    		for(i = 0; i < result.length; i ++) {
+    			var tr = $j(document.createElement('tr'));
+    			
+    			if (i % 2 == 0)
+    				$j(tr).addClass("evenRow");
+    			else
+    				$j(tr).addClass("oddRow");
+    			
+    			var value = result[i].identifiers[0].identifier;
+    			
+    			$j(tr).hover(
+    				function() {
+						$j(this).addClass("searchHighlight");
+    				},
+    				function() {
+						$j(this).removeClass("searchHighlight");
+    				}
+    			);
+    			
+    			$j(tr).click(function() {
+    				getPatientByIdentifier(value);
+    			});
+    			
+    			createCell(result[i].identifiers[0].identifier, tr);
+    			createCell(result[i].personName.givenName, tr);
+    			createCell(result[i].personName.familyName, tr);
+    			
+    			var td = $j(document.createElement('td'));
+    			$j(td).css('text-align', 'center');
+    			var data = $j(document.createElement('img'));
+    			if (result[i].gender == 'F')
+    				$j(data).attr('src', "${pageContext.request.contextPath}/images/female.gif");
+    			else
+    				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
+    			$j(td).append($j(data));
+    			$j(tr).append($j(td));
+    			
+    			createCell(parseDate(result[i].birthdate, '<openmrs:datePattern />'), tr);
+    			
+    			$j(tbody).append($j(tr));
+    		}
+    		
+    		$j('#floating').show();
+    		
+    	} else {
+    		$j('#floating').hide();
+    	}
+    }
+	
+	// age function borrowed from http://anotherdan.com/2006/02/simple-javascript-age-function/
+	function getAge(d) {
+		var age = -1;
+		now = new Date();
+		while (now >= d) {
+			age++;
+			d.setFullYear(d.getFullYear() + 1);
+		}
+		return age;
+	}
+    
+    function isAlphaNumericCharacter(key) {
+		 return (key >= 48 && key <= 90) ||
+				(key >= 96 && key <= 105);
+	}
+	
+	function isDashCharacter(key) {
+		return key == 189 || key == 109;
+	}
+	
+	function isBackspaceDelete(key) {
+		return key == 46 || key == 8;
+	}
+	
+	function timeOutSearch(e) {
+		c = e.keyCode;
+		
+		if (isAlphaNumericCharacter(c) || isDashCharacter(c) || isBackspaceDelete(c)) {
+			clearTimeout(searchTimeout);
+			searchTimeout = setTimeout("patientSearch()", searchDelay);
+		}
 	}
 
-    function patientSearch(thing) {
+    function patientSearch() {
+    	
         var gName = document.getElementById("names[0].givenName");
         var mName = document.getElementById("names[0].middleName");
         var fName = document.getElementById("names[0].familyName");
@@ -326,7 +348,24 @@
         }
         // alert("Attributes: " + DWRUtil.toDescriptiveString(attributes, 2));
         
-        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, null, null, null, handlePatientResult);
+        var birthStr = $j('input:text[name=birthdate]').attr('value');
+        var birthdate = null;
+        if (birthStr && birthStr.length > 0)
+        	birthdate = new Date(Date.parse(birthStr));
+        	
+        var gender = $j('input:radio[name=gender]:checked').attr('value');
+        if (!gender)
+        	gender = null;
+        	
+        var age = $j('input:text[name=age]').attr('value');
+        if (!age && birthStr) {
+			var age = getAge(birthStr);
+        	if (!age)
+        		age = null;
+        } else
+        	age = null;
+        
+        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, gender, birthdate, age, handlePatientResult);
     }
     
     function prepareAttributes() {
@@ -521,7 +560,7 @@
 						<td style="padding-right: 3.6em;">
 							<spring:bind path="patient.gender">
 								<openmrs:forEachRecord name="gender">
-									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> />
+									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onkeyup="timeOutSearch(event)" />
 										<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
 								</openmrs:forEachRecord>
 							</spring:bind>
@@ -530,9 +569,9 @@
 				<c:choose>
 					<c:when test="${patient.birthdate == null}">
 							<td style="padding-right: 4em;">
-								<input type="text" name="birthdate" id="birthdate" size="11" value="" onClick="showCalendar(this)" onkeyup="timeOutSearch(this.value)"/>
+								<input type="text" name="birthdate" id="birthdate" size="11" value="" readonly="readonly" onclick="showCalendar(this)" onkeyup="timeOutSearch(event)"/>
 								<spring:message code="Person.age.or"/>
-								<input type="text" name="age" id="age" size="5" value="" />
+								<input type="text" name="age" id="age" size="5" value="" onkeyup="timeOutSearch(event)" />
 							</td>
 					</c:when>
 					<c:otherwise>
@@ -573,8 +612,9 @@
 									<input type="text" 
 											name="birthdate" size="10" id="birthdate"
 											value="${status.value}"
-											onChange="updateAge(); updateEstimated(this);"
-											onClick="showCalendar(this)" />
+											readonly="readonly"
+											onchange="updateAge(); updateEstimated(this);"
+											onclick="showCalendar(this)" onkeyup="timeOutSearch(event)" />
 									<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
 								</spring:bind>
 								
@@ -704,6 +744,8 @@
 			</td>
 		</tr>
 	</table>
+	<input type="hidden" name="_page1" value="true" />
+	&nbsp;
 	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 	&nbsp; &nbsp;
 	<input type="submit" name="_target2" value="<spring:message code='amrsregistration.button.continue'/>">

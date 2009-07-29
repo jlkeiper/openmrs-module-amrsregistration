@@ -61,6 +61,7 @@
 	</div>
 		
 	<br />
+	<input type="hidden" name="_page3" value="true" />
 	&nbsp;
 	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 	&nbsp; &nbsp;
