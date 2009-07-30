@@ -187,11 +187,80 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		                patient.addAttribute(attribute);
 	                }
                 }
+
+				String namePreferred = ServletRequestUtils.getStringParameter(request, "namePreferred", null);
+				int selectedName = 0;
+				if(namePreferred != null) {
+					selectedName = Integer.parseInt(namePreferred);
+				}
+				boolean preferredNameCreated = true;
+				if (selectedName < patient.getNames().size()) {
+					// preferred is one of the name in the patient
+					// iterate the name and move the preferred to other place
+					preferredNameCreated = false;
+					int counter = 0;
+					for (PersonName name : patient.getNames()) {
+						if (counter == selectedName) {
+							name.setPreferred(new Boolean(true));
+						} else {
+							name.setPreferred(new Boolean(false));
+						}
+						counter ++;
+                    }
+				} else {
+					selectedName = selectedName - patient.getNames().size();
+				}
+				
+				String identifierPreferred = ServletRequestUtils.getStringParameter(request, "identifierPreferred", null);
+				int selectedIdentifier = 0;
+				if(identifierPreferred != null) {
+					selectedIdentifier = Integer.parseInt(identifierPreferred);
+				}
+				boolean preferredIdentifierCreated = true;
+				if (selectedIdentifier < patient.getIdentifiers().size()) {
+					// preferred is one of the name in the patient
+					// iterate the name and move the preferred to other place
+					preferredIdentifierCreated = false;
+					int counter = 0;
+					for (PatientIdentifier identifier: patient.getIdentifiers()) {
+						if (counter == selectedIdentifier) {
+							identifier.setPreferred(new Boolean(true));
+						} else {
+							identifier.setPreferred(new Boolean(false));
+						}
+						counter ++;
+                    }
+				} else {
+					selectedIdentifier = selectedIdentifier - patient.getIdentifiers().size();
+				}
+				
+				String addressPreferred = ServletRequestUtils.getStringParameter(request, "addressPreferred", null);
+				int selectedAddress = 0;
+				if(addressPreferred != null) {
+					selectedAddress = Integer.parseInt(addressPreferred);
+				}
+				boolean preferredAddressCreated = true;
+				if (selectedAddress < patient.getAddresses().size()) {
+					// preferred is one of the name in the patient
+					// iterate the name and move the preferred to other place
+					preferredAddressCreated = false;
+					int counter = 0;
+					for (PersonAddress address: patient.getAddresses()) {
+						if (counter == selectedAddress) {
+							address.setPreferred(new Boolean(true));
+						} else {
+							address.setPreferred(new Boolean(false));
+						}
+						counter ++;
+                    }
+				} else {
+					selectedAddress = selectedAddress - patient.getAddresses().size();
+				}
 				
 				String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
 				String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
 				String[] locations = ServletRequestUtils.getStringParameters(request, "location");
-				String[] preferredIds = ServletRequestUtils.getStringParameters(request, "preferred");
+				
 				if (ids != null || idTypes != null) {
 					int maxIds = 0;
 					if (ids != null && ids.length > maxIds)
@@ -208,63 +277,38 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                    identifier.setIdentifier(ids[j]);
 	                    identifier.setIdentifierType(patientService.getPatientIdentifierType(Integer.valueOf(idTypes[j])));
 	                    identifier.setLocation(locationService.getLocation(Integer.valueOf(locations[j])));
-//						if (preferredIds != null && preferredIds.length > j)
-//							identifier.setPreferred(new Boolean(true));
-//						else
-//							identifier.setPreferred(new Boolean(false));
+	                    if (preferredIdentifierCreated && selectedIdentifier == j)
+	                    	identifier.setPreferred(new Boolean(true));
 						patient.addIdentifier(identifier);
                     }
 				}
 
 				String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName");
 				String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName");
-//				String[] familyNamePrefixes = ServletRequestUtils.getStringParameters(request, "familyNamePrefix");
 				String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName");
-//				String[] familyName2s = ServletRequestUtils.getStringParameters(request, "familyName2");
-//				String[] familyNameSuffixes = ServletRequestUtils.getStringParameters(request, "familyNameSuffix");
 				String[] degrees = ServletRequestUtils.getStringParameters(request, "degree");
-//				String[] prefixes = ServletRequestUtils.getStringParameters(request, "prefix");
-				String[] preferredNames = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (givenNames != null || middleNames != null ||
-//						familyNamePrefixes != null || 
-						familyNames != null ||
-//						familyName2s != null || familyNameSuffixes != null ||
-						degrees != null) {
-//					|| prefixes != null) {
+						familyNames != null || degrees != null) {
 					
 					int maxNames = 0;
 					if (givenNames != null && givenNames.length > maxNames)
 						maxNames = givenNames.length;
 					if (middleNames != null && middleNames.length > maxNames)
 						maxNames = middleNames.length;
-//					if (familyNamePrefixes != null && familyNamePrefixes.length > maxNames)
-//						maxNames = familyNamePrefixes.length;
 					if (familyNames != null && familyNames.length > maxNames)
 						maxNames = familyNames.length;
-//					if (familyName2s != null && familyName2s.length > maxNames)
-//						maxNames = familyName2s.length;
-//					if (familyNameSuffixes != null && familyNameSuffixes.length > maxNames)
-//						maxNames = familyNameSuffixes.length;
 					if (degrees != null && degrees.length > maxNames)
 						maxNames = degrees.length;
-//					if (prefixes != null && prefixes.length > maxNames)
-//						maxNames = prefixes.length;
 					
 					for (int j = 0; j < maxNames; j++) {
 						PersonName name = new PersonName();
-//						if (preferredNames != null && preferredNames.length > j)
-//							name.setPreferred(new Boolean(true));
-//						else
-//							name.setPreferred(new Boolean(false));
 						name.setGivenName(givenNames[j]);
 						name.setMiddleName(middleNames[j]);
-//						name.setFamilyNamePrefix(familyNamePrefixes[j]);
 						name.setFamilyName(familyNames[j]);
-//						name.setFamilyName2(familyName2s[j]);
-//						name.setFamilyNameSuffix(familyNameSuffixes[j]);
-//						name.setDegree(prefixes[j]);
 						name.setDegree(degrees[j]);
+						if (preferredNameCreated && selectedName == j)
+							name.setPreferred(new Boolean(true));
 						patient.addName(name);
                     }
 				}
@@ -280,7 +324,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion");
 				String[] countries = ServletRequestUtils.getStringParameters(request, "country");
 				String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
-				String[] preferredAddress = ServletRequestUtils.getStringParameters(request, "preferred");
 				
 				if (address1s != null || address1s != null ||
 						cells != null || cities != null ||
@@ -326,10 +369,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						pa.setCountry(countries[j]);
 						pa.setPostalCode(postalCodes[j]);
 						pa.setCountyDistrict(counties[j]);
-//						if (preferredAddress != null && preferredAddress.length > j)
-//							pa.setPreferred(new Boolean(true));
-//						else
-//							pa.setPreferred(new Boolean(false));
+	                    if (preferredAddressCreated && selectedAddress == j)
+	                    	pa.setPreferred(new Boolean(true));
 						patient.addAddress(pa);
 					}
 				}

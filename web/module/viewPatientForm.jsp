@@ -63,11 +63,11 @@
 	<br />
 	<input type="hidden" name="_page3" value="true" />
 	&nbsp;
-	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
+	<input type="submit" name="_finish" value="<spring:message code='amrsregistration.button.register'/>">
 	&nbsp; &nbsp;
 	<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 	&nbsp; &nbsp;
-	<input type="submit" name="_finish" value="<spring:message code='amrsregistration.button.register'/>">
+	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 </form>
 <br/>
 <br />

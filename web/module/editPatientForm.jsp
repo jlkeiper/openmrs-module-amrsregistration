@@ -80,6 +80,45 @@
     	
     	$j(document.forms[0].submit());
     }
+		
+	function createPreferred(preferred, type, position, hidden) {
+		var container = $j('#' + type + 'Content' + position);
+		var element = null;
+			
+		var input = $j(document.createElement('input'));
+		$j(input).attr('type', 'radio');
+		$j(input).attr('name', type + 'Preferred');
+		$j(input).attr('value', position);
+		if(preferred)
+			$j(input).attr('checked', 'checked');
+			
+		if (type == 'address') {
+			// for address, element is a row
+			element = $j(document.createElement('tr'));
+			
+			td = $j(document.createElement('td'));
+			$j(td).attr('colspan', '2');
+			
+			$j(element).append(td);
+			
+			$j(td).append(input);
+			
+			var label = $j(document.createTextNode('Preferred'));
+			$j(td).append(label);
+			
+			$j(container).prepend(element);
+		} else {
+			// for identifier and name, the element is a cell
+			element = $j(document.createElement('td'));
+			
+			$j(element).append(input);
+			
+			$j(container).append(element);
+		}
+		
+		if (hidden)
+			$j(element).hide();
+	}
 
     function addNew(type) {
         $j('#' + type + 'Error').empty();
@@ -113,6 +152,12 @@
             var cloneHolder = $j(typeHolder).clone(true);
             $j(cloneHolder).attr('id', type + 'Content' + numObjs[type]);
             $j('#' + type + 'Position').append($j(cloneHolder));
+            
+            if (numObjs[type] == 1) {
+            	$j('#' + type + 'PreferredLabel').show();
+            	$j('input:radio[name=' + type + 'Preferred]').parent().show();
+            }
+            createPreferred(false, type, numObjs[type]);
             
             // focus to the first element
             ele = $j('#' + type + 'Content' + numObjs[type] + ' input[type=text]:eq(0)');
@@ -173,6 +218,12 @@
 	    	if (deleteInputs) {
 	    		$j('#' + type + "Content" + idSufix).remove();
 	    		numObjs[type] = idSufix;
+	    		// remove radio button when there's only one row left
+	    		// assume the last one a preferred one
+	    		if (numObjs[type] == 1) {
+	    			$j('#' + type + 'PreferredLabel').hide();
+	    			$j('input:radio[name=' + type + 'Preferred]').parent().hide();
+	    		}
 	    	} else {
 	    		message = "Removing " + type + " not permitted because deleted element is not empty";
 	    	}
@@ -307,10 +358,8 @@
         var subreg = document.getElementById("addresses[0].subregion");
         var cntry = document.getElementById("addresses[0].country");
         var postCode = document.getElementById("addresses[0].postalCode");
-        var prefAdd = document.getElementById("addresses[0].preferred");
         
         var personAddress = {
-        	preferred: prefAdd.checked,
         	address1: add1.value,
         	address2: add2.value,
         	cityVillage: city.value,
@@ -327,7 +376,6 @@
         
         var id = document.getElementById("identifiers[0].identifier");
         var idType = document.getElementById("identifiers[0].identifierType");
-        var preferredId = document.getElementById("identifiers[0].identifier.preferred");
         
         var patientIdentifier = {
         	identifier: id.value,
@@ -517,13 +565,24 @@
 				    <spring:message code="PersonName.degree"/>
 				</td>
 				<td>
-				    <spring:message code="general.preferred"/>
+				    <span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
 				</td>
 			</tr>
 	        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.names[${varStatus.index}]">
 	            	<%@ include file="portlets/patientName.jsp" %>
 	            </spring:nestedPath>
+				<script type="text/javascript">
+					var hidden = true;
+					<c:if test="${fn:length(patient.names) > 1}">
+						hidden = false;
+					</c:if>
+					var preferred = false;
+					<c:if test="${name.preferred}">
+						preferred = true;
+					</c:if>
+					createPreferred(preferred, 'name', ${varStatus.index}, hidden);
+	            </script>
 	        </c:forEach>
 	    	<tbody id="namePosition">
 		</table>
@@ -560,7 +619,7 @@
 						<td style="padding-right: 3.6em;">
 							<spring:bind path="patient.gender">
 								<openmrs:forEachRecord name="gender">
-									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onkeyup="timeOutSearch(event)" />
+									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onclick="timeOutSearch(event)" />
 										<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
 								</openmrs:forEachRecord>
 							</spring:bind>
@@ -664,7 +723,7 @@
 					<spring:message code="PatientIdentifier.location"/>
 				</td>
 				<td>
-				    <spring:message code="general.preferred"/>
+				    <span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
 				</td>
 			</tr>
 	        <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
@@ -746,9 +805,9 @@
 	</table>
 	<input type="hidden" name="_page1" value="true" />
 	&nbsp;
-	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
-	&nbsp; &nbsp;
 	<input type="submit" name="_target2" value="<spring:message code='amrsregistration.button.continue'/>">
+	&nbsp; &nbsp;
+	<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 	<br/>
 	<br/>
 	</form>

@@ -226,11 +226,11 @@
 		</div>
 		<input type="hidden" name="_page2" value="true" />
 		&nbsp;
-		<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
+	    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
 	    &nbsp; &nbsp;
 		<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 		&nbsp; &nbsp;
-	    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
+		<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 	</form>
 	<br />
 	<br />

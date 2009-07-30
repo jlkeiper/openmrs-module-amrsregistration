@@ -23,7 +23,7 @@ import org.openmrs.api.context.Context;
  */
 public class AmrsSearchManager {
 
-    Integer limit = 200;
+    private Integer limit = 200;
 
     private AmrsRegistrationService getAmrsRegistrationService() {
         return (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
@@ -65,8 +65,25 @@ public class AmrsSearchManager {
         if (getSearchablePersonName(personName) == null) {
             return persons;
         }
-        return getAmrsRegistrationService().getPersons(personName, personAddress,
+        
+        int rotateCounter = 0;
+        int maxCounter = 3;
+        
+        while(persons.size() == 0 && rotateCounter < maxCounter) {
+            persons = getAmrsRegistrationService().getPersons(personName, personAddress,
                 personAttributes, gender, birthDate, age, limit);
+        	rotateName(personName);
+        	rotateCounter ++;
+        }
+        
+        return persons;
+    }
+    
+    private void rotateName(PersonName name) {
+    	String temp = name.getGivenName();
+    	name.setGivenName(name.getFamilyName());
+    	name.setFamilyName(name.getMiddleName());
+    	name.setMiddleName(temp);
     }
 
     /**

@@ -30,10 +30,4 @@
 				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 			</spring:bind>
 		</td>
-        <td class="spacing">
-            <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}" />
-				<input type="checkbox" name="${status.expression}" value="true" alt="patientIdentifier" onclick="if (preferredBoxClick) preferredBoxClick(this)" <c:if test="${status.value == true}">checked</c:if> />
-            </spring:bind>
-        </td>
 	</tr>

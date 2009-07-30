@@ -203,6 +203,8 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
                     ((Calendar) localObject2).getTime()), Expression.lt(
                     "person.birthdate", localCalendar.getTime())));
         }
+        
+        localCriteria.add(Expression.eq("person.personVoided", false));
 
         localCriteria.addOrder(Order.asc("names.familyName"));
         if (limit != null && limit > 0 && limit < 101) {
@@ -221,6 +223,7 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
      * @return
      * @throws DAOException
      */
+    @SuppressWarnings("unchecked")
     public List<Person> getPersons() throws DAOException {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(org.openmrs.Person.class, "person")
                 .add(Expression.eq("person.personId", Integer.valueOf(364)))

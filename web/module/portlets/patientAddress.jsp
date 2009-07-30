@@ -1,22 +1,5 @@
 <tbody id="addressContent${varStatus.index}">
     <tr>
-        <td colspan="2">
-            <spring:bind path="personAddressId">
-                <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}" />
-            </spring:bind>
-            <spring:bind path="preferred">
-				<input type="hidden" name="_${status.expression}" />
-                <input type="checkbox"
-                	id="${status.expression}"
-                	name="${status.expression}"
-                    value="true" alt="patientAddress"
-                    onclick="if (preferredBoxClick) preferredBoxClick(this)"
-                    <c:if test="${status.value == 'true'}">checked</c:if> />
-            </spring:bind>
-            <spring:message code="general.preferred"/>
-        </td>
-    </tr>
-    <tr>
         <td>
             <spring:message code="PersonAddress.address1"/>
         </td>
