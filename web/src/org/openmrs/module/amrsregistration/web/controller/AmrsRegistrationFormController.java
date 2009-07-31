@@ -141,7 +141,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						// default to found patient, but no required id type
 						targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
 						for (PatientIdentifier identifier : patient.getIdentifiers()) {
-							if (identifier.getIdentifierType().getName().equals(idType)) {
+							if (identifier.getIdentifierType().getName().equals(idType) && !identifier.isVoided()) {
 								// found the required id type, go to confirmation page
 								targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 								break;
@@ -151,6 +151,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 				break;
 			case 2:
+				
+				if (targetPage == currentPage)
+					break;
+				
     			if (patient.getFamilyName() == null || patient.getFamilyName().length() <= 0) {
     				errors.reject("Please insert a family name for the patient.");
     			}
@@ -164,6 +168,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					errors.reject("Please assign birthdate or age for this patient");
 				}
 				updateBirthdate(patient, date, age);
+				
+				for (PatientIdentifier identifier : patient.getIdentifiers()) {
+	                if(identifier.getIdentifier() == null || identifier.getIdentifier().length() == 0)
+	                	patient.removeIdentifier(identifier);
+                }
 				
 				// remove from this list elements that already in the person attribute (list.remove(personattributeType)
 		        List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
@@ -265,10 +274,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					int maxIds = 0;
 					if (ids != null && ids.length > maxIds)
 						maxIds = ids.length;
-					if (idTypes != null && idTypes.length > maxIds)
-						maxIds = idTypes.length;
-					if (locations != null && locations.length > maxIds)
-						maxIds = locations.length;
 					
 					LocationService locationService = Context.getLocationService();
 					
@@ -386,34 +391,37 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				break;
 			case 3:
 				String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
-				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
-    			boolean validIdentifier = false;
-				try {
-	                IdentifierValidator validator = Context.getPatientService().getIdentifierValidator(type.getValidator());
-	                validIdentifier = validator.isValid(amrsId);
-                }
-                catch (UnallowedIdentifierException e) {
-					log.error("Bad identifier: '" + amrsId + "'");
-                }
-                
-                if (!validIdentifier) {
-    				errors.reject("AMRS Id assigned is invalid according to the identifier validator.");
-                } else {
-        			boolean foundAmrsId = false;
-        			for (PatientIdentifier identifier : patient.getIdentifiers()) {
-    	                if (identifier.getIdentifierType().equals(type)) {
-    	                	foundAmrsId = true;
-    	                	identifier.setIdentifier(amrsId);
-    	                }
-        			}
-    				if (!foundAmrsId) {
-						PatientIdentifier identifier = new PatientIdentifier();
-						identifier.setIdentifier(amrsId);
-						identifier.setIdentifierType(type);
-						identifier.setLocation(Context.getLocationService().getDefaultLocation());
-						patient.addIdentifier(identifier);
-    				}
-                }
+				if (amrsId != null) {
+
+					PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
+	    			boolean validIdentifier = false;
+					try {
+		                IdentifierValidator validator = Context.getPatientService().getIdentifierValidator(type.getValidator());
+		                validIdentifier = validator.isValid(amrsId);
+	                }
+	                catch (UnallowedIdentifierException e) {
+						log.error("Bad identifier: '" + amrsId + "'");
+	                }
+	                
+	                if (!validIdentifier) {
+	    				errors.reject("AMRS Id assigned is invalid according to the identifier validator.");
+	                } else {
+	        			boolean foundAmrsId = false;
+	        			for (PatientIdentifier identifier : patient.getIdentifiers()) {
+	    	                if (identifier.getIdentifierType().equals(type)) {
+	    	                	foundAmrsId = true;
+	    	                	identifier.setIdentifier(amrsId);
+	    	                }
+	        			}
+	    				if (!foundAmrsId) {
+							PatientIdentifier identifier = new PatientIdentifier();
+							identifier.setIdentifier(amrsId);
+							identifier.setIdentifierType(type);
+							identifier.setLocation(Context.getLocationService().getDefaultLocation());
+							patient.addIdentifier(identifier);
+	    				}
+	                }
+				}
     			break;
 			
 		}

@@ -31,10 +31,10 @@ function renderPatientData(patient) {
 	var identifier = '';
 	var identifiers = patient.identifiers;
 	for (i = 0; i < identifiers.length; i ++) {
-		if (identifier != '') {
-			identifier = identifier +  + '<br />';
-		}
 		if (identifiers[i].identifierType.name != '${amrsIdType}') {
+			if (identifier != '') {
+				identifier = identifier +  + '<br />';
+			}
 			identifier = identifier + identifiers[i].identifierType.name + ': ' + identifiers[i].identifier;
 		} else {
 			amrsIdentifier = identifiers[i].identifier;

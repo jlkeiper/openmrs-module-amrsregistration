@@ -21,6 +21,11 @@
     numObjs["identifier"] = ${fn:length(patient.identifiers)};
     numObjs["name"] = ${fn:length(patient.names)};
     numObjs["address"] = ${fn:length(patient.addresses)};
+    
+    var baseObjs = new Array();
+    baseObjs["identifier"] = ${fn:length(patient.identifiers)};
+    baseObjs["name"] = ${fn:length(patient.names)};
+    baseObjs["address"] = ${fn:length(patient.addresses)};
     	
 	nonRequiredIdType = 0;
     <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
@@ -38,9 +43,9 @@
 		
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
-			var input = $j(tr + ':first-child');
-			alert($(input).html());
-			getPatientByIdentifier($(input).html());
+			var children = $j(tr).children(':first');
+			var id = $j(children).html();
+			getPatientByIdentifier(jQuery.trim(id));
 		});
 		
 		$j('.match').hover(
@@ -53,6 +58,8 @@
 				$j(parent).removeClass("searchHighlight");
 			}
 		);
+		
+		$j('th').css('font', '1em verdana');
     });
     
     function getPatientByIdentifier(identifier) {
@@ -81,14 +88,15 @@
     	$j(document.forms[0].submit());
     }
 		
-	function createPreferred(preferred, type, position, hidden) {
-		var container = $j('#' + type + 'Content' + position);
+	function createPreferred(preferred, type, container, hidden) {
+		// this will be <tr> for id and name
+		// and <table> for address
 		var element = null;
 			
 		var input = $j(document.createElement('input'));
 		$j(input).attr('type', 'radio');
 		$j(input).attr('name', type + 'Preferred');
-		$j(input).attr('value', position);
+		$j(input).attr('value', numObjs[type]);
 		if(preferred)
 			$j(input).attr('checked', 'checked');
 			
@@ -119,12 +127,42 @@
 		if (hidden)
 			$j(element).hide();
 	}
+	
+	function getTemplateType(type) {
+		if (type == 'name')
+			return $j('#nameContent').find('tr');
+		if (type == 'address')
+			return $j('#addressContent').find('table');
+		if (type == 'identifier')
+			return $j('#identifierContent');
+	}
+	
+	function duplicateElement(type) {
+		var templateClone = getTemplateType(type).clone(true);
+		createPreferred(false, type, templateClone, false);
+		
+		// custom mods for address
+		if (type == 'address') {
+			var td = $j(document.createElement('td'));
+			td.append(templateClone);
+			var tr = $j(document.createElement('tr'));
+			tr.append(td);
+			return tr;
+		}
+		
+		return templateClone;
+	}
+	
+	function createElement(type) {
+		var element = duplicateElement(type);
+		$j(element).attr('id', type + 'Content' + numObjs[type]);
+		return element;
+	}
 
     function addNew(type) {
         $j('#' + type + 'Error').empty();
         
     	var idSufix = numObjs[type] - 1;
-    	
     	var allowCreate = false;
     	
     	if (numObjs[type] == 0) {
@@ -147,18 +185,20 @@
 		    }
 		}
     	
-        var typeHolder = $j('#' + type + 'Content');
-        if ($j(typeHolder) != null && allowCreate) {
-            var cloneHolder = $j(typeHolder).clone(true);
-            $j(cloneHolder).attr('id', type + 'Content' + numObjs[type]);
-            $j('#' + type + 'Position').append($j(cloneHolder));
+        if (allowCreate) {
+            
+            var newElement = createElement(type);
+            
+            $j('#' + type + 'Position').append(newElement);
             
             if (numObjs[type] == 1) {
             	$j('#' + type + 'PreferredLabel').show();
-            	$j('input:radio[name=' + type + 'Preferred]').parent().show();
+            	var parent = $j('input:radio[name=' + type + 'Preferred]').parent();
+            	if (type != 'address')
+            		parent.show();
+            	else
+            		parent.parent().show();
             }
-            createPreferred(false, type, numObjs[type]);
-            
             // focus to the first element
             ele = $j('#' + type + 'Content' + numObjs[type] + ' input[type=text]:eq(0)');
             ele.focus();
@@ -222,7 +262,11 @@
 	    		// assume the last one a preferred one
 	    		if (numObjs[type] == 1) {
 	    			$j('#' + type + 'PreferredLabel').hide();
-	    			$j('input:radio[name=' + type + 'Preferred]').parent().hide();
+	            	parent = $j('input:radio[name=' + type + 'Preferred]').parent();
+	            	if (type != 'address')
+	            		$j(parent).hide();
+	            	else
+	            		$j(parent).parent().hide();
 	    		}
 	    	} else {
 	    		message = "Removing " + type + " not permitted because deleted element is not empty";
@@ -258,8 +302,6 @@
     			else
     				$j(tr).addClass("oddRow");
     			
-    			var value = result[i].identifiers[0].identifier;
-    			
     			$j(tr).hover(
     				function() {
 						$j(this).addClass("searchHighlight");
@@ -270,7 +312,9 @@
     			);
     			
     			$j(tr).click(function() {
-    				getPatientByIdentifier(value);
+					var children = $j(this).children(':first');
+					var id = $j(children).html();
+					getPatientByIdentifier(jQuery.trim(id));
     			});
     			
     			createCell(result[i].identifiers[0].identifier, tr);
@@ -333,54 +377,35 @@
 	}
 
     function patientSearch() {
-    	
-        var gName = document.getElementById("names[0].givenName");
-        var mName = document.getElementById("names[0].middleName");
-        var fName = document.getElementById("names[0].familyName");
-        var deg = document.getElementById("names[0].degree");
 
         var personName = {
-        	givenName: gName.value,
-        	middleName: mName.value,
-        	familyName: fName.value,
-        	degree: deg.value
+        	givenName: $j('input[name=names[0].givenName]').attr('value'),
+        	middleName: $j('input[name=names[0].middleName]').attr('value'),
+        	familyName: $j('input[name=names[0].familyName]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personName, 2));
         
-        var add1 = document.getElementById("addresses[0].address1");
-        var add2 = document.getElementById("addresses[0].address2");
-        var cell = document.getElementById("addresses[0].neighborhoodCell");
-        var city = document.getElementById("addresses[0].cityVillage");
-        var township = document.getElementById("addresses[0].townshipDivision");
-        var county = document.getElementById("addresses[0].countyDistrict");
-        var state = document.getElementById("addresses[0].stateProvince");
-        var reg = document.getElementById("addresses[0].region");
-        var subreg = document.getElementById("addresses[0].subregion");
-        var cntry = document.getElementById("addresses[0].country");
-        var postCode = document.getElementById("addresses[0].postalCode");
-        
         var personAddress = {
-        	address1: add1.value,
-        	address2: add2.value,
-        	cityVillage: city.value,
-        	neighborhoodCell: cell.value,
-        	countyDistrict: county.value,
-        	townshipDivision: township.value,
-        	region: reg.value,
-        	subregion: subreg.value,
-        	stateProvince: state.value,
-        	country: cntry.value,
-        	postalCode: postCode.value
+        	address1: $j('input[name=addresses[0].address1]').attr('value'),
+        	address2: $j('input[name=addresses[0].address2]').attr('value'),
+        	neighborhoodCell: $j('input[name=addresses[0].neighborhoodCell]').attr('value'),
+        	cityVillage: $j('input[name=addresses[0].cityVillage]').attr('value'),
+        	townshipDivision: $j('input[name=addresses[0].townshipDivision]').attr('value'),
+        	countyDistrict: $j('input[name=addresses[0].countyDistrict]').attr('value'),
+        	stateProvince: $j('input[name=addresses[0].stateProvince]').attr('value'),
+        	region: $j('input[name=addresses[0].region]').attr('value'),
+        	subregion: $j('input[name=addresses[0].subregion]').attr('value'),
+        	country: $j('input[name=addresses[0].country]').attr('value'),
+        	postalCode: $j('input[name=addresses[0].postalCode]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personAddress, 2));
         
-        var id = document.getElementById("identifiers[0].identifier");
-        var idType = document.getElementById("identifiers[0].identifierType");
-        
         var patientIdentifier = {
-        	identifier: id.value,
-        	identifierType: idType.value
+        	identifier: $j('input[name=identifiers[0].identifier]').attr('value'),
+        	identifierType: $j('input[name=identifiers[0].identifierType]').attr('value')
         }
+        // alert(DWRUtil.toDescriptiveString(patientIdentifier, 2));
+        
         
         if (attributes == null) {
         	prepareAttributes();
@@ -465,6 +490,7 @@
 	
 	#centeredContent {
 	}
+	
 </style>
 
 <div>
@@ -520,8 +546,9 @@
     				<td class="match">
     					<c:out value="${person.personName.familyName}" />
     				</td>
-    				<td class="match">
-    					<c:out value="${person.gender}" />
+    				<td class="match" style="text-align: center;">
+						<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+						<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
     				</td>
     				<td class="match">
     					<openmrs:formatDate date="${person.birthdate}" />
@@ -550,30 +577,21 @@
 			<td class="input">
 
 <!-- Patient Names Section -->
-		<table>
+		<table id="namePositionParent">
 			<tr>
-				<td>
-				    <spring:message code="PersonName.givenName"/>
-				</td>
-				<td>
-				    <spring:message code="PersonName.middleName"/>
-				</td>
-				<td>
-				    <spring:message code="PersonName.familyName"/>
-				</td>
-				<td>
-				    <spring:message code="PersonName.degree"/>
-				</td>
+				<thead>
+					<openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
 				<td>
 				    <span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
 				</td>
+				</thead>
 			</tr>
 	        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.names[${varStatus.index}]">
-	            	<%@ include file="portlets/patientName.jsp" %>
+					<openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
 	            </spring:nestedPath>
-				<script type="text/javascript">
-					var hidden = true;
+	            <script type="text/javascript">
+	            	var hidden = true;
 					<c:if test="${fn:length(patient.names) > 1}">
 						hidden = false;
 					</c:if>
@@ -581,16 +599,30 @@
 					<c:if test="${name.preferred}">
 						preferred = true;
 					</c:if>
-					createPreferred(preferred, 'name', ${varStatus.index}, hidden);
+	            	$j(document).ready(function () {
+	            		var position = ${varStatus.index};
+	            		var tbody = $j('#namePositionParent').find('tbody:eq(1)');
+	            		var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
+	            		$j(nameContentX).attr('id', 'nameContent' + position);
+	            		createPreferred(preferred, 'name', nameContentX, hidden);
+	            		
+	            		// bind onkeyup for each of the address layout text field
+	            		var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
+	            		$j(allTextInputs).bind('keyup', function(event){
+	            			timeOutSearch(event);
+	            		});
+	            	});
 	            </script>
 	        </c:forEach>
 	    	<tbody id="namePosition">
 		</table>
-		<spring:nestedPath path="emptyName">
-			<table style="display: none;">
-				<%@ include file="portlets/patientName.jsp" %>
-			</table>
-		</spring:nestedPath>
+		<div id="nameContent" style="display: none;">
+			<spring:nestedPath path="emptyName">
+				<table>
+					<openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
+				</table>
+			</spring:nestedPath>
+		</div>
 		<div class="tabBar" id="nameTabBar">
 			<span id="nameError" class="newError"></span>
 			<input type="button" onClick="return deleteLastRow('name');" class="addNew" id="name" value="Remove"/>
@@ -711,7 +743,7 @@
 			<td class="input">
 
 <!-- Patient Identifier Section -->
-		<table>
+		<table id="identifierPositionParent">
 			<tr>
 			    <td>
 			        <spring:message code="amrsregistration.labels.ID"/>
@@ -730,10 +762,22 @@
 	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
 	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
+						<script type="text/javascript">
+							var hidden = true;
+							<c:if test="${fn:length(patient.identifiers) > 1}">
+								hidden = false;
+							</c:if>
+							var preferred = false;
+							<c:if test="${identifier.preferred}">
+								preferred = true;
+							</c:if>
+							var container = $j('#identifierContent${varStatus.index}');
+							createPreferred(preferred, 'identifier', container, hidden);
+			            </script>
 	            	</c:if>
-	    			<tbody id="identifierPosition">
 	            </spring:nestedPath>
 	        </c:forEach>
+	    	<tbody id="identifierPosition">
       	</table>
         <spring:nestedPath path="emptyIdentifier">
 			<table style="display: none;">
@@ -754,18 +798,44 @@
 			<td class="input">
 
 <!-- Patient Address Section -->
-		<table id="addressPosition">
-	        <c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
-	            <spring:nestedPath path="patient.addresses[${varStatus.index}]">
-	                <%@ include file="portlets/patientAddress.jsp" %>
-	            </spring:nestedPath>
-	        </c:forEach>
+		<table>
+			<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+				<tr><td>
+			    <spring:nestedPath path="patient.addresses[${varStatus.index}]">
+			    	<openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
+			    </spring:nestedPath>
+				</td></tr>
+	            <script type="text/javascript">
+	            	var hidden = true;
+					<c:if test="${fn:length(patient.addresses) > 1}">
+						hidden = false;
+					</c:if>
+					var preferred = false;
+					<c:if test="${address.preferred}">
+						preferred = true;
+					</c:if>
+	            	$j(document).ready(function () {
+	            		var position = ${varStatus.index};
+	            		var nameContentX = $j('#addressPortlet' + position).find('table');
+	            		$j(nameContentX).attr('id', 'addressContent' + position);
+	            		createPreferred(preferred, 'address', nameContentX, hidden);
+	            		
+	            		// bind all inputs
+	            		var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
+	            		$j(allTextInputs).bind('keyup', function(event){
+	            			timeOutSearch(event);
+	            		});
+	            	});
+	            </script>
+			</c:forEach>
+	        <tbody id="addressPosition" />
 		</table>
-		<spring:nestedPath path="emptyAddress">
-			<table style="display: none;">
-	        	<%@ include file="portlets/patientAddress.jsp" %>
-			</table>
-		</spring:nestedPath>
+        <div id="addressPosition" style="clear:both"/>
+		<div id="addressContent" style="display: none;">
+			<spring:nestedPath path="emptyAddress">
+				<openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
+			</spring:nestedPath>
+	    </div>
 	    <div class="tabBar" id="addressTabBar">
 			<span id="addressError" class="newError"></span>
 	        <input type="button" onClick="return deleteLastRow('address');" class="addNew" id="address" value="Remove"/>

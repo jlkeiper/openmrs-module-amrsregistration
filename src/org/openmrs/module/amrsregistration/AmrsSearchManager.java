@@ -72,7 +72,7 @@ public class AmrsSearchManager {
         while(persons.size() == 0 && rotateCounter < maxCounter) {
             persons = getAmrsRegistrationService().getPersons(personName, personAddress,
                 personAttributes, gender, birthDate, age, limit);
-        	rotateName(personName);
+//        	rotateName(personName);
         	rotateCounter ++;
         }
         
