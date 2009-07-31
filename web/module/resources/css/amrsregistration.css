@@ -20,12 +20,10 @@
 	}
 	
     #floating {
-    	width: 30%;
+    	width: 100%;
     	background-color: #ffffff;
-    	top: 25px;
-    	right: 5px;
-        position: fixed;
     	font-size: 14px;
+    	text-align: center;
     }
 	
 	h2 {
@@ -55,6 +53,13 @@
         cursor: pointer;
     }
     
+    .toggle {
+        right: 5px;
+        top: 5px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    
     #mask {
         position:absolute;
         left:0;
@@ -75,6 +80,8 @@
     }
 
     #boxes #dialog {
+		width:600px; 
+		height:400px;
     	font-size: 13px;
         padding:10px;
         background-color:#ffffff;
@@ -107,7 +114,7 @@
 		white-space: nowrap;
 		vertical-align: top;
 		padding: 5px;
-		font: bold 0.8em verdana;
+		font: bold 1em verdana;
 	}
 	
 	.summaryInfo {

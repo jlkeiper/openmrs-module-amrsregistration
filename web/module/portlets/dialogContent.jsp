@@ -37,7 +37,8 @@ function renderPatientData(patient) {
 			}
 			identifier = identifier + identifiers[i].identifierType.name + ': ' + identifiers[i].identifier;
 		} else {
-			amrsIdentifier = identifiers[i].identifier;
+			if (identifiers[i].voided)
+				amrsIdentifier = identifiers[i].identifier;
 		}
 	}
 	

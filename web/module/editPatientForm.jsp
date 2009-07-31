@@ -59,6 +59,16 @@
 			}
 		);
 		
+		$j('a[name=extendedToggle]').click(function(e) {
+			e.preventDefault();
+			$j('.resultTableExtended').toggle();
+			if ($j('.resultTableExtended').is(':hidden')) {
+				$j(this).html('more >>');
+			} else {
+				$j(this).html('<< less');
+			}
+		});
+		
 		$j('th').css('font', '1em verdana');
     });
     
@@ -288,11 +298,18 @@
     
     function handlePatientResult(result) {
 		clearTimeout(searchTimeout);
+    		
+		var tbody = $j('#resultTable');
+		$j(tbody).empty();
+		
+		$j('#floating').show();
+    		
+		if (result.length > 3)
+			$j('#extendedToggle').show();
+		else
+			$j('#extendedToggle').hide();
 		
     	if (result.length > 0) {
-    		
-    		var tbody = $j('#resultTable');
-    		$j(tbody).empty();
     		
     		for(i = 0; i < result.length; i ++) {
     			var tr = $j(document.createElement('tr'));
@@ -301,6 +318,10 @@
     				$j(tr).addClass("evenRow");
     			else
     				$j(tr).addClass("oddRow");
+    				
+    			if (i > 2) {
+    				$j(tr).addClass('resultTableExtended');
+    			}
     			
     			$j(tr).hover(
     				function() {
@@ -336,10 +357,12 @@
     			$j(tbody).append($j(tr));
     		}
     		
-    		$j('#floating').show();
+    		$j('#resultTableHeader').show();
+    		$j('.filler').hide();
     		
     	} else {
-    		$j('#floating').hide();
+    		$j('#resultTableHeader').hide();
+    		$j('.filler').show();
     	}
     }
 	
@@ -455,18 +478,6 @@
         	attributes[${varStatus.index}] = attr;
 		</openmrs:forEachDisplayAttributeType>
     }
-    
-	function preferredBoxClick(obj) {
-		var inputs = $j('input:checkbox');
-		if (obj.checked == true) {
-			for (var i=0; i<inputs.length; i++) {
-				var input = inputs[i];
-				if (input.type == "checkbox")
-					if (input.alt == obj.alt && input != obj)
-						input.checked = false;
-			}
-		}
-	}
 </script>
 
 <style>
@@ -491,6 +502,10 @@
 	#centeredContent {
 	}
 	
+	.resultTableExtended {
+		display: none;
+	}
+	
 </style>
 
 <div>
@@ -500,69 +515,118 @@
 <div id="mask"></div>
 <div id="amrsContent">
 	<span>Fill in the patient information and press continue to proceed</span>
-	<form id="patientForm" method="post" onSubmit="removeBlankData()">
+	<form id="patientForm" method="post" onSubmit="removeBlankData()" autocomplete="off">
 	<div id="boxes"> 
 		<div id="dialog" class="window">
 			<div id="personContent"></div>
 		</div>
 	</div>
-	
-	<c:choose>
-		<c:when test="${fn:length(potentialMatches) > 0}">
-			<div id="floating" style="display: block;">
-		</c:when>
-		<c:otherwise>
-			<div id="floating" style="display: none;">
-		</c:otherwise>
-	</c:choose>
-    <table class="box">
-        <tr>
-        	<td><spring:message code="amrsregistration.labels.ID" /></td>
-        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
-        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
-        	<td><spring:message code="amrsregistration.labels.gender" /></td>
-        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
-        </tr>
-        <tbody id="resultTable">
-    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
-    			<c:choose>
-    				<c:when test="${varStatus.index % 2 == 0}">
-    					<tr class="evenRow">
-    				</c:when>
-    				<c:otherwise>
-    					<tr class="oddRow">
-    				</c:otherwise>
-    			</c:choose>
-    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
-    					<c:if test="${varStatus.index == 0}">
-		    				<td class="match">
-		    					<c:out value="${identifier.identifier}" />
-		    				</td>
-        				</c:if>
-    				</c:forEach>
-    				<td class="match">
-    					<c:out value="${person.personName.givenName}" />
-    				</td>
-    				<td class="match">
-    					<c:out value="${person.personName.familyName}" />
-    				</td>
-    				<td class="match" style="text-align: center;">
-						<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
-						<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
-    				</td>
-    				<td class="match">
-    					<openmrs:formatDate date="${person.birthdate}" />
-    				</td>
-    			</tr>
-    		</c:forEach>
-        </tbody>
-        <tr>
-        	<td>
-        		<span class="close"><a href="javascript:;" onclick="hidDiv()">close</a></span>
-        	</td>
-        </tr>
-    </table>
+	<br /><br />
+			
+	<div id="floating" style="display: block;">
+	    <table class="box" style="width: 80%;">
+	    	<tr>
+	    		<td><span style="border-bottom:1px solid lightgray;">Patient Search</span></td>
+	    		<td colspan="3">&nbsp;</td>
+	    		<td style="text-align: right;"><span class="toggle"><a href="javascript:;" onclick="hidDiv()">close</a></span></td>
+	    	</tr>
+			<c:choose>
+				<c:when test="${fn:length(potentialMatches) > 0}">
+			        <tr class="filler" style="display: none">
+			        	<td colspan="5"><span id="searchMessage">No patients found.</span></td>
+			        </tr>
+			        <tr class="filler" style="display: none">
+			        	<td colspan="5">&nbsp;</td>
+			        </tr>
+			        <tr class="filler" style="display: none">
+			        	<td colspan="5">&nbsp;</td>
+			        </tr>
+				</c:when>
+				<c:otherwise>
+			        <tr class="filler" style="display: block">
+			        	<td colspan="5"><span id="searchMessage">No patients found.</span></td>
+			        </tr>
+			        <tr class="filler" style="display: block">
+			        	<td colspan="5">&nbsp;</td>
+			        </tr>
+			        <tr class="filler" style="display: block">
+			        	<td colspan="5">&nbsp;</td>
+			        </tr>
+				</c:otherwise>
+			</c:choose>
+	        <tr id="resultTableHeader" style="display:none">
+	        	<td><spring:message code="amrsregistration.labels.ID" /></td>
+	        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
+	        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
+	        	<td style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></td>
+	        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
+	        </tr>
+	        <tbody id="resultTable">
+				<c:choose>
+					<c:when test="${fn:length(potentialMatches) > 0}">
+			    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
+			    			<c:choose>
+			    				<c:when test="${varStatus.index % 2 == 0}">
+					    			<c:choose>
+					    				<c:when test="${varStatus.index > 2}">
+					    					<tr class="evenRow resultTableExtended">
+					    				</c:when>
+					    				<c:otherwise>
+					    					<tr class="evenRow">
+					    				</c:otherwise>
+					    			</c:choose>
+			    				</c:when>
+			    				<c:otherwise>
+					    			<c:choose>
+					    				<c:when test="${varStatus.index > 2}">
+					    					<tr class="oddRow resultTableExtended">
+					    				</c:when>
+					    				<c:otherwise>
+					    					<tr class="oddRow">
+					    				</c:otherwise>
+					    			</c:choose>
+			    				</c:otherwise>
+			    			</c:choose>
+			    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
+			    					<c:if test="${varStatus.index == 0}">
+					    				<td class="match">
+					    					<c:out value="${identifier.identifier}" />
+					    				</td>
+			        				</c:if>
+			    				</c:forEach>
+			    				<td class="match">
+			    					<c:out value="${person.personName.givenName}" />
+			    				</td>
+			    				<td class="match">
+			    					<c:out value="${person.personName.familyName}" />
+			    				</td>
+			    				<td class="match" style="text-align: center;">
+									<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+									<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
+			    				</td>
+			    				<td class="match">
+			    					<openmrs:formatDate date="${person.birthdate}" />
+			    				</td>
+			    			</tr>
+			    		</c:forEach>
+					</c:when>
+				</c:choose>
+	        </tbody>
+			<c:choose>
+				<c:when test="${fn:length(potentialMatches) > 2}">
+	    			<tr id="extendedToggle" style="display: block;">
+				</c:when>
+				<c:otherwise>
+	    			<tr id="extendedToggle" style="display: none;">
+				</c:otherwise>
+			</c:choose>
+	    		<td class="toggle">
+					<a href="#" name="extendedToggle">more >></a>
+				</td>
+			</tr>
+	    </table>
 	</div>
+	<br />
 
 	<spring:hasBindErrors name="patient">
 		<c:forEach items="${errors.allErrors}" var="error">

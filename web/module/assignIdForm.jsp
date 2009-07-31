@@ -25,8 +25,9 @@
 		
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
-			var input = $j(tr + ':input[type=radio]');
-			getPatientByIdentifier($(input).attr('value'));
+			var children = $j(tr).children(':first').next();
+			var id = $j(children).html();
+			getPatientByIdentifier(jQuery.trim(id));
 		});
 		
 		$j('.match').hover(
@@ -109,18 +110,18 @@
 <c:choose>
 	<c:when test="${fn:length(potentialMatches) > 0}">
 		<div id="matchesSection">
-			<span>The system have determine that the following patient look similar to the one you are entering</span>
+			<span><spring:message code="amrsregistration.page.assign.description"/></span>
 			<br />
 			<br />
-			<form id="switchPatient" name="switchPatient" method="post">
+			<form id="switchPatient" name="switchPatient" method="post" autocomplete="off">
 		        <table border="0" cellspacing="2" cellpadding="2" class="border">
 		            <tr>
-		            	<td>Use this patient?</td>
-		            	<td>Identifier</td>
-		            	<td>Given Name</td>
-		            	<td>Family Name</td>
-		            	<td>Gender</td>
-		            	<td>DOB</td>
+		            	<td><spring:message code="amrsregistration.page.assign.use" /></td>
+			        	<td><spring:message code="amrsregistration.labels.ID" /></td>
+			        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
+			        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
+			        	<td><spring:message code="amrsregistration.labels.gender" /></td>
+			        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
 		            </tr>
 		    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
 		    			<c:choose>
@@ -149,8 +150,8 @@
 		    					<c:out value="${person.personName.familyName}" />
 		    				</td>
 		    				<td class="match spacing" style="text-align: center">
-								<c:if test="${patient.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
-								<c:if test="${patient.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
+								<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+								<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
 		    				</td>
 		    				<td class="match spacing">
 		    					<openmrs:formatDate date="${person.birthdate}" />
@@ -159,7 +160,12 @@
 		    		</c:forEach>
 		        </table>
 		        <br />
-		        <input type="checkbox" id="amrsIdToggle" value="true" /> I certify that none of the above is the patient that I'm looking for
+		        <input type="checkbox" id="amrsIdToggle" value="true" /><spring:message code="amrsregistration.page.assign.certify"/>
+		        <br /><br />
+			    &nbsp; &nbsp;
+				<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
+				&nbsp; &nbsp;
+				<input type="submit" name="_cancel" value="<spring:message code='amrsregistration.button.startover'/>">
 			</form>
 			<br />
 		</div>
@@ -177,7 +183,7 @@
 			<span class="error"><spring:message code="${error.code}"/></span>
 		</c:forEach>
 	</spring:hasBindErrors>
-	<form id="patientForm" method="post">
+	<form id="patientForm" method="post" autocomplete="off">
 		<div id="summaryHeading">
 			<div id="headingName">${patient.personName}</div>
 			<%@ include file="portlets/personInfo.jsp" %>
@@ -226,7 +232,7 @@
 		</div>
 		<input type="hidden" name="_page2" value="true" />
 		&nbsp;
-	    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.save'/>">
+	    <input type="submit" name="_target3" value="<spring:message code='amrsregistration.button.continue'/>">
 	    &nbsp; &nbsp;
 		<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">
 		&nbsp; &nbsp;

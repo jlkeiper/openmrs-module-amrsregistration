@@ -13,11 +13,11 @@
 
 <style>
 
-	input[type='text'] {
+	input[type=text] {
 		font-size: 3em;
 	}
 	
-	input[type='submit'] {
+	input[type=submit] {
 		font-size: 2em;
 		padding: 5px;
 		margin-bottom: 10px;
@@ -44,7 +44,7 @@
 					<span class="error"><spring:message code="${error.code}"/></span>
 				</c:forEach>
 			</spring:hasBindErrors>
-			<form id="identifierForm" method="post">
+			<form id="identifierForm" method="post" autocomplete="off">
 		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
 		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
 				<input type="hidden" name="_page0" value="true" />

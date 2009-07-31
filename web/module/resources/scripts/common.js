@@ -64,7 +64,7 @@
 		
 		//transition effect		
 		$j('#mask').fadeIn(0);	
-		$j('#mask').fadeTo(0, 0.8);
+		$j('#mask').fadeTo(0, 0.2);
     }
 	
 	function replaceNull (nullInput) {

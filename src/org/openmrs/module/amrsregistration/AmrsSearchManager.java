@@ -23,7 +23,7 @@ import org.openmrs.api.context.Context;
  */
 public class AmrsSearchManager {
 
-    private Integer limit = 200;
+    private Integer limit = 50;
 
     private AmrsRegistrationService getAmrsRegistrationService() {
         return (AmrsRegistrationService)Context.getService(AmrsRegistrationService.class);
@@ -62,28 +62,18 @@ public class AmrsSearchManager {
             PersonAddress personAddress, Set<PersonAttribute> personAttributes,
             String gender, Date birthDate, Integer age, Integer limit) {
         List<Person> persons = new ArrayList<Person>();
-        if (getSearchablePersonName(personName) == null) {
-            return persons;
+        
+        List<Patient> patients = new ArrayList<Patient>();
+        if (isSearchable(personName)) {
+        	String name = personName.toString();
+        	patients = Context.getPatientService().getPatients(name, null, null, false);
         }
         
-        int rotateCounter = 0;
-        int maxCounter = 3;
-        
-        while(persons.size() == 0 && rotateCounter < maxCounter) {
-            persons = getAmrsRegistrationService().getPersons(personName, personAddress,
-                personAttributes, gender, birthDate, age, limit);
-//        	rotateName(personName);
-        	rotateCounter ++;
+        for (Patient patient: patients) {
+	        persons.add(patient);
         }
         
         return persons;
-    }
-    
-    private void rotateName(PersonName name) {
-    	String temp = name.getGivenName();
-    	name.setGivenName(name.getFamilyName());
-    	name.setFamilyName(name.getMiddleName());
-    	name.setMiddleName(temp);
     }
 
     /**
@@ -163,5 +153,17 @@ public class AmrsSearchManager {
         }
         return personName;
     }
-
+    
+    private boolean isSearchable(PersonName name) {
+    	boolean searchable = false;
+    	
+    	if(name != null) {
+    		if (name.getGivenName() != null && name.getGivenName().length() > 3)
+    			searchable = true;
+    		else if (name.getFamilyName() != null && name.getFamilyName().length() > 3)
+    			searchable = true;
+    	}
+    	
+    	return searchable;
+    }
 }
