@@ -4,8 +4,8 @@
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 <%@ include file="localHeader.jsp" %>
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/common.js" />
 
 <div id="amrsTitle">
 	<h2><spring:message code="amrsregistration.start.title"/></h2>
@@ -39,20 +39,21 @@
 	<span><spring:message code="amrsregistration.start.details"/></span>
 	<div id="amrsForm">
 		<div id="centeredForm">
-			<spring:hasBindErrors name="patient">	
+			<spring:hasBindErrors name="patient">
 				<c:forEach items="${errors.allErrors}" var="error">
-					<span class="error"><spring:message code="${error.code}"/></span>
+					<span class="error"><spring:message code="${error.code}" arguments="${idCard}"/></span>
 				</c:forEach>
 			</spring:hasBindErrors>
 			<form id="identifierForm" method="post" autocomplete="off">
 		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
-		        <input type="text" id="idCardInput" size="20" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
+		        <input type="text" id="idCardInput" size="15" maxlength="15" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
 				<input type="hidden" name="_page0" value="true" />
 				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " tabindex="2"/>
 			</form>
+			<br /><br />
 			<form id="newIdentifierForm" method="post">
 				<input type="hidden" name="_page0" value="true" />
-				<input type="submit" name="_target1" value="Do Not Have ID Card" tabindex="3"/>
+				<input type="submit" name="_target1" value="<spring:message code="amrsregistration.page.start.button.id"/>" tabindex="3"/>
 			</form>
 		</div>
 	</div>

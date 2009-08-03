@@ -9,8 +9,8 @@
 <openmrs:htmlInclude file="/dwr/engine.js" />
 <openmrs:htmlInclude file="/dwr/util.js" />
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/common.js" />
 
 <%@ include file="portlets/dialogContent.jsp" %>
 <script type="text/javascript">
@@ -27,10 +27,10 @@
     baseObjs["name"] = ${fn:length(patient.names)};
     baseObjs["address"] = ${fn:length(patient.addresses)};
     	
-	nonRequiredIdType = 0;
+	requiredIdType = 0;
     <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
-        <c:if test="${amrsIdType != identifier.identifierType.name}">
-        	nonRequiredIdType ++;
+        <c:if test="${amrsIdType == identifier.identifierType.name}">
+        	requiredIdType ++;
         </c:if>
     </c:forEach>
     
@@ -43,8 +43,8 @@
 		
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
-			var children = $j(tr).children(':first');
-			var id = $j(children).html();
+			var children = $j(tr).children(':input');
+			var id = $j(children).attr('value');
 			getPatientByIdentifier(jQuery.trim(id));
 		});
 		
@@ -70,14 +70,13 @@
 		});
 		
 		$j('th').css('font', '1em verdana');
+		
+		<c:if test="${fn:length(potentialMatches) > 0}">$j('#resultTableHeader').show();</c:if>
+		
     });
     
     function getPatientByIdentifier(identifier) {
     	DWRAmrsRegistrationService.getPatientByIdentifier(identifier, renderPatientData);
-    }
-    
-    function hidDiv() {
-    	$j('#floating').hide();
     }
 	
 	function cancel() {
@@ -90,15 +89,15 @@
     	
     	var hiddenInput = $j(document.createElement("input"));
     	$j(hiddenInput).attr("type", "hidden");
-    	$j(hiddenInput).attr("name", "idCardInput");
-    	$j(hiddenInput).attr("id", "idCardInput");
+    	$j(hiddenInput).attr("name", "patientIdInput");
+    	$j(hiddenInput).attr("id", "patientIdInput");
     	$j(hiddenInput).attr("value", identifier);
     	$j('#boxes').append($j(hiddenInput));
     	
     	$j(document.forms[0].submit());
     }
 		
-	function createPreferred(preferred, type, container, hidden) {
+	function createPreferred(preferred, type, id, container, hidden) {
 		// this will be <tr> for id and name
 		// and <table> for address
 		var element = null;
@@ -106,7 +105,7 @@
 		var input = $j(document.createElement('input'));
 		$j(input).attr('type', 'radio');
 		$j(input).attr('name', type + 'Preferred');
-		$j(input).attr('value', numObjs[type]);
+		$j(input).attr('value', id);
 		if(preferred)
 			$j(input).attr('checked', 'checked');
 			
@@ -147,9 +146,9 @@
 			return $j('#identifierContent');
 	}
 	
-	function duplicateElement(type) {
+	function duplicateElement(type, id) {
 		var templateClone = getTemplateType(type).clone(true);
-		createPreferred(false, type, templateClone, false);
+		createPreferred(false, type, id, templateClone, false);
 		
 		// custom mods for address
 		if (type == 'address') {
@@ -163,45 +162,47 @@
 		return templateClone;
 	}
 	
-	function createElement(type) {
+	function createElement(type, id) {
 		var element = duplicateElement(type);
-		$j(element).attr('id', type + 'Content' + numObjs[type]);
+		$j(element).attr('id', type + 'Content' + id);
 		return element;
 	}
 
     function addNew(type) {
         $j('#' + type + 'Error').empty();
         
-    	var idSufix = numObjs[type] - 1;
+    	var prevIdSuffix = numObjs[type] - 1;
+    	if (type == 'identifier')
+    		prevIdSuffix = prevIdSuffix - requiredIdType;
+    		
     	var allowCreate = false;
     	
-    	if (numObjs[type] == 0) {
+    	// alert('id: ' + prevIdSuffix);
+    	// alert('numObjs['+type+']: ' + numObjs[type]);
+
+    	if (prevIdSuffix < 0) {
     		allowCreate = true;
     	} else {
-    		if (nonRequiredIdType == 0 && type == 'identifier')
-    			allowCreate = true;
-    		else {
-	    		var allInputType = $j('#' + type + 'Content' + idSufix + ' input[type=text]');
-	    		
-		    	for (i = 0; i < allInputType.length; i ++) {
-		    		var o = allInputType[i];
-		    		str = jQuery.trim(o.value);
-		    		if (str.length > 0) {
-		    			// allow creating new object when a non blank element is found
-		    			allowCreate = true;
-		    			break;
-		    		}
-		    	}
-		    }
+    		var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
+    		
+	    	for (i = 0; i < allInputType.length; i ++) {
+	    		var o = allInputType[i];
+	    		str = jQuery.trim(o.value);
+	    		if (str.length > 0) {
+	    			// allow creating new object when a non blank element is found
+	    			allowCreate = true;
+	    			break;
+	    		}
+	    	}
 		}
     	
         if (allowCreate) {
-            
-            var newElement = createElement(type);
+            var newElement = createElement(type, prevIdSuffix + 1);
             
             $j('#' + type + 'Position').append(newElement);
             
-            if (numObjs[type] == 1) {
+            if (prevIdSuffix == 0) {
+            	// alert('show flag');
             	$j('#' + type + 'PreferredLabel').show();
             	var parent = $j('input:radio[name=' + type + 'Preferred]').parent();
             	if (type != 'address')
@@ -214,9 +215,6 @@
             ele.focus();
             
             numObjs[type] = numObjs[type] + 1;
-            if (type == 'identifier') {
-            	nonRequiredIdType ++;
-            }
         }
         
         if (!allowCreate){
@@ -250,11 +248,13 @@
 		// the check only for the last element because we're not allowing adding
 		// new one when the previous one still blank (see addNew)
 		
-		var idSufix = numObjs[type] - 1;
+		var prevIdSuffix = numObjs[type] - 1;
+		if (type == 'identifier')
+			prevIdSuffix = prevIdSuffix - requiredIdType;
 		message = "";
-			
-		if (idSufix > 0) {
-			var allInputType = $j('#' + type + 'Content' + idSufix + ' input[type=text]');
+    		
+		if (prevIdSuffix > 0) {
+			var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
 	    	var deleteInputs = true;
 	    	for (i = 0; i < allInputType.length; i ++) {
 	    		var o = allInputType[i];
@@ -266,11 +266,14 @@
 	    		}
 	    	}
 	    	if (deleteInputs) {
-	    		$j('#' + type + "Content" + idSufix).remove();
-	    		numObjs[type] = idSufix;
+    			// alert('id: ' + prevIdSuffix);
+    			// alert('type: ' + requiredIdType);
+	    		var success = $j('#' + type + "Content" + prevIdSuffix).remove();
+	    		numObjs[type] = numObjs[type] - 1;
+	    		prevIdSuffix = prevIdSuffix - 1;
 	    		// remove radio button when there's only one row left
 	    		// assume the last one a preferred one
-	    		if (numObjs[type] == 1) {
+	    		if (prevIdSuffix == 0) {
 	    			$j('#' + type + 'PreferredLabel').hide();
 	            	parent = $j('input:radio[name=' + type + 'Preferred]').parent();
 	            	if (type != 'address')
@@ -301,8 +304,6 @@
     		
 		var tbody = $j('#resultTable');
 		$j(tbody).empty();
-		
-		$j('#floating').show();
     		
 		if (result.length > 3)
 			$j('#extendedToggle').show();
@@ -319,7 +320,7 @@
     			else
     				$j(tr).addClass("oddRow");
     				
-    			if (i > 2) {
+    			if (i > 3) {
     				$j(tr).addClass('resultTableExtended');
     			}
     			
@@ -333,16 +334,25 @@
     			);
     			
     			$j(tr).click(function() {
-					var children = $j(this).children(':first');
-					var id = $j(children).html();
+					var children = $j(this).children(':input');
+					var id = $j(children).attr('value');
 					getPatientByIdentifier(jQuery.trim(id));
     			});
     			
     			createCell(result[i].identifiers[0].identifier, tr);
     			createCell(result[i].personName.givenName, tr);
+    			createCell(result[i].personName.middleName, tr);
     			createCell(result[i].personName.familyName, tr);
+    			createCell(result[i].age, tr);
     			
     			var td = $j(document.createElement('td'));
+    			
+    			var input = $j(document.createElement('input'));
+    			$j(input).attr('type', 'hidden');
+    			$j(input).attr('name', 'hiddenId' + i);
+    			$j(input).attr('value', result[i].patientId);
+    			$j(tr).append($j(input));
+    			
     			$j(td).css('text-align', 'center');
     			var data = $j(document.createElement('img'));
     			if (result[i].gender == 'F')
@@ -351,6 +361,11 @@
     				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
     			$j(td).append($j(data));
     			$j(tr).append($j(td));
+    			
+    			if (result[i].birthdateEstimated)
+    				createCell('~', tr);
+    			else
+    				createCell('', tr);
     			
     			createCell(parseDate(result[i].birthdate, '<openmrs:datePattern />'), tr);
     			
@@ -435,33 +450,37 @@
         }
         
         for(i=0; i<attributes.length; i++) {
-            if (attributes[i].value == null || attributes[i].value == "") {
+            if (attributes[i].value == null || attributes[i].value == "")
                 continue;
-            }
-        	else {
+        	else
                 attributes[i].value = DWRUtil.getValue(attributes[i].attributeType.personAttributeTypeId).toString();
-            }
         }
         // alert("Attributes: " + DWRUtil.toDescriptiveString(attributes, 2));
         
-        var birthStr = $j('input:text[name=birthdate]').attr('value');
+        var birthStr = $j('input:text[name=birthdateInput]').attr('value');
         var birthdate = null;
-        if (birthStr && birthStr.length > 0)
+        if (typeof(birthStr) != 'undefined' && birthStr.length > 0)
         	birthdate = new Date(Date.parse(birthStr));
-        	
+        else {
+        	birthStr = $j('input:text[name=birthdate]').attr('value');
+        	if (typeof(birthStr) != 'undefined' && birthStr.length > 0)
+        		birthdate = new Date(Date.parse(birthStr));
+        }
+        
         var gender = $j('input:radio[name=gender]:checked').attr('value');
         if (!gender)
         	gender = null;
         	
-        var age = $j('input:text[name=age]').attr('value');
-        if (!age && birthStr) {
-			var age = getAge(birthStr);
-        	if (!age)
-        		age = null;
-        } else
+        var ageStr = $j('input:text[name=ageInput]').attr('value');
+        var age = null;
+        if (typeof(ageStr) != 'undefined' && ageStr.length > 0) {
+        	age = ageStr;
+        } else if (birthdate != null)
+        	age = getAge(birthdate);
+        else
         	age = null;
         
-        DWRAmrsRegistrationService.getPatients(personName, personAddress, attributes, gender, birthdate, age, handlePatientResult);
+        DWRAmrsRegistrationService.getPatients(personName, personAddress, patientIdentifier, attributes, gender, birthdate, age, handlePatientResult);
     }
     
     function prepareAttributes() {
@@ -524,51 +543,53 @@
 	<br /><br />
 			
 	<div id="floating" style="display: block;">
-	    <table class="box" style="width: 80%;">
+	    <table class="box" style="width: 80%; padding: 0px">
 	    	<tr>
 	    		<td><span style="border-bottom:1px solid lightgray;">Patient Search</span></td>
-	    		<td colspan="3">&nbsp;</td>
-	    		<td style="text-align: right;"><span class="toggle"><a href="javascript:;" onclick="hidDiv()">close</a></span></td>
+	    		<td colspan="4">&nbsp;</td>
 	    	</tr>
 			<c:choose>
 				<c:when test="${fn:length(potentialMatches) > 0}">
 			        <tr class="filler" style="display: none">
-			        	<td colspan="5"><span id="searchMessage">No patients found.</span></td>
+			        	<td colspan="8"><span id="searchMessage">No patients found.</span></td>
 			        </tr>
 			        <tr class="filler" style="display: none">
-			        	<td colspan="5">&nbsp;</td>
+			        	<td colspan="8">&nbsp;</td>
 			        </tr>
 			        <tr class="filler" style="display: none">
-			        	<td colspan="5">&nbsp;</td>
+			        	<td colspan="8">&nbsp;</td>
 			        </tr>
 				</c:when>
 				<c:otherwise>
 			        <tr class="filler" style="display: block">
-			        	<td colspan="5"><span id="searchMessage">No patients found.</span></td>
+			        	<td colspan="8"><span id="searchMessage">No patients found.</span></td>
 			        </tr>
 			        <tr class="filler" style="display: block">
-			        	<td colspan="5">&nbsp;</td>
+			        	<td colspan="8">&nbsp;</td>
 			        </tr>
 			        <tr class="filler" style="display: block">
-			        	<td colspan="5">&nbsp;</td>
+			        	<td colspan="8">&nbsp;</td>
 			        </tr>
 				</c:otherwise>
 			</c:choose>
-	        <tr id="resultTableHeader" style="display:none">
+        	<tr id="resultTableHeader" style="display: none;">
 	        	<td><spring:message code="amrsregistration.labels.ID" /></td>
 	        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
+	        	<td><spring:message code="amrsregistration.labels.middleNameLabel" /></td>
 	        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
+	        	<td><spring:message code="amrsregistration.labels.age" /></td>
 	        	<td style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></td>
+	        	<td>&nbsp;</td>
 	        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
 	        </tr>
 	        <tbody id="resultTable">
 				<c:choose>
 					<c:when test="${fn:length(potentialMatches) > 0}">
-			    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
+			    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus">
 			    			<c:choose>
 			    				<c:when test="${varStatus.index % 2 == 0}">
 					    			<c:choose>
-					    				<c:when test="${varStatus.index > 2}">
+					    				<c:when test="${varStatus.index > 3}">
 					    					<tr class="evenRow resultTableExtended">
 					    				</c:when>
 					    				<c:otherwise>
@@ -578,7 +599,7 @@
 			    				</c:when>
 			    				<c:otherwise>
 					    			<c:choose>
-					    				<c:when test="${varStatus.index > 2}">
+					    				<c:when test="${varStatus.index > 3}">
 					    					<tr class="oddRow resultTableExtended">
 					    				</c:when>
 					    				<c:otherwise>
@@ -587,7 +608,7 @@
 					    			</c:choose>
 			    				</c:otherwise>
 			    			</c:choose>
-			    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
+			    				<c:forEach items="${patient.identifiers}" var="identifier" varStatus="varStatus">
 			    					<c:if test="${varStatus.index == 0}">
 					    				<td class="match">
 					    					<c:out value="${identifier.identifier}" />
@@ -595,25 +616,35 @@
 			        				</c:if>
 			    				</c:forEach>
 			    				<td class="match">
-			    					<c:out value="${person.personName.givenName}" />
+			    					<c:out value="${patient.personName.givenName}" />
 			    				</td>
 			    				<td class="match">
-			    					<c:out value="${person.personName.familyName}" />
+			    					<c:out value="${patient.personName.middleName}" />
+			    				</td>
+			    				<td class="match">
+			    					<c:out value="${patient.personName.familyName}" />
+			    				</td>
+			    				<td class="match">
+			    					<c:out value="${patient.age}" />
 			    				</td>
 			    				<td class="match" style="text-align: center;">
-									<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
-									<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
+									<c:if test="${patient.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+									<c:if test="${patient.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
 			    				</td>
 			    				<td class="match">
-			    					<openmrs:formatDate date="${person.birthdate}" />
+			    					<c:if test="${patient.birthdateEstimated}">~</c:if>
 			    				</td>
+			    				<td class="match">
+			    					<openmrs:formatDate date="${patient.birthdate}" />
+			    				</td>
+			    				<input type="hidden" name="hiddenId${varStatus.index}" value="${patient.patientId}" />
 			    			</tr>
 			    		</c:forEach>
 					</c:when>
 				</c:choose>
 	        </tbody>
 			<c:choose>
-				<c:when test="${fn:length(potentialMatches) > 2}">
+				<c:when test="${fn:length(potentialMatches) > 3}">
 	    			<tr id="extendedToggle" style="display: block;">
 				</c:when>
 				<c:otherwise>
@@ -668,7 +699,7 @@
 	            		var tbody = $j('#namePositionParent').find('tbody:eq(1)');
 	            		var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
 	            		$j(nameContentX).attr('id', 'nameContent' + position);
-	            		createPreferred(preferred, 'name', nameContentX, hidden);
+	            		createPreferred(preferred, 'name', position, nameContentX, hidden);
 	            		
 	            		// bind onkeyup for each of the address layout text field
 	            		var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
@@ -724,9 +755,9 @@
 				<c:choose>
 					<c:when test="${patient.birthdate == null}">
 							<td style="padding-right: 4em;">
-								<input type="text" name="birthdate" id="birthdate" size="11" value="" readonly="readonly" onclick="showCalendar(this)" onkeyup="timeOutSearch(event)"/>
+								<input type="text" name="birthdateInput" id="birthdate" size="11" value="" readonly="readonly" onclick="showCalendar(this)" onkeyup="timeOutSearch(event)"/>
 								<spring:message code="Person.age.or"/>
-								<input type="text" name="age" id="age" size="5" value="" onkeyup="timeOutSearch(event)" />
+								<input type="text" name="ageInput" id="age" size="5" value="" onkeyup="timeOutSearch(event)" />
 							</td>
 					</c:when>
 					<c:otherwise>
@@ -763,27 +794,25 @@
 										}
 									}
 								</script>
-								<spring:bind path="birthdate">			
+								<spring:bind path="patient.birthdate">			
 									<input type="text" 
-											name="birthdate" size="10" id="birthdate"
+											name="${status.expression}" size="10" id="birthdate"
 											value="${status.value}"
 											readonly="readonly"
 											onchange="updateAge(); updateEstimated(this);"
 											onclick="showCalendar(this)" onkeyup="timeOutSearch(event)" />
-									<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
 								</spring:bind>
 								
 								<span id="age"></span> &nbsp; 
 								
 								<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
-									<spring:bind path="birthdateEstimated">
+									<spring:bind path="patient.birthdateEstimated">
 										<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
-										<input type="hidden" name="_birthdateEstimated">
-										<input type="checkbox" name="birthdateEstimated" value="true" 
+										<input type="hidden" name="_${status.expression}">
+										<input type="checkbox" name="${status.expression}" value="true" 
 											   <c:if test="${status.value == true}">checked</c:if> 
 											   id="birthdateEstimatedInput" 
 											   onclick="if (!this.checked) updateEstimated()" />
-										<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 									</spring:bind>
 								</span>
 								
@@ -836,7 +865,7 @@
 								preferred = true;
 							</c:if>
 							var container = $j('#identifierContent${varStatus.index}');
-							createPreferred(preferred, 'identifier', container, hidden);
+							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
 			            </script>
 	            	</c:if>
 	            </spring:nestedPath>
@@ -882,7 +911,7 @@
 	            		var position = ${varStatus.index};
 	            		var nameContentX = $j('#addressPortlet' + position).find('table');
 	            		$j(nameContentX).attr('id', 'addressContent' + position);
-	            		createPreferred(preferred, 'address', nameContentX, hidden);
+	            		createPreferred(preferred, 'address', position, nameContentX, hidden);
 	            		
 	            		// bind all inputs
 	            		var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
@@ -946,5 +975,12 @@
 	<br/>
 	</form>
 </div>
+<script type="text/javascript">
+	// bind onkeyup for each of the address layout text field
+	$j(document).ready(function() {
+		var first = $j('#nameContent0 input[type=text]:eq(0)');
+		first.focus();
+	});
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

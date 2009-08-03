@@ -117,8 +117,6 @@
             <create creator="new" javascript="DWRAmrsRegistrationService">
                 <param name="class" value="org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService"/>
                 <include method="getPatients"/>
-                <include method="sayHello"/>
-                <include method="getPersonName"/>
                 <include method="getPatientByIdentifier"/>
             </create>
         </allow>
@@ -129,9 +127,7 @@
             import org.openmrs.PersonAddress;
             import org.openmrs.PersonAttribute;
             import org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService;
-            DWRAmrsRegistrationService.getPatients(PersonName name, PersonAddress address, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
-            DWRAmrsRegistrationService.sayHello(String name);
-            DWRAmrsRegistrationService.getPersonName(Integer personId);
+            DWRAmrsRegistrationService.getPatients(PersonName name, PersonAddress address, PersonIdentifier identifier, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
             DWRAmrsRegistrationService.getPatientByIdentifier(String identifier);
             ]]>
         </signatures>

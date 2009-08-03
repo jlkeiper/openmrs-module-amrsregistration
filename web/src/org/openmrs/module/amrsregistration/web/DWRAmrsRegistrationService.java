@@ -1,13 +1,12 @@
 package org.openmrs.module.amrsregistration.web;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.Person;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
@@ -20,34 +19,16 @@ public class DWRAmrsRegistrationService extends DWRPersonService {
 	private AmrsSearchManager searchManager = new AmrsSearchManager();
 
     public List<Patient> getPatients(PersonName paramPersonName,
-            PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
+            PersonAddress paramPersonAddress,  PatientIdentifier identifier, Set<PersonAttribute> paramSet,
             String paramString, Date paramDate, Integer paramInteger) {
-    	List<Person> localList = searchManager.getPersons(
-                paramPersonName, paramPersonAddress, paramSet, paramString,
+    	List<Patient> localList = searchManager.getPatients(
+                paramPersonName, paramPersonAddress, identifier, paramSet, paramString,
                 paramDate, paramInteger, 10);
-        ArrayList<Patient> localArrayList = new ArrayList<Patient>();
-        for (Person localPerson : localList) {
-            if (!(localPerson.isUser())) {
-                localArrayList.add((Patient) localPerson);
-            }
-        }
-        return localArrayList;
-    }
-
-    public String sayHello(String paramString) {
-        return "Hello, " + paramString;
-    }
-
-    public PersonName getPersonName(Integer paramInteger) {
-        Person localPerson = Context.getPersonService().getPerson(paramInteger);
-        if (localPerson != null) {
-            return localPerson.getPersonName();
-        }
-        return null;
+        return localList;
     }
     
     public Patient getPatientByIdentifier(String identifier) {
-		List<Patient> patients = Context.getPatientService().getPatients("", identifier, new ArrayList<PatientIdentifierType>(), true);
-		return patients.get(0);
+		Patient matchedPatient = Context.getPatientService().getPatient(NumberUtils.toInt(identifier));
+		return matchedPatient;
     }
 }

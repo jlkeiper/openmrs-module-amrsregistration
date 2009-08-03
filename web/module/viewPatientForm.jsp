@@ -10,6 +10,11 @@
 <br/><br/>
 
 <form id="identifierForm" method="post">
+	<spring:hasBindErrors name="patient">	
+		<c:forEach items="${errors.allErrors}" var="error">
+			<span class="error"><spring:message code="${error.code}" /></span>
+		</c:forEach>
+	</spring:hasBindErrors>
 	<div id="summaryHeading">
 		<div id="headingName">${patient.personName}</div>
 		<div id="headingPreferredIdentifier">

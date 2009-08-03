@@ -1,5 +1,7 @@
 package org.openmrs.module.amrsregistration.web.controller;
 
+import org.openmrs.api.context.Context;
+
 
 public interface AmrsRegistrationConstants {
 	
@@ -10,5 +12,6 @@ public interface AmrsRegistrationConstants {
 	int ASSIGN_ID_PAGE = 2;
 	
 	int REVIEW_PAGE = 3;
-
+	
+	String AMRS_TARGET_ID = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
 }

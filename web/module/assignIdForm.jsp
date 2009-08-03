@@ -8,8 +8,8 @@
 <openmrs:htmlInclude file="/dwr/interface/DWRAmrsRegistrationService.js" />
 <openmrs:htmlInclude file="/dwr/engine.js" />
 <openmrs:htmlInclude file="/dwr/util.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/common.js" />
 
 <script type="text/javascript">
 	$j = jQuery.noConflict();
@@ -25,8 +25,8 @@
 		
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
-			var children = $j(tr).children(':first').next();
-			var id = $j(children).html();
+			var children = $j(tr).children(':input');
+			var id = $j(children).attr('value');
 			getPatientByIdentifier(jQuery.trim(id));
 		});
 		
@@ -54,8 +54,8 @@
     	
     	var hiddenInput = $j(document.createElement("input"));
     	$j(hiddenInput).attr("type", "hidden");
-    	$j(hiddenInput).attr("name", "idCardInput");
-    	$j(hiddenInput).attr("id", "idCardInput");
+    	$j(hiddenInput).attr("name", "patientIdInput");
+    	$j(hiddenInput).attr("id", "patientIdInput");
     	$j(hiddenInput).attr("value", identifier);
     	$j('.match').append($j(hiddenInput));
     	
@@ -116,14 +116,16 @@
 			<form id="switchPatient" name="switchPatient" method="post" autocomplete="off">
 		        <table border="0" cellspacing="2" cellpadding="2" class="border">
 		            <tr>
-		            	<td><spring:message code="amrsregistration.page.assign.use" /></td>
 			        	<td><spring:message code="amrsregistration.labels.ID" /></td>
 			        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
+			        	<td><spring:message code="amrsregistration.labels.middleNameLabel" /></td>
 			        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
-			        	<td><spring:message code="amrsregistration.labels.gender" /></td>
+			        	<td><spring:message code="amrsregistration.labels.age" /></td>
+			        	<td style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></td>
+			        	<td>&nbsp;</td>
 			        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
 		            </tr>
-		    		<c:forEach items="${potentialMatches}" var="person" varStatus="varStatus">
+		    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus">
 		    			<c:choose>
 		    				<c:when test="${varStatus.index % 2 == 0}">
 		    					<tr class="evenRow">
@@ -132,35 +134,43 @@
 		    					<tr class="oddRow">
 		    				</c:otherwise>
 		    			</c:choose>
-		    				<c:forEach items="${person.identifiers}" var="identifier" varStatus="varStatus">
+		    				<c:forEach items="${patient.identifiers}" var="identifier" varStatus="varStatus">
 		    					<c:if test="${varStatus.index == 0}">
-			    					<td>
-										<input type="hidden" name="_idCardInput">
-										<input type="radio" name="idCardInput" value="${identifier.identifier}" onclick="getPatientByIdentifier(this.value)" />
-	            					</td>
 				    				<td class="match spacing">
 				    					<c:out value="${identifier.identifier}" />
 				    				</td>
 	            				</c:if>
 		    				</c:forEach>
 		    				<td class="match spacing">
-		    					<c:out value="${person.personName.givenName}" />
+		    					<c:out value="${patient.personName.givenName}" />
+		    				</td>
+		    				<td class="match">
+		    					<c:out value="${patient.personName.middleName}" />
 		    				</td>
 		    				<td class="match spacing">
-		    					<c:out value="${person.personName.familyName}" />
+		    					<c:out value="${patient.personName.familyName}" />
+		    				</td>
+		    				<td class="match spacing">
+		    					<c:out value="${patient.age}" />
 		    				</td>
 		    				<td class="match spacing" style="text-align: center">
-								<c:if test="${person.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
-								<c:if test="${person.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
+								<c:if test="${patient.gender == 'M'}"><img src="${pageContext.request.contextPath}/images/male.gif" alt='<spring:message code="Person.gender.male"/>' /></c:if>
+								<c:if test="${patient.gender == 'F'}"><img src="${pageContext.request.contextPath}/images/female.gif" alt='<spring:message code="Person.gender.female"/>' /></c:if>
+		    				</td>
+		    				<td class="match">
+		    					<c:if test="${patient.birthdateEstimated}">~</c:if>
 		    				</td>
 		    				<td class="match spacing">
-		    					<openmrs:formatDate date="${person.birthdate}" />
+		    					<openmrs:formatDate date="${patient.birthdate}" />
 		    				</td>
+			    			<input type="hidden" name="hiddenId" id="hiddenId" value="${patient.patientId}" />
 		    			</tr>
 		    		</c:forEach>
 		        </table>
 		        <br />
-		        <input type="checkbox" id="amrsIdToggle" value="true" /><spring:message code="amrsregistration.page.assign.certify"/>
+		        <c:if test="!${selectionOnly}">
+		        	<input type="checkbox" id="amrsIdToggle" value="true" /><spring:message code="amrsregistration.page.assign.certify"/>
+		        </c:if>
 		        <br /><br />
 			    &nbsp; &nbsp;
 				<input type="submit" name="_target1" value="<spring:message code='amrsregistration.button.edit'/>">

@@ -130,7 +130,7 @@ function renderPatientData(patient) {
     yesButton.type = "button";
     yesButton.value="Yes";
 	$j(yesButton).bind('click', function() {
-		updateData(patient.identifiers[0].identifier);
+		updateData(patient.patientId);
 	});
     document.getElementById("personContent").appendChild(yesButton);
     
@@ -144,6 +144,8 @@ function renderPatientData(patient) {
 		cancel();
 	});
     document.getElementById("personContent").appendChild(noButton);
+    
+	yesButton.focus();
 	
 	animatePatientData();
 }

@@ -1,5 +1,5 @@
 
-<openmrs:htmlInclude file="/openmrs/moduleResources/amrsregistration/css/amrsregistration.css" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/css/amrsregistration.css" />
 <div id="amrsUserBar">
 	<openmrs:authentication>
 		<c:if test="${authenticatedUser != null}">
