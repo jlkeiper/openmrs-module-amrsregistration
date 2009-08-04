@@ -222,7 +222,7 @@
         }
     }
 	
-	function removeBlankData() {
+	function removeTemplate() {
 		// remove name, id and address template
 		var obj = document.getElementById("identifierContent");
 		if (obj != null)
@@ -534,7 +534,7 @@
 <div id="mask"></div>
 <div id="amrsContent">
 	<span>Fill in the patient information and press continue to proceed</span>
-	<form id="patientForm" method="post" onSubmit="removeBlankData()" autocomplete="off">
+	<form id="patientForm" method="post" onSubmit="removeTemplate()" autocomplete="off">
 	<div id="boxes"> 
 		<div id="dialog" class="window">
 			<div id="personContent"></div>
@@ -923,7 +923,7 @@
 			</c:forEach>
 	        <tbody id="addressPosition" />
 		</table>
-        <div id="addressPosition" style="clear:both"/>
+        <div id="addressPositionClear" style="clear:both"/>
 		<div id="addressContent" style="display: none;">
 			<spring:nestedPath path="emptyAddress">
 				<openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />

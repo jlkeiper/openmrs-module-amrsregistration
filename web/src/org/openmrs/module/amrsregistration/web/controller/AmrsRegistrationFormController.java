@@ -51,7 +51,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class AmrsRegistrationFormController extends AbstractWizardFormController {
 	
-    private Log log = LogFactory.getLog(super.getClass());
+    private Log log = LogFactory.getLog(AmrsRegistrationFormController.class);
 	
 	public AmrsRegistrationFormController() {
 	}
@@ -206,10 +206,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         		String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName");
         		String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName");
         		String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName");
-        		String[] degrees = ServletRequestUtils.getStringParameters(request, "degree");
         		
         		if (givenNames != null || middleNames != null ||
-        				familyNames != null || degrees != null) {
+        				familyNames != null) {
         			
         			int maxNames = 0;
         			if (givenNames != null && givenNames.length > maxNames)
@@ -218,15 +217,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         				maxNames = middleNames.length;
         			if (familyNames != null && familyNames.length > maxNames)
         				maxNames = familyNames.length;
-        			if (degrees != null && degrees.length > maxNames)
-        				maxNames = degrees.length;
         			
         			for (int j = 0; j < maxNames; j++) {
         				PersonName name = new PersonName();
         				name.setGivenName(givenNames[j]);
         				name.setMiddleName(middleNames[j]);
         				name.setFamilyName(familyNames[j]);
-        				name.setDegree(degrees[j]);
         				if (preferredNameCreated && selectedName == j)
         					name.setPreferred(Boolean.TRUE);
         				patient.addName(name);
@@ -457,7 +453,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				} else
 					errors.reject("amrsregistration.page.start.error", new Object[] {idCard}, "No patient found in the system");
 			}
-		} else if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE || page == AmrsRegistrationConstants.EDIT_PAGE) {
+		} else if (page == AmrsRegistrationConstants.EDIT_PAGE) {
 			String patientId = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
 			if (patientId != null) {
 				Patient matchedPatient = patientService.getPatient(NumberUtils.toInt(patientId));
@@ -480,6 +476,29 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					}
 				}
 	        }
+		} else if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
+			String patientId = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
+			if (patientId != null) {
+				Patient matchedPatient = patientService.getPatient(NumberUtils.toInt(patientId));
+				if (matchedPatient != null) {
+					copyPatient(patient, matchedPatient);
+					patient.getAttributeMap();
+					
+					targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
+					for (PatientIdentifier identifier : patient.getIdentifiers()) {
+						if (identifier != null) {
+							PatientIdentifierType identifierType = identifier.getIdentifierType();
+							if (identifierType != null &&
+									!identifier.isVoided() &&
+									AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
+								// found the required id type, go to confirmation page
+								targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
+								break;
+							}
+						}
+			        }
+				}
+			}
 		}
 		
 		if (page == AmrsRegistrationConstants.EDIT_PAGE)
@@ -520,14 +539,14 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			}
 			
 			if (patient.getBirthdate() == null)
-				errors.reject("amrsregistration.page.edit.invalidDate");
+				errors.rejectValue("birthdate", "amrsregistration.page.edit.invalidDate");
 			else {
 				if (patient.getBirthdate().after(new Date()))
-	    			errors.reject("amrsregistration.page.edit.futureDate");
+	    			errors.rejectValue("birthdate", "amrsregistration.page.edit.futureDate");
 			}
 			
 			if (StringUtils.isEmpty(patient.getGender()))
-				errors.reject("amrsregistration.page.edit.invalidGender");
+				errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
 			
 			foundInvalid = false;
 			for (PersonAddress address: patient.getAddresses()) {
