@@ -106,8 +106,9 @@
 		$j(input).attr('type', 'radio');
 		$j(input).attr('name', type + 'Preferred');
 		$j(input).attr('value', id);
-		if(preferred)
+		if(preferred) {
 			$j(input).attr('checked', 'checked');
+		}
 			
 		if (type == 'address') {
 			// for address, element is a row
@@ -163,7 +164,7 @@
 	}
 	
 	function createElement(type, id) {
-		var element = duplicateElement(type);
+		var element = duplicateElement(type, id);
 		$j(element).attr('id', type + 'Content' + id);
 		return element;
 	}
@@ -197,7 +198,7 @@
 		}
     	
         if (allowCreate) {
-            var newElement = createElement(type, prevIdSuffix + 1);
+            var newElement = createElement(type, (prevIdSuffix + 1));
             
             $j('#' + type + 'Position').append(newElement);
             
@@ -677,7 +678,14 @@
 				<thead>
 					<openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
 				<td>
-				    <span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+					<c:choose>
+						<c:when test="${fn:length(patient.names) > 1}">
+				   			<span id="namePreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
+						</c:when>
+						<c:otherwise>
+				    		<span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+						</c:otherwise>
+					</c:choose>
 				</td>
 				</thead>
 			</tr>
@@ -686,15 +694,9 @@
 					<openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
 	            </spring:nestedPath>
 	            <script type="text/javascript">
-	            	var hidden = true;
-					<c:if test="${fn:length(patient.names) > 1}">
-						hidden = false;
-					</c:if>
-					var preferred = false;
-					<c:if test="${name.preferred}">
-						preferred = true;
-					</c:if>
 	            	$j(document).ready(function () {
+	            		var hidden = ${fn:length(patient.names) <= 1};
+						var preferred = ${name.preferred};
 	            		var position = ${varStatus.index};
 	            		var tbody = $j('#namePositionParent').find('tbody:eq(1)');
 	            		var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
@@ -848,7 +850,14 @@
 					<spring:message code="PatientIdentifier.location"/>
 				</td>
 				<td>
-				    <span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+					<c:choose>
+						<c:when test="${fn:length(patient.identifiers) > 1}">
+				    		<span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
+						</c:when>
+						<c:otherwise>
+				    		<span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+						</c:otherwise>
+					</c:choose>
 				</td>
 			</tr>
 	        <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
@@ -856,14 +865,8 @@
 	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
 						<script type="text/javascript">
-							var hidden = true;
-							<c:if test="${fn:length(patient.identifiers) > 1}">
-								hidden = false;
-							</c:if>
-							var preferred = false;
-							<c:if test="${identifier.preferred}">
-								preferred = true;
-							</c:if>
+							var hidden = ${fn:length(patient.identifiers) <= 1};
+							var preferred = ${identifier.preferred};
 							var container = $j('#identifierContent${varStatus.index}');
 							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
 			            </script>
@@ -899,15 +902,9 @@
 			    </spring:nestedPath>
 				</td></tr>
 	            <script type="text/javascript">
-	            	var hidden = true;
-					<c:if test="${fn:length(patient.addresses) > 1}">
-						hidden = false;
-					</c:if>
-					var preferred = false;
-					<c:if test="${address.preferred}">
-						preferred = true;
-					</c:if>
 	            	$j(document).ready(function () {
+		            	var hidden = ${fn:length(patient.addresses) <= 1};
+						var preferred = ${address.preferred};
 	            		var position = ${varStatus.index};
 	            		var nameContentX = $j('#addressPortlet' + position).find('table');
 	            		$j(nameContentX).attr('id', 'addressContent' + position);

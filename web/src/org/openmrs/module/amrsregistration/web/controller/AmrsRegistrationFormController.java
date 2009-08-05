@@ -33,11 +33,10 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsregistration.AmrsSearchManager;
-import org.openmrs.patient.IdentifierValidator;
-import org.openmrs.patient.UnallowedIdentifierException;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
 import org.openmrs.propertyeditor.PatientIdentifierTypeEditor;
+import org.openmrs.validator.PatientIdentifierValidator;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.validation.BindException;
@@ -81,6 +80,16 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					patient.getBirthdate(), patient.getAge(), 10);
 				request.setAttribute("potentialMatches", patients);
 			}
+		} else {
+			PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
+			if (type == null) {
+				errors.reject("amrsregistration.page.start.undefinedTarget",
+					new Object[]{AmrsRegistrationConstants.AMRS_TARGET_ID},
+					"Target identifier is not specified");
+				errors.reject("amrsregistration.page.start.targetSpecify",
+					new Object[]{AmrsRegistrationConstants.AMRS_TARGET_ID_KEY},
+					"Please specify target in the global properties");
+			}
 		}
 		
 		return localHashMap;
@@ -99,7 +108,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     		if (idCard == null) {
         		
         		// remove from this list elements that already in the person attribute (list.remove(personattributeType)
-                List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes();
+                List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes(false);
         		for (PersonAttribute attribute : patient.getAttributes()) {
         			Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
                     String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
@@ -294,41 +303,52 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     	}
     	
     	if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
-    		String idType = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
-			String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", StringUtils.EMPTY);
-			if (StringUtils.isNotBlank(amrsId)) {
-
-				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(idType);
-    			boolean validIdentifier = false;
+			String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
+			if (amrsId != null) {
+				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
+            	boolean foundAmrsId = false;
 				try {
-	                IdentifierValidator validator = Context.getPatientService().getIdentifierValidator(type.getValidator());
-	                validIdentifier = validator.isValid(amrsId);
+	                PatientIdentifierValidator.validateIdentifier(amrsId, type);
+	                for (PatientIdentifier identifier : patient.getIdentifiers()) {
+	                    if (identifier.getIdentifierType().equals(type)) {
+	                    	foundAmrsId = true;
+	                    	identifier.setIdentifier(amrsId);
+	                    }
+	                }
+	                if (!foundAmrsId) {
+	                	PatientIdentifier identifier = new PatientIdentifier();
+	                	identifier.setIdentifier(amrsId);
+	                	identifier.setIdentifierType(type);
+	                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
+                        PatientIdentifierValidator.validateIdentifier(identifier);
+                		patient.addIdentifier(identifier);
+	                }
                 }
-                catch (UnallowedIdentifierException e) {
-					log.error("Bad identifier: '" + amrsId + "'");
-                }
-                
-                if (!validIdentifier) {
-    				errors.reject("amrsregistration.page.assign.invalidId", new Object[]{amrsId},
-    					"AMRS Id assigned is invalid according to the identifier validator.");
-                } else {
-        			boolean foundAmrsId = false;
-        			for (PatientIdentifier identifier : patient.getIdentifiers()) {
-    	                if (identifier.getIdentifierType().equals(type)) {
-    	                	foundAmrsId = true;
-    	                	identifier.setIdentifier(amrsId);
-    	                }
-        			}
-    				if (!foundAmrsId) {
-						PatientIdentifier identifier = new PatientIdentifier();
-						identifier.setIdentifier(amrsId);
-						identifier.setIdentifierType(type);
-						identifier.setLocation(Context.getLocationService().getDefaultLocation());
-						patient.addIdentifier(identifier);
-    				}
+                catch (Exception e) {
+        			errors.reject(e.getMessage());
                 }
 			}
     	}
+		
+		if (getTargetPage(request, page) == AmrsRegistrationConstants.EDIT_PAGE) {
+			int nonTargetedIdentifier = 0;
+			for (PatientIdentifier identifier : patient.getIdentifiers()) {
+				PatientIdentifierType identifierType = identifier.getIdentifierType();
+				if (identifierType != null) {
+						if (!identifier.isVoided() &&
+								!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
+							nonTargetedIdentifier ++;
+						}
+				} else
+					// assume null type to be non target identifier
+					nonTargetedIdentifier ++;
+            }
+			if (nonTargetedIdentifier <= 0) {
+		        PatientIdentifier identifier = new PatientIdentifier();
+		        identifier.setIdentifier("");
+		        patient.addIdentifier(identifier);
+			}
+		}
     }
 
 	/**
@@ -440,15 +460,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						Patient matchedPatient = patients.get(0);
 						copyPatient(patient, matchedPatient);
 						patient.getAttributeMap();
-						
-						for (PatientIdentifier identifier : patient.getIdentifiers()) {
-							if (identifier.getIdentifierType().getName().equals(AmrsRegistrationConstants.AMRS_TARGET_ID) &&
-									!identifier.isVoided()) {
-								// found the required id type, go to confirmation page
-								targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
-								break;
-							}
-				        }
+						if (targetIdentifierExists(patient))
+							targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 					}
 				} else
 					errors.reject("amrsregistration.page.start.error", new Object[] {idCard}, "No patient found in the system");
@@ -464,18 +477,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			}
 			
 			targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
-			for (PatientIdentifier identifier : patient.getIdentifiers()) {
-				if (identifier != null) {
-					PatientIdentifierType identifierType = identifier.getIdentifierType();
-					if (identifierType != null &&
-							!identifier.isVoided() &&
-							AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
-						// found the required id type, go to confirmation page
-						targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
-						break;
-					}
-				}
-	        }
+			if (targetIdentifierExists(patient))
+				targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
+			
+			validate(command, errors, false);
+			
 		} else if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
 			String patientId = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
 			if (patientId != null) {
@@ -485,81 +491,118 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 					patient.getAttributeMap();
 					
 					targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
-					for (PatientIdentifier identifier : patient.getIdentifiers()) {
-						if (identifier != null) {
-							PatientIdentifierType identifierType = identifier.getIdentifierType();
-							if (identifierType != null &&
-									!identifier.isVoided() &&
-									AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
-								// found the required id type, go to confirmation page
-								targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
-								break;
-							}
-						}
-			        }
+					if (targetIdentifierExists(patient))
+						targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 				}
 			}
 		}
 		
-		if (page == AmrsRegistrationConstants.EDIT_PAGE)
-			validatePage(command, errors, page, true);
-		
 		return targetPage;
+	}
+	
+	private boolean targetIdentifierExists(Patient patient) {
+		boolean exist = false;
+		for (PatientIdentifier identifier : patient.getIdentifiers()) {
+			PatientIdentifierType identifierType = identifier.getIdentifierType();
+			if (identifierType != null &&
+					!identifier.isVoided() &&
+					AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
+				// found the required id type, go to confirmation page
+				exist = true;
+				break;
+			}
+        }
+		return exist;
 	}
 	
 	
 
 	@Override
     protected void validatePage(Object command, Errors errors, int page, boolean finish) {
-		if (finish) {
-			
-			Patient patient = (Patient) command;
-			
-			boolean foundInvalid = false;
-			for (PersonName name: patient.getNames()) {
-				
-				// if all fields for the name is empty then check if the name already has an id
-				// if yes, then that name can only be voided
-				// if no, then we can remove the name
-	    		if (StringUtils.isBlank(name.getFamilyName()) &&
-	    				StringUtils.isBlank(name.getGivenName()) &&
-	    				StringUtils.isBlank(name.getMiddleName())) {
-	    			if (name.getPersonNameId() != null)
-	    				foundInvalid = true;
-	    			else {
-	    				if (patient.getNames().size() > 1)
-	    					patient.removeName(name);
-	    			}
-	    		}
-	        }
-			
-			// show message for empty name with id
-			if (foundInvalid) {
-				errors.reject("amrsregistration.page.edit.invalidName");
-			}
-			
-			if (patient.getBirthdate() == null)
-				errors.rejectValue("birthdate", "amrsregistration.page.edit.invalidDate");
-			else {
-				if (patient.getBirthdate().after(new Date()))
-	    			errors.rejectValue("birthdate", "amrsregistration.page.edit.futureDate");
-			}
-			
-			if (StringUtils.isEmpty(patient.getGender()))
-				errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
-			
-			foundInvalid = false;
-			for (PersonAddress address: patient.getAddresses()) {
-	    		if (StringUtils.isBlank(address.getSubregion()) ||
-	    				StringUtils.isBlank(address.getRegion()))
-	    			
-	    			// TODO: probably need to do validation like above (name)
-	    			foundInvalid = true;
-	        }
-			
-			if (foundInvalid)
-				errors.reject("amrsregistration.page.edit.invalidAddress");
+		// only validate when process finish is being called
+		if (finish && page == AmrsRegistrationConstants.EDIT_PAGE) {
+			validate(command, errors, finish);
 		}
+		
+		if (finish && page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
+			Patient patient = (Patient) command;
+			PatientIdentifierValidator validator = new PatientIdentifierValidator();
+			for (PatientIdentifier identifier: patient.getIdentifiers()) {
+				PatientIdentifierType identifierType = identifier.getIdentifierType();
+				if (!identifier.isVoided() &&
+						identifierType != null &&
+						AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName()))
+					validator.validate(identifier, errors);
+			}
+		}
+	}
+	
+	
+	
+	private void validate(Object command, Errors errors, boolean finish) {
+		
+		Patient patient = (Patient) command;
+		
+		boolean foundInvalid = false;
+		for (PersonName name: patient.getNames()) {
+			
+			// if all fields for the name is empty then check if the name already has an id
+			// if yes, then that name can only be voided
+			// if no, then we can remove the name
+    		if (StringUtils.isBlank(name.getFamilyName()) &&
+    				StringUtils.isBlank(name.getGivenName()) &&
+    				StringUtils.isBlank(name.getMiddleName())) {
+    			if (name.getPersonNameId() != null)
+    				foundInvalid = true;
+    			else {
+    				if (patient.getNames().size() > 1)
+    					patient.removeName(name);
+    				else
+    					foundInvalid = true;
+    			}
+    		}
+        }
+		
+		// show message for empty name with id
+		if (foundInvalid) {
+			errors.reject("amrsregistration.page.edit.invalidName");
+		}
+		
+		if (patient.getBirthdate() == null)
+			errors.rejectValue("birthdate", "amrsregistration.page.edit.invalidDate");
+		else {
+			if (patient.getBirthdate().after(new Date()))
+    			errors.rejectValue("birthdate", "amrsregistration.page.edit.futureDate");
+		}
+		
+		if (StringUtils.isEmpty(patient.getGender()))
+			errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
+		
+		if (finish) {
+			// only validate when processing finish, otherwise this will always shows error in edit page
+			PatientIdentifierValidator validator = new PatientIdentifierValidator();
+			for (PatientIdentifier identifier: patient.getIdentifiers()) {
+				PatientIdentifierType identifierType = identifier.getIdentifierType();
+				if (!identifier.isVoided() &&
+						identifierType != null &&
+						!StringUtils.isBlank(identifier.getIdentifier()) &&
+						!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName()))
+					validator.validate(identifier, errors);
+						
+			}
+		}
+		
+		foundInvalid = false;
+		for (PersonAddress address: patient.getAddresses()) {
+    		if (StringUtils.isBlank(address.getSubregion()) ||
+    				StringUtils.isBlank(address.getRegion()))
+    			
+    			// TODO: probably need to do validation like above (name)
+    			foundInvalid = true;
+        }
+		
+		if (foundInvalid)
+			errors.reject("amrsregistration.page.edit.invalidAddress");
 	}
 
 	/**

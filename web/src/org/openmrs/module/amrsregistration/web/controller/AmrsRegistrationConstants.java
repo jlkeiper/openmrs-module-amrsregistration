@@ -13,5 +13,7 @@ public interface AmrsRegistrationConstants {
 	
 	int REVIEW_PAGE = 3;
 	
-	String AMRS_TARGET_ID = Context.getAdministrationService().getGlobalProperty("amrsregistration.idType");
+	String AMRS_TARGET_ID_KEY = "amrsregistration.idType";
+	
+	String AMRS_TARGET_ID = Context.getAdministrationService().getGlobalProperty(AMRS_TARGET_ID_KEY);
 }

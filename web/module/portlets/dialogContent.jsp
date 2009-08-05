@@ -31,13 +31,14 @@ function renderPatientData(patient) {
 	var identifier = '';
 	var identifiers = patient.identifiers;
 	for (i = 0; i < identifiers.length; i ++) {
+		// alert(identifiers[i].identifierType.name + ": " + identifiers[i].identifier + ", voided: " + identifiers[i].voided);
 		if (identifiers[i].identifierType.name != '${amrsIdType}') {
 			if (identifier != '') {
-				identifier = identifier +  + '<br />';
+				identifier = identifier + '<br />';
 			}
 			identifier = identifier + identifiers[i].identifierType.name + ': ' + identifiers[i].identifier;
 		} else {
-			if (identifiers[i].voided)
+			if (!identifiers[i].voided)
 				amrsIdentifier = identifiers[i].identifier;
 		}
 	}

@@ -41,7 +41,8 @@
 		<div id="centeredForm">
 			<spring:hasBindErrors name="patient">
 				<c:forEach items="${errors.allErrors}" var="error">
-					<span class="error"><spring:message code="${error.code}" arguments="${idCard}"/></span>
+					<br />
+					<span class="error"><spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /></span>
 				</c:forEach>
 			</spring:hasBindErrors>
 			<form id="identifierForm" method="post" autocomplete="off">

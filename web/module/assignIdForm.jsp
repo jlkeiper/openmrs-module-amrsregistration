@@ -190,7 +190,7 @@
 	<spring:hasBindErrors name="patient">
 		<c:forEach items="${errors.allErrors}" var="error">
 			<br />
-			<span class="error"><spring:message code="${error.code}"/></span>
+			<span class="error"><spring:message code="${error.code}" arguments="${error.arguments}" /></span>
 		</c:forEach>
 	</spring:hasBindErrors>
 	<form id="patientForm" method="post" autocomplete="off">
