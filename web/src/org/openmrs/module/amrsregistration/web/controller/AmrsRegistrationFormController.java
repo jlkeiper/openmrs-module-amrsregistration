@@ -31,11 +31,13 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService.ATTR_VIEW_TYPE;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsregistration.AmrsSearchManager;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
 import org.openmrs.propertyeditor.PatientIdentifierTypeEditor;
+import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
 import org.openmrs.validator.PatientIdentifierValidator;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
@@ -108,7 +110,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     		if (idCard == null) {
         		
         		// remove from this list elements that already in the person attribute (list.remove(personattributeType)
-                List<PersonAttributeType> attributeTypes = Context.getPersonService().getAllPersonAttributeTypes(false);
+                List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
         		for (PersonAttribute attribute : patient.getAttributes()) {
         			Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
                     String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());

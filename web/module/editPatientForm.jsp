@@ -487,7 +487,7 @@
     function prepareAttributes() {
     	attributes = new Array();
         
-        <openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+        <openmrs:forEachDisplayAttributeType personType="" displayType="listing" var="attrType">
         	type = new Object();
         	type.personAttributeTypeId = "${attrType.personAttributeTypeId}";
         	type.name = "${attrType.name}";
@@ -942,7 +942,7 @@
 <!-- Patient Attributes Section -->
     	<table>
 			<spring:nestedPath path="patient">
-				<openmrs:forEachDisplayAttributeType personType="" displayType="all" var="attrType">
+				<openmrs:forEachDisplayAttributeType personType="" displayType="listing" var="attrType">
 					<tr>
 						<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
 						<td>

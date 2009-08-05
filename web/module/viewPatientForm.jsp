@@ -64,6 +64,19 @@
 			</tr>
 		</table>
 	</div>
+    
+    <div class="summaryInfo">
+        <div class="infoHeading">Attributes</div>
+            <table>
+            <openmrs:forEachDisplayAttributeType personType="" displayType="viewing" var="attrType">
+                <tr>
+                    <td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/> :</td>
+                    <td>${patient.attributeMap[attrType.name].hydratedObject}</td>
+                </tr>
+            </openmrs:forEachDisplayAttributeType>
+            </table>
+        </div>
+    </div>
 		
 	<br />
 	<input type="hidden" name="_page3" value="true" />
