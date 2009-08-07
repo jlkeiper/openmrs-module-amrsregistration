@@ -242,7 +242,6 @@
                     </tr>
                 </openmrs:forEachDisplayAttributeType>
             </table>
-            </div>
         </div>
 		<div style="clear: both">&nbsp;</div>
 		<div id="idFormSection">
