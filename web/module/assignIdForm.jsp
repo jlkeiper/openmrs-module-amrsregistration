@@ -10,11 +10,12 @@
 <openmrs:htmlInclude file="/dwr/util.js" />
 <openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 <openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery.tablesorter.min.js" />
 
 <script type="text/javascript">
-	$j = jQuery.noConflict();
-
 	$j(document).ready(function() {
+		// the "i certify" checkbox
+		// hide the potential matches, show the patient summary section, focus on the identifier text field
 		$j('#amrsIdToggle').click(function() {
 			if ($j(this).attr("checked")) {
 				$j("#matchesSection").hide();
@@ -23,6 +24,8 @@
 			}
 		});
 		
+		// selecting a patient from the potential matches
+		// get the <tr> --> get the value of input element inside it and send it to server to get the patient object
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
 			var children = $j(tr).children(':input');
@@ -30,6 +33,7 @@
 			getPatientByIdentifier(jQuery.trim(id));
 		});
 		
+		// show highlight effect on the selected row
 		$j('.match').hover(
 			function() {
 				var parent = $j(this).parent();
@@ -40,29 +44,34 @@
 				$j(parent).removeClass("searchHighlight");
 			}
 		);
+		
+		// make the potential matches table sortable object
+        $j("#sortableTable").tablesorter();
 	});
 	
 	function cancel() {
+		// dismiss the mask (selecting from potential matches patient will show the mask)
 		$j('#mask').hide();
 		$j('.window').hide();
-		$j('input:radio').removeAttr("checked");
 	}
     
     function updateData(identifier) {
+    	// get the form and reset the form
     	var formName = $j('#switchPatient').attr("id");
     	document.forms[formName].reset();
-    	
+    	// attach the patient id to the form
     	var hiddenInput = $j(document.createElement("input"));
     	$j(hiddenInput).attr("type", "hidden");
     	$j(hiddenInput).attr("name", "patientIdInput");
     	$j(hiddenInput).attr("id", "patientIdInput");
     	$j(hiddenInput).attr("value", identifier);
     	$j('.match').append($j(hiddenInput));
-    	
+    	// submit the form
     	document.forms[formName].submit();
     }
     
     function getPatientByIdentifier(identifier) {
+    	// get patient by patient id
     	DWRAmrsRegistrationService.getPatientByIdentifier(identifier, renderPatientData);
     }
 </script>
@@ -114,18 +123,20 @@
 			<br />
 			<br />
 			<form id="switchPatient" name="switchPatient" method="post" autocomplete="off">
-		        <table border="0" cellspacing="2" cellpadding="2" class="border">
+		        <table id="sortableTable" border="0" cellspacing="2" cellpadding="2" class="border">
+		        	<thead>
 		            <tr>
-			        	<td><spring:message code="amrsregistration.labels.ID" /></td>
-			        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
-			        	<td><spring:message code="amrsregistration.labels.middleNameLabel" /></td>
-			        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
-			        	<td><spring:message code="amrsregistration.labels.age" /></td>
-			        	<td style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></td>
-			        	<td>&nbsp;</td>
-			        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
+			        	<th><spring:message code="amrsregistration.labels.ID" /></th>
+			        	<th><spring:message code="amrsregistration.labels.givenNameLabel" /></th>
+			        	<th><spring:message code="amrsregistration.labels.middleNameLabel" /></th>
+			        	<th><spring:message code="amrsregistration.labels.familyNameLabel" /></th>
+			        	<th><spring:message code="amrsregistration.labels.age" /></th>
+			        	<th style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></th>
+			        	<th>&nbsp;</th>
+			        	<th><spring:message code="amrsregistration.labels.birthdate" /></th>
 		            </tr>
-		    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus">
+		            </thead>
+		    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus" end="${maxReturned}">
 		    			<c:choose>
 		    				<c:when test="${varStatus.index % 2 == 0}">
 		    					<tr class="evenRow">
@@ -168,7 +179,7 @@
 		    		</c:forEach>
 		        </table>
 		        <br />
-		        <c:if test="!${selectionOnly}">
+		        <c:if test="${!selectionOnly}">
 		        	<input type="checkbox" id="amrsIdToggle" value="true" /><spring:message code="amrsregistration.page.assign.certify"/>
 		        </c:if>
 		        <br /><br />
@@ -204,7 +215,7 @@
 				<tr>
 					<td>
 						<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-							<c:if test="${!name.voided}">
+							<c:if test="${!name.voided && name != patient.personName}">
 								<spring:nestedPath path="patient.names[${varStatus.index}]">
 									<openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
 								</spring:nestedPath>
@@ -231,7 +242,7 @@
 				</tr>
 			</table>
 		</div>
-    
+		<c:if test="${displayAttributes}">
         <div class="summaryInfo">
             <div class="infoHeading">Attributes</div>
             <table>
@@ -243,6 +254,7 @@
                 </openmrs:forEachDisplayAttributeType>
             </table>
         </div>
+        </c:if>
 		<div style="clear: both">&nbsp;</div>
 		<div id="idFormSection">
 			<span style="font: bold 2em verdana;">Assign New ID: </span><br />

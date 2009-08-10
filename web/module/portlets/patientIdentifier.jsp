@@ -7,6 +7,7 @@
         <td class="spacing">
             <spring:bind path="identifierType">
                 <select id="${status.expression}" name="${status.expression}">
+					<option value=""></option>
                     <openmrs:forEachRecord name="patientIdentifierType">
                     	<c:if test="${amrsIdType != record.name}">
 	                        <option value="${record.patientIdentifierTypeId}"
@@ -21,6 +22,7 @@
 		<td class="spacing">
 			<spring:bind path="location">
 				<select id="${status.expression}" name="${status.expression}">
+					<option value=""></option>
 					<openmrs:forEachRecord name="location">
 						<option value="${record.locationId}" <c:if test="${record.locationId == status.value}">selected</c:if>>
 							${record.name}

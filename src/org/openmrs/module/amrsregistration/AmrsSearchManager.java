@@ -25,7 +25,7 @@ import org.openmrs.api.context.Context;
  * class to manage the search based on the user defined criteria.
  */
 public class AmrsSearchManager {
-    private Integer maxReturned = 10;
+    public static Integer MAX_RETURNED_PATIENTS = 10;
 
     @SuppressWarnings("unused")
     private AmrsRegistrationService getAmrsRegistrationService() {
@@ -46,7 +46,7 @@ public class AmrsSearchManager {
     			List<Patient> namePatients = patientService.getPatients(personName.toString());
     			namePatients.removeAll(patients);
     			
-    			if (namePatients.size() > this.maxReturned) {
+    			if (namePatients.size() > MAX_RETURNED_PATIENTS) {
     				// too much result, need to filter out the result
     				List<Patient> ageGenderPatients = new ArrayList<Patient>();
     				// limit by gender and birth date
@@ -58,7 +58,7 @@ public class AmrsSearchManager {
         				}
         				
         				// the age is not within the range (age +/- 1 year)
-        				if (isFilterableByAge(age) && !(patient.getAge() > age - 1 && patient.getAge() < age + 1)) {
+        				if (isFilterableByAge(age) && !(patient.getAge() >= age - 2 && patient.getAge() <= age + 2)) {
         					continue;
         				}
         				
@@ -72,8 +72,15 @@ public class AmrsSearchManager {
 	                    }
                     	ageGenderPatients.add(patient);
                     }
-    				if (ageGenderPatients.size() <= this.maxReturned) 
+    				if (ageGenderPatients.size() <= MAX_RETURNED_PATIENTS) 
     					return ageGenderPatients;
+    				else {
+    					List<Patient> maxSizePatient = new ArrayList<Patient>();
+    					for (int i = 0; i < MAX_RETURNED_PATIENTS + 1; i++) {
+	                        maxSizePatient.add(ageGenderPatients.get(i));
+                        }
+    					return maxSizePatient;
+    				}
     			} else
     				return namePatients;
     		}	

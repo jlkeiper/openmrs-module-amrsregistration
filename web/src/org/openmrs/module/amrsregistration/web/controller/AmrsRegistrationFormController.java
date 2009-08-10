@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +51,21 @@ import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.mvc.AbstractWizardFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
+// Note: The wizard controller workflow for form submission:
+// - Get current page
+// - Process cancel
+// - Process finish
+// - Validate command object
+// - Post processing
+// - Get target page
+// - Redirect to current page when there's error
+// - Redirect to target page when there's no error
+// There are several alternatives to perform validation on things that are not in the command object:
+// First Way
+//  - Process inside onBindAndValidate
+// 
+
+// TODO: externalize string to the constant class
 public class AmrsRegistrationFormController extends AbstractWizardFormController {
 	
     private Log log = LogFactory.getLog(AmrsRegistrationFormController.class);
@@ -64,25 +80,55 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors, int)
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
 		HashMap<String, Object> localHashMap = new HashMap<String, Object>();
 		
+		// on first page, show error when the registration identifier type is not defined
 		if (page != AmrsRegistrationConstants.START_PAGE) {
+			// send the target identifier to all pages that need it
 			localHashMap.put("amrsIdType", AmrsRegistrationConstants.AMRS_TARGET_ID);
-			if (page == AmrsRegistrationConstants.EDIT_PAGE) {
+			if (page == AmrsRegistrationConstants.EDIT_PAGE || page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
+				localHashMap.put("maxReturned", AmrsSearchManager.MAX_RETURNED_PATIENTS);
+				// initial binding for the template for identifier, name, and address
 				localHashMap.put("emptyIdentifier", new PatientIdentifier());
 				localHashMap.put("emptyName", new PersonName());
 				localHashMap.put("emptyAddress", new PersonAddress());
 				
-				Patient patient = (Patient) command;
-				AmrsSearchManager searchManager = new AmrsSearchManager();
-				List<Patient> patients = searchManager.getPatients(patient.getPersonName(),
-					patient.getPersonAddress(), patient.getPatientIdentifier(), patient.getAttributes(), patient.getGender(),
-					patient.getBirthdate(), patient.getAge(), 10);
-				request.setAttribute("potentialMatches", patients);
+				// used to flag down whether to show the patient's attributes or not
+				List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
+				localHashMap.put("displayAttributes", attributeTypes.size() > 0);
+				
+				// on edit page, we also need to show the potential matches
+				// this is used when you are coming back from other page
+				// such as:
+				// - submitting the form but there are errors on the form
+				// - coming back from assign id or review page
+				String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
+				String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
+				if (idCard == null && amrsId == null) {
+					Patient patient = (Patient) command;
+					AmrsSearchManager searchManager = new AmrsSearchManager();
+					
+					Set<Patient> matches = new HashSet<Patient>();
+					Set<Patient> currentPatient = (Set<Patient>) request.getAttribute("potentialMatches");
+					if (currentPatient != null && currentPatient.size() > 0)
+						matches.addAll(currentPatient);
+					
+					List<Patient> patients = searchManager.getPatients(patient.getPersonName(),
+						patient.getPersonAddress(), patient.getPatientIdentifier(), patient.getAttributes(), patient.getGender(),
+						patient.getBirthdate(), patient.getAge(), 10);
+					
+					for (Patient p : patients)
+		                matches.add(p);
+					
+					request.setAttribute("potentialMatches", matches);
+					request.setAttribute("selectionOnly", Boolean.FALSE);
+				}
 			}
 		} else {
+			// if you're on the start page, then show this errors when the target identifier type is not defined
 			PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
 			if (type == null) {
 				errors.reject("amrsregistration.page.start.undefinedTarget",
@@ -104,16 +150,19 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     protected void postProcessPage(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
     	Patient patient = (Patient) command;
     	
+    	// post process each page that needs processing (have a form that is in the spring's command object).
     	if (page == AmrsRegistrationConstants.EDIT_PAGE) {
 
+    		// don't process form from page two if you select a patient from the potential matches pop-up
 			String idCard = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
     		if (idCard == null) {
+        		// get a list of person attribute that belong to the patient
+        		List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
         		
-        		// remove from this list elements that already in the person attribute (list.remove(personattributeType)
-                List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
+        		// remove the 
         		for (PersonAttribute attribute : patient.getAttributes()) {
         			Integer id = attribute.getAttributeType().getPersonAttributeTypeId();
-                    String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), attribute.getValue());
+                    String value = ServletRequestUtils.getStringParameter(request, String.valueOf(id), null);
                     if (value != null) {
                     	attribute.setValue(value);
                     	attributeTypes.remove(attribute.getAttributeType());
@@ -132,13 +181,22 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
                 }
 
+        		// Preferred Handling (see #1663) --> The following docs also valid for identifier and address
+        		// Since the preferred handling is still buggy on trunk, so I wrote my own way of handling preferred
+        		// So here it goes:
+        		
+        		// Get the preferred value of the preferred from the list
+        		// The value will be 1 or 2 or 3 ... or n, where n is the position of the name in the set
+        		// The names implementation is using TreeSet, so names in a person object always will have the same order
         		String namePreferred = ServletRequestUtils.getStringParameter(request, "namePreferred", StringUtils.EMPTY);
         		int selectedName = NumberUtils.toInt(namePreferred);
         		
+        		// flag whether the preferred name is one of the name in the person object or a new PersonName object
         		boolean preferredNameCreated = true;
         		if (selectedName < patient.getNames().size()) {
-        			// preferred is one of the name in the patient
-        			// iterate the name and move the preferred to other place
+        			// Preferred is one of the name in the person, iterate the name and move the preferred correct position.
+        			// This is a blind assignment of preferred without checking whether the preferred is moved from one name
+        			// to another or not
         			preferredNameCreated = false;
         			int counter = 0;
         			for (PersonName name : patient.getNames()) {
@@ -149,6 +207,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         				counter ++;
                     }
         		} else
+        			// Preferred is not one of the name in the person object, so it's going to be on one of
+        			// person name array. If you have multiple text input in the form with the same name, then
+        			// you will get it as an array inside the request object.
         			selectedName = selectedName - patient.getNames().size();
         		
         		String identifierPreferred = ServletRequestUtils.getStringParameter(request, "identifierPreferred", StringUtils.EMPTY);
@@ -187,39 +248,50 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
         		} else
         			selectedAddress = selectedAddress - patient.getAddresses().size();
+        		// End of preferred processing
         		
+        		// Start processing part of the form that is created by user (using "add new" button)
+        		
+        		// arrays from the identifiers section
         		String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
         		String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
         		String[] locations = ServletRequestUtils.getStringParameters(request, "location");
         		
-        		if (ids != null || idTypes != null) {
-        			int maxIds = 0;
-        			if (ids != null && ids.length > maxIds)
-        				maxIds = ids.length;
+        		// only process when the user add a new identifier
+        		if (ids != null && idTypes != null && locations != null) {
+        			int maxIds = ids.length;
         			
         			LocationService locationService = Context.getLocationService();
         			
+        			// only add identifier when the identifier is not blank.
+        			// ignore the blank identifiers ...
         			for (int j = 0; j < maxIds; j++) {
-                        PatientIdentifier identifier = new PatientIdentifier();
-                        identifier.setIdentifier(ids[j]);
-                        
-                        Integer idType = NumberUtils.createInteger(idTypes[j]);
-                        identifier.setIdentifierType(Context.getPatientService().getPatientIdentifierType(idType));
-                        
-                        Integer location = NumberUtils.createInteger(locations[j]);
-                        identifier.setLocation(locationService.getLocation(location));
-                        if (preferredIdentifierCreated && selectedIdentifier == j)
-                        	identifier.setPreferred(Boolean.TRUE);
-        				patient.addIdentifier(identifier);
+							PatientIdentifier identifier = new PatientIdentifier();
+							identifier.setIdentifier(ids[j]);
+							
+							Integer idType = NumberUtils.createInteger(idTypes[j]);
+							identifier.setIdentifierType(Context.getPatientService().getPatientIdentifierType(idType));
+							
+							Integer location = NumberUtils.createInteger(locations[j]);
+							identifier.setLocation(locationService.getLocation(location));
+							// Assign preferred for selected identifier. The array will be indexed the same way
+							// with how it is rendered on the page. So, we can tell which one is preferred or not
+							// based on this selectedIdentifier value (refer to the preferred processing above)
+							if (preferredIdentifierCreated && selectedIdentifier == j)
+								identifier.setPreferred(Boolean.TRUE);
+							patient.addIdentifier(identifier);
                     }
         		}
 
+        		// arrays from the names section
         		String[] givenNames = ServletRequestUtils.getStringParameters(request, "givenName");
         		String[] middleNames = ServletRequestUtils.getStringParameters(request, "middleName");
         		String[] familyNames = ServletRequestUtils.getStringParameters(request, "familyName");
         		
-        		if (givenNames != null || middleNames != null ||
-        				familyNames != null) {
+        		// Since the requirement doesn't strict which field must be filled in, we assume that we will
+        		// allow a name to have either given, middle or family name. So, create a new PersonName object
+        		// when you have given name or middle name or family name
+        		if (givenNames != null || middleNames != null || familyNames != null) {
         			
         			int maxNames = 0;
         			if (givenNames != null && givenNames.length > maxNames)
@@ -240,6 +312,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                     }
         		}
         		
+        		// arrays from the address section
         		String[] address1s = ServletRequestUtils.getStringParameters(request, "address1");
         		String[] address2s = ServletRequestUtils.getStringParameters(request, "address2");
         		String[] cells = ServletRequestUtils.getStringParameters(request, "neighborhoodCell");
@@ -252,6 +325,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         		String[] countries = ServletRequestUtils.getStringParameters(request, "country");
         		String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
         		
+        		// The logic is similar with name above, create a new PersonAddress if you find any non blank
+        		// value on the form.
         		if (address1s != null || address1s != null ||
         				cells != null || cities != null ||
         				townships != null || counties != null ||
@@ -304,12 +379,20 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     		}
     	}
     	
-    	if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
+    	int targetPage = getTargetPage(request, page);
+    	
+    	// Post processing for the assign id page
+    	if (targetPage == AmrsRegistrationConstants.REVIEW_PAGE) {
+    		
+    		// variable that will be sent from jsp for the amrs id
 			String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
 			if (amrsId != null) {
+				// prepare the amrs target id
 				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
             	boolean foundAmrsId = false;
 				try {
+					// search if the patient already have the targeted identifier or not
+					// if yes then do update
 	                PatientIdentifierValidator.validateIdentifier(amrsId, type);
 	                for (PatientIdentifier identifier : patient.getIdentifiers()) {
 	                    if (identifier.getIdentifierType().equals(type)) {
@@ -317,6 +400,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                    	identifier.setIdentifier(amrsId);
 	                    }
 	                }
+	                // if not then create a new identifier
 	                if (!foundAmrsId) {
 	                	PatientIdentifier identifier = new PatientIdentifier();
 	                	identifier.setIdentifier(amrsId);
@@ -327,12 +411,15 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                }
                 }
                 catch (Exception e) {
+                	// the identifier is not valid, this exception will contains message explaining why the validation fail
         			errors.reject(e.getMessage());
                 }
 			}
     	}
 		
-		if (getTargetPage(request, page) == AmrsRegistrationConstants.EDIT_PAGE) {
+    	// when going to the edit page, then make sure the patient at least have one non targeted identifier
+    	// if not, then the identifier section in the jsp will be blank
+		if (targetPage == AmrsRegistrationConstants.EDIT_PAGE) {
 			int nonTargetedIdentifier = 0;
 			for (PatientIdentifier identifier : patient.getIdentifiers()) {
 				PatientIdentifierType identifierType = identifier.getIdentifierType();
@@ -363,10 +450,22 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     	Patient patient = (Patient) command;
 		
 		if (page == AmrsRegistrationConstants.EDIT_PAGE) {
+			// update the patient age and birthdate
 			String date = ServletRequestUtils.getStringParameter(request, "birthdateInput", "");
 			String age = ServletRequestUtils.getStringParameter(request, "ageInput", null);
 			updateBirthdate(patient, date, age);
 			
+			// This section to delete address and name and identifier that already attached to the patient object.
+			// Address (and name and identifier) that already attached to the patient object can't be removed automatically.
+			// We need to check whether they are still being sent from the jsp or not. If not, then remove it from the patient
+			// object. Address, name and identifier that already attached to the patient object will have the following
+			// pattern:
+			// - Address 	--> Addresses[x].<property-name>
+			// - Name 		--> Names[x].<property-name>
+			// - Identifier --> Identifier[x].<property-name>
+			// Address, name and identifier that is not attached to the patient object will only have the following pattern:
+			// - Address (or Name or Identifier) --> <property-name>
+			// This is what causing the bug in the preferred handling :)
 			boolean[] addresses = new boolean[patient.getAddresses().size()];
 			boolean[] names = new boolean[patient.getNames().size()];
 			boolean[] ids = new boolean[patient.getIdentifiers().size()];
@@ -447,30 +546,45 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		PatientService patientService = Context.getPatientService();
 		
+		// if current page is the start page, then try to search the identifier
 		if (page == AmrsRegistrationConstants.START_PAGE) {
+			// get the identifier
 			String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
 			if (idCard != null) {
+				// search for all patient with the specified identifier
 				List<Patient> patients = patientService.getPatients(StringUtils.EMPTY, idCard, null, true);
 				if (patients != null && patients.size() > 0) {
 					// default to found patient, but no required id type
 					targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
 					if (patients.size() > 1) {
-						request.setAttribute("potentialMatches", patients);
+						// more than one patient found
+						// show patient selection and force the user to select one of the patient (or start over again)
+						Set<Patient> matches = new HashSet<Patient>();
+						for (Patient p : patients)
+							matches.add(p);
+						request.setAttribute("potentialMatches", matches);
+						// property to force the user to select one of the patient
 						request.setAttribute("selectionOnly", Boolean.TRUE);
 					}
 					else {
+						// only one patient found
+						// test whether the patient already have the targeted identifier
 						Patient matchedPatient = patients.get(0);
 						copyPatient(patient, matchedPatient);
 						patient.getAttributeMap();
 						if (targetIdentifierExists(patient))
+							// send user to review page if the target identifier is found
 							targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 					}
 				} else
+					// show error when no patient is found
 					errors.reject("amrsregistration.page.start.error", new Object[] {idCard}, "No patient found in the system");
 			}
 		} else if (page == AmrsRegistrationConstants.EDIT_PAGE) {
+			// in the edit patient page, you can select patient from the search
 			String patientId = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
 			if (patientId != null) {
+				// get the patient object based on the patient id
 				Patient matchedPatient = patientService.getPatient(NumberUtils.toInt(patientId));
 				if (matchedPatient != null) {
 					copyPatient(patient, matchedPatient);
@@ -478,22 +592,29 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				}
 			}
 			
+			// set the default page after the edit page to assign id page
 			targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
 			if (targetIdentifierExists(patient))
+				// jump to review if the selected patient already have the targeted amrs identifier
 				targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 			
+			// validate the page before going to the next page
 			validate(command, errors, false);
 			
 		} else if (page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
+			// from the assign page, you are also allowed to select patient from the search result
 			String patientId = ServletRequestUtils.getStringParameter(request, "patientIdInput", null);
 			if (patientId != null) {
+				// get the patient object
 				Patient matchedPatient = patientService.getPatient(NumberUtils.toInt(patientId));
 				if (matchedPatient != null) {
 					copyPatient(patient, matchedPatient);
 					patient.getAttributeMap();
 					
+					// set the default to return to assign id page
 					targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
 					if (targetIdentifierExists(patient))
+						// jump to review when the patient already have the targeted amrs identifier
 						targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
 				}
 			}
@@ -539,9 +660,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		}
 	}
 	
-	
-	
 	private void validate(Object command, Errors errors, boolean finish) {
+		// finish flag will determine whether we need to check for the validity of the patient identifier
 		
 		Patient patient = (Patient) command;
 		

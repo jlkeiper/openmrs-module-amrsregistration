@@ -43,19 +43,30 @@ function renderPatientData(patient) {
 		}
 	}
 	
+	var preferedName = patient.personName;
+	var personName = "";
+	if (preferedName.givenName.length > 0)
+		personName = personName + preferedName.givenName + ' ';
+	if (preferedName.middleName.length > 0)
+		personName = personName + preferedName.middleName + ' ';
+	if (preferedName.familyName.length > 0)
+		personName = personName + preferedName.familyName;
+	
 	var name = "";
 	var names = patient.names;
 	for (i = 0; i < names.length; i ++) {
 		if (!names[i].voided) {
 			if (names[i].preferred)
 				name = name + '*';
+			var fullname = "";
 			if (names[i].givenName.length > 0)
-				name = name + names[i].givenName + ' ';
+				fullname = fullname + names[i].givenName + ' ';
 			if (names[i].middleName.length > 0)
-				name = name + names[i].middleName + ' ';
+				fullname = fullname + names[i].middleName + ' ';
 			if (names[i].familyName.length > 0)
-				name = name + names[i].familyName;
-			name = name + '<br />';
+				fullname = fullname + names[i].familyName;
+			if (fullname != personName)
+				name = name + fullname + '<br />';
 		}
 	}
 	
@@ -74,15 +85,6 @@ function renderPatientData(patient) {
 	    	address = address + replaceNull(addresses[i].stateProvince) + '</td><td>' + replaceNull(addresses[i].country) + '</td><td>' + replaceNull(addresses[i].postalCode) + '</td></tr>';
 		}
 	}
-	
-	var preferedName = patient.personName;
-	var personName = "";
-	if (preferedName.givenName.length > 0)
-		personName = personName + preferedName.givenName + ' ';
-	if (preferedName.middleName.length > 0)
-		personName = personName + preferedName.middleName + ' ';
-	if (preferedName.familyName.length > 0)
-		personName = personName + preferedName.familyName;
 	
 	var content = 
 	'<div id="summaryHeading" style="width: 100%; padding: 2px; margin: 2px;">' + 

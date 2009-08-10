@@ -37,7 +37,7 @@
 			<tr>
 				<td>
 					<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-						<c:if test="${!name.voided}">
+						<c:if test="${!name.voided && name != patient.personName}">
 							<spring:nestedPath path="patient.names[${varStatus.index}]">
 								<openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
 							</spring:nestedPath>
@@ -65,19 +65,20 @@
 		</table>
 	</div>
     
+	<c:if test="${displayAttributes}">
     <div class="summaryInfo">
         <div class="infoHeading">Attributes</div>
-            <table>
+        <table>
             <openmrs:forEachDisplayAttributeType personType="" displayType="viewing" var="attrType">
                 <tr>
                     <td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/> :</td>
                     <td>${patient.attributeMap[attrType.name].hydratedObject}</td>
                 </tr>
             </openmrs:forEachDisplayAttributeType>
-            </table>
-        </div>
+        </table>
     </div>
-		
+	</c:if>
+	
 	<br />
 	<input type="hidden" name="_page3" value="true" />
 	&nbsp;

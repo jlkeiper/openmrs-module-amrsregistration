@@ -11,22 +11,18 @@
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
 <openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery-1.3.2.min.js" />
 <openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/common.js" />
+<openmrs:htmlInclude file="/moduleResources/amrsregistration/scripts/jquery.tablesorter.min.js" />
 
 <%@ include file="portlets/dialogContent.jsp" %>
 <script type="text/javascript">
 
     // Number of objects stored.  Needed for 'add new' purposes.
-    // starts at -1 due to the extra 'blank' data div in the *Boxes dib
     var numObjs = new Array();
     numObjs["identifier"] = ${fn:length(patient.identifiers)};
     numObjs["name"] = ${fn:length(patient.names)};
     numObjs["address"] = ${fn:length(patient.addresses)};
     
-    var baseObjs = new Array();
-    baseObjs["identifier"] = ${fn:length(patient.identifiers)};
-    baseObjs["name"] = ${fn:length(patient.names)};
-    baseObjs["address"] = ${fn:length(patient.addresses)};
-    	
+    // number of identifier that is a target identifier	
 	requiredIdType = 0;
     <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
         <c:if test="${amrsIdType == identifier.identifierType.name}">
@@ -34,20 +30,28 @@
         </c:if>
     </c:forEach>
     
+    // Search time out variable. Need to clear this variable to cancel the server request, thus
+    // preventing multiple request being submitted to the server.
+    // Reset when:
+    // - dwr return a result
+    // - user entered more alpha-numeric or delete or backspace character
 	searchTimeout = null;
+	// how long should we wait after keystroke before dwr submit the request
 	searchDelay = 1000;
     
+    // variable that will hold the attributes shown in the screen and their values
     var attributes = null;
     
     $j(document).ready(function() {
-		
+		// selecting a patient from the potential matches
+		// get the <tr> --> get the value of input element inside it and send it to server to get the patient object
 		$j('.match').click(function(){
 			var tr = $j(this).parent();
 			var children = $j(tr).children(':input');
 			var id = $j(children).attr('value');
 			getPatientByIdentifier(jQuery.trim(id));
 		});
-		
+		// show highlight effect on the selected row
 		$j('.match').hover(
 			function() {
 				var parent = $j(this).parent();
@@ -58,10 +62,12 @@
 				$j(parent).removeClass("searchHighlight");
 			}
 		);
-		
+		// more or less toggle function
 		$j('a[name=extendedToggle]').click(function(e) {
 			e.preventDefault();
+			// toggle the extended match result row
 			$j('.resultTableExtended').toggle();
+			// show more or less link
 			if ($j('.resultTableExtended').is(':hidden')) {
 				$j(this).html('more >>');
 			} else {
@@ -69,8 +75,15 @@
 			}
 		});
 		
-		$j('th').css('font', '1em verdana');
+		// don't bold the <th> content
+        $j('th').css('font', '1em verdana');
+        // remove top border to prevent overlapping border
+        $j('th').css('border-top', '0px');
 		
+		// make the search result table sortable
+        $j("#tableSorter").tablesorter();
+        
+        // show the potential matches
 		<c:if test="${fn:length(potentialMatches) > 0}">$j('#resultTableHeader').show();</c:if>
 		
     });
@@ -80,26 +93,28 @@
     }
 	
 	function cancel() {
+		// dismiss the mask (selecting from potential matches patient will show the mask)
 		$j('#mask').hide();
 		$j('.window').hide();
 	}
     
     function updateData(identifier) {
+    	// get the form and reset the form
     	$j(document.forms[0].reset());
-    	
+    	// attach the patient id to the form
     	var hiddenInput = $j(document.createElement("input"));
     	$j(hiddenInput).attr("type", "hidden");
     	$j(hiddenInput).attr("name", "patientIdInput");
     	$j(hiddenInput).attr("id", "patientIdInput");
     	$j(hiddenInput).attr("value", identifier);
     	$j('#boxes').append($j(hiddenInput));
-    	
+    	// submit the form
     	$j(document.forms[0].submit());
     }
 		
 	function createPreferred(preferred, type, id, container, hidden) {
-		// this will be <tr> for id and name
-		// and <table> for address
+		// container of the preferred will be <tr> for id and name
+		// <table> for address
 		var element = null;
 			
 		var input = $j(document.createElement('input'));
@@ -139,6 +154,8 @@
 	}
 	
 	function getTemplateType(type) {
+		// the following are the id of the template for name, address and identifier
+		// this element must exist and must be bind to an emptyName, emptyAddress and emptyIdentifier
 		if (type == 'name')
 			return $j('#nameContent').find('tr');
 		if (type == 'address')
@@ -148,6 +165,7 @@
 	}
 	
 	function duplicateElement(type, id) {
+		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
 		createPreferred(false, type, id, templateClone, false);
 		
@@ -164,16 +182,20 @@
 	}
 	
 	function createElement(type, id) {
+		// method that will be called when "add new" button is pressed
 		var element = duplicateElement(type, id);
 		$j(element).attr('id', type + 'Content' + id);
 		return element;
 	}
 
     function addNew(type) {
+    	// remove the error message
         $j('#' + type + 'Error').empty();
         
+        // get the total number of element in the page (also used for id)
     	var prevIdSuffix = numObjs[type] - 1;
     	if (type == 'identifier')
+    		// for identifier, total number rendered is subtracted by the number of targeted identifier attached to the patient
     		prevIdSuffix = prevIdSuffix - requiredIdType;
     		
     	var allowCreate = false;
@@ -181,14 +203,17 @@
     	// alert('id: ' + prevIdSuffix);
     	// alert('numObjs['+type+']: ' + numObjs[type]);
 
+		// always allow creating new element where the number is less than 0
     	if (prevIdSuffix < 0) {
     		allowCreate = true;
     	} else {
+    		// when more than 0, then get all input element and check whethere one of them is filled
     		var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
     		
 	    	for (i = 0; i < allInputType.length; i ++) {
 	    		var o = allInputType[i];
 	    		str = jQuery.trim(o.value);
+	    		// if one of the input element is not empty then allow creating new element
 	    		if (str.length > 0) {
 	    			// allow creating new object when a non blank element is found
 	    			allowCreate = true;
@@ -198,12 +223,24 @@
 		}
     	
         if (allowCreate) {
+        	// create a new element using the above function
             var newElement = createElement(type, (prevIdSuffix + 1));
             
+            // put the new element to the correct position
+            // each type will have their own template and position id
+            // address: --> template: addressContent
+            //          --> position: addressPosition
+            //          --> added element: addressContentXX
+            // In general, for each type they will have:
+            // template: <type>Content
+            // position: <type>Position
+            // added element: <type>ContentXX
             $j('#' + type + 'Position').append(newElement);
             
             if (prevIdSuffix == 0) {
             	// alert('show flag');
+            	
+            	// show the preferred label and the preferred radio button when the total number of element more than 1
             	$j('#' + type + 'PreferredLabel').show();
             	var parent = $j('input:radio[name=' + type + 'Preferred]').parent();
             	if (type != 'address')
@@ -224,7 +261,7 @@
     }
 	
 	function removeTemplate() {
-		// remove name, id and address template
+		// remove name, id and address template when submitting
 		var obj = document.getElementById("identifierContent");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
@@ -235,15 +272,16 @@
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
 		
+		// remove added element but still blank from the form
 		for (key in numObjs)
-			deleteRow(key, false);
+			deleteRow(key, true);
 	}
 	
 	function deleteLastRow (type) {
-		deleteRow(type, true);
+		deleteRow(type, false);
 	}
 	
-	function deleteRow(type, showMessage) {
+	function deleteRow(type, submit) {
 		
 		// remove blank name, id and address that is added but never get filled
 		// the check only for the last element because we're not allowing adding
@@ -255,6 +293,7 @@
 		message = "";
     		
 		if (prevIdSuffix > 0) {
+			// check all input to see if it's blank
 			var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
 	    	var deleteInputs = true;
 	    	for (i = 0; i < allInputType.length; i ++) {
@@ -272,7 +311,7 @@
 	    		var success = $j('#' + type + "Content" + prevIdSuffix).remove();
 	    		numObjs[type] = numObjs[type] - 1;
 	    		prevIdSuffix = prevIdSuffix - 1;
-	    		// remove radio button when there's only one row left
+	    		// hide radio button when there's only one row left
 	    		// assume the last one a preferred one
 	    		if (prevIdSuffix == 0) {
 	    			$j('#' + type + 'PreferredLabel').hide();
@@ -289,8 +328,13 @@
     		message = "Removing " + type + " not permitted because there is only one row left";
     	}
     	
-    	if (message.length > 0 && showMessage)
-	    	$j('#' + type + 'Error').html(message);
+    	if (!submit) {
+    		// clear all element when the user press remove but there's only one element on the screen
+    		if (prevIdSuffix <= 0)
+    			$j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]').attr("value", "");
+    		if (message.length > 0)
+	    		$j('#' + type + 'Error').html(message);
+	    }
 	}
 	
 	function createCell(content, row) {
@@ -302,29 +346,44 @@
     
     function handlePatientResult(result) {
 		clearTimeout(searchTimeout);
-    		
+    	
+    	// clear the tbody from previous search result
 		var tbody = $j('#resultTable');
 		$j(tbody).empty();
-    		
-		if (result.length > 3)
-			$j('#extendedToggle').show();
-		else
-			$j('#extendedToggle').hide();
+		
+		// hide extended toggle, more than ${maxReturned}, result table header
+		$j('#extendedToggle').hide();
+		$j('#moreMatches').hide();
+		$j('#resultTableHeader').hide();
+		// show filler (3 blank row and a no patient found text)
+    	$j('.filler').show();
 		
     	if (result.length > 0) {
     		
-    		for(i = 0; i < result.length; i ++) {
+    		// check if the max result is returned or not
+    		returnedPatient = result.length;
+    		if (returnedPatient > ${maxReturned}) {
+    			returnedPatient = ${maxReturned};
+    			$j('#moreMatches').show();
+    		}
+    		
+    		// loop through all result and display it
+    		for(i = 0; i < returnedPatient; i ++) {
+    			// create new row
     			var tr = $j(document.createElement('tr'));
-    			
+    			// zebra like row
     			if (i % 2 == 0)
     				$j(tr).addClass("evenRow");
     			else
     				$j(tr).addClass("oddRow");
-    				
-    			if (i > 3) {
+    			
+    			// mark the fourth element to be an extended result that can be toggled
+    			if (i > 2) {
     				$j(tr).addClass('resultTableExtended');
+					$j('#extendedToggle').show();
     			}
     			
+    			// bind highlight effect
     			$j(tr).hover(
     				function() {
 						$j(this).addClass("searchHighlight");
@@ -333,13 +392,14 @@
 						$j(this).removeClass("searchHighlight");
     				}
     			);
-    			
+    			// bind click to show the selected patient
     			$j(tr).click(function() {
 					var children = $j(this).children(':input');
 					var id = $j(children).attr('value');
 					getPatientByIdentifier(jQuery.trim(id));
     			});
     			
+    			// create each cell for identifier, given, middle, family name, age, gender, and birthdate (+ estimated)
     			createCell(result[i].identifiers[0].identifier, tr);
     			createCell(result[i].personName.givenName, tr);
     			createCell(result[i].personName.middleName, tr);
@@ -373,12 +433,12 @@
     			$j(tbody).append($j(tr));
     		}
     		
+    		// show the table and hide the filler
     		$j('#resultTableHeader').show();
     		$j('.filler').hide();
-    		
-    	} else {
-    		$j('#resultTableHeader').hide();
-    		$j('.filler').show();
+        
+            // let the plugin know that we made a update 
+            $j("#tableSorter").trigger("update");
     	}
     }
 	
@@ -404,6 +464,11 @@
 	
 	function isBackspaceDelete(key) {
 		return key == 46 || key == 8;
+	}
+	
+	function clickTimeOutSearch() {
+		clearTimeout(searchTimeout);
+		searchTimeout = setTimeout("patientSearch()", searchDelay);
 	}
 	
 	function timeOutSearch(e) {
@@ -534,7 +599,7 @@
 
 <div id="mask"></div>
 <div id="amrsContent">
-	<span>Fill in the patient information and press continue to proceed</span>
+	<span><spring:message code="amrsregistration.page.edit.title"></spring:message></span>
 	<form id="patientForm" method="post" onSubmit="removeTemplate()" autocomplete="off">
 	<div id="boxes"> 
 		<div id="dialog" class="window">
@@ -546,7 +611,7 @@
 	<div id="floating" style="display: block;">
 	    <table class="box" style="width: 80%; padding: 0px">
 	    	<tr>
-	    		<td><span style="border-bottom:1px solid lightgray;">Patient Search</span></td>
+	    		<td>Patient Search</td>
 	    		<td colspan="4">&nbsp;</td>
 	    	</tr>
 			<c:choose>
@@ -573,20 +638,24 @@
 			        </tr>
 				</c:otherwise>
 			</c:choose>
+		</table>
+        <table id="tableSorter" class="box" style="width: 80%; padding: 0px; border-top:0px;">
+			<thead>
         	<tr id="resultTableHeader" style="display: none;">
-	        	<td><spring:message code="amrsregistration.labels.ID" /></td>
-	        	<td><spring:message code="amrsregistration.labels.givenNameLabel" /></td>
-	        	<td><spring:message code="amrsregistration.labels.middleNameLabel" /></td>
-	        	<td><spring:message code="amrsregistration.labels.familyNameLabel" /></td>
-	        	<td><spring:message code="amrsregistration.labels.age" /></td>
-	        	<td style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></td>
-	        	<td>&nbsp;</td>
-	        	<td><spring:message code="amrsregistration.labels.birthdate" /></td>
+	        	<th><spring:message code="amrsregistration.labels.ID" /></th>
+	        	<th><spring:message code="amrsregistration.labels.givenNameLabel" /></th>
+	        	<th><spring:message code="amrsregistration.labels.middleNameLabel" /></th>
+	        	<th><spring:message code="amrsregistration.labels.familyNameLabel" /></th>
+	        	<th><spring:message code="amrsregistration.labels.age" /></th>
+	        	<th style="text-align: center;"><spring:message code="amrsregistration.labels.gender" /></th>
+	        	<th>&nbsp;</th>
+	        	<th><spring:message code="amrsregistration.labels.birthdate" /></th>
 	        </tr>
+	        </thead>
 	        <tbody id="resultTable">
 				<c:choose>
 					<c:when test="${fn:length(potentialMatches) > 0}">
-			    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus">
+			    		<c:forEach items="${potentialMatches}" var="patient" varStatus="varStatus" end="${maxReturned}">
 			    			<c:choose>
 			    				<c:when test="${varStatus.index % 2 == 0}">
 					    			<c:choose>
@@ -644,19 +713,48 @@
 					</c:when>
 				</c:choose>
 	        </tbody>
-			<c:choose>
-				<c:when test="${fn:length(potentialMatches) > 3}">
-	    			<tr id="extendedToggle" style="display: block;">
-				</c:when>
-				<c:otherwise>
-	    			<tr id="extendedToggle" style="display: none;">
-				</c:otherwise>
-			</c:choose>
-	    		<td class="toggle">
-					<a href="#" name="extendedToggle">more >></a>
-				</td>
-			</tr>
 	    </table>
+        <c:choose>
+            <c:when test="${fn:length(potentialMatches) > 3}">
+                <table id="extendedToggle" class="box" style="width: 80%; padding: 0px; border-top:0px; display: block;">
+					<c:choose>
+						<c:when test="${fn:length(potentialMatches) > maxReturned}">
+					    	<tr id="moreMatches" style="display: block">
+					    		<td class="toggle">
+			    					<spring:message code="amrsregistration.page.edit.moreMatches" arguments="${maxReturned}"></spring:message>
+								</td>
+							</tr>
+						</c:when>
+						<c:otherwise>
+					    	<tr id="moreMatches" style="display: none">
+					    		<td class="toggle">
+			    					<spring:message code="amrsregistration.page.edit.moreMatches" arguments="${maxReturned}"></spring:message>
+								</td>
+							</tr>
+						</c:otherwise>
+					</c:choose>
+			    	<tr>
+			    		<td class="toggle">
+							<a href="#" name="extendedToggle">more >></a>
+						</td>
+					</tr>
+			    </table>
+            </c:when>
+            <c:otherwise>
+                <table id="extendedToggle" class="box" style="width: 80%; padding: 0px; border-top:0px; display: none;">
+			    	<tr id="moreMatches" style="display: none">
+			    		<td class="toggle">
+			    			<spring:message code="amrsregistration.page.edit.moreMatches" arguments="${maxReturned}"></spring:message>
+						</td>
+					</tr>
+			    	<tr>
+			    		<td class="toggle">
+							<a href="#" name="extendedToggle">more >></a>
+						</td>
+					</tr>
+			    </table>
+            </c:otherwise>
+        </c:choose>
 	</div>
 	<br />
 
@@ -748,7 +846,7 @@
 						<td style="padding-right: 3.6em;">
 							<spring:bind path="patient.gender">
 								<openmrs:forEachRecord name="gender">
-									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onclick="timeOutSearch(event)" />
+									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onclick="clickTimeOutSearch()" />
 										<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
 								</openmrs:forEachRecord>
 							</spring:bind>
@@ -920,7 +1018,7 @@
 			</c:forEach>
 	        <tbody id="addressPosition" />
 		</table>
-        <div id="addressPositionClear" style="clear:both"/>
+        <div id="addressPositionClear" style="clear:both"></div>
 		<div id="addressContent" style="display: none;">
 			<spring:nestedPath path="emptyAddress">
 				<openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
@@ -935,6 +1033,7 @@
 	
 			</td>
 		</tr>
+		<c:if test="${displayAttributes}">
 		<tr>
 			<th class="header footer">Attributes</th>
 			<td class="input footer">
@@ -962,6 +1061,7 @@
 	
 			</td>
 		</tr>
+		</c:if>
 	</table>
 	<input type="hidden" name="_page1" value="true" />
 	&nbsp;
