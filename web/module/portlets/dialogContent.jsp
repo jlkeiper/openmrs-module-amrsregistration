@@ -63,11 +63,9 @@ function renderPatientData(patient) {
 				fullname = fullname + names[i].middleName + ' ';
 			if (names[i].familyName.length > 0)
 				fullname = fullname + names[i].familyName;
-			if (fullname != personName) {
-				if (names[i].preferred)
-					name = name + '*';
-				name = name + fullname + '<br />';
-			}
+		    if (names[i].preferred)
+				name = name + '*&nbsp;';
+			name = name + fullname + '<br />';
 		}
 	}
 	
