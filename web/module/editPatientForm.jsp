@@ -563,6 +563,29 @@
         	attributes[${varStatus.index}] = attr;
 		</openmrs:forEachDisplayAttributeType>
     }
+
+    function clearAgeOrDOB(inputField) {
+        var dob = document.getElementById("birthdateInput");
+        var dobMsg = document.getElementById("birthdateTitle");
+        var age = document.getElementById("ageInput");
+        var ageMsg = document.getElementById("ageTitle");
+        var orMsg = document.getElementById("orTitle");
+        orMsg.style.color = "#CCCCCC";
+        if (inputField.id == "birthdateInput") {
+            dob.style.backgroundColor="white";
+            dobMsg.style.color="black";
+            age.style.backgroundColor="#D3D3D3"
+            ageMsg.style.color="#CCCCCC"
+            age.value="";
+        }
+        else if (inputField.id == "ageInput") {
+            age.style.backgroundColor="white";
+            ageMsg.style.color="black";
+            dob.style.backgroundColor="#D3D3D3";
+            dobMsg.style.color="#CCCCCC";
+            dob.value="";
+        }
+    }
 </script>
 
 <style>
@@ -835,7 +858,7 @@
     	<table>
     		<tr>
 				<td><spring:message code="Person.gender"/></td>
-				<td>
+				<td id="birthdateTitle">
 					<spring:message code="Person.birthdate"/>
 					<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
 				</td>
@@ -855,9 +878,10 @@
 				<c:choose>
 					<c:when test="${patient.birthdate == null}">
 							<td style="padding-right: 4em;">
-								<input type="text" name="birthdateInput" id="birthdate" size="11" value="" readonly="readonly" onclick="showCalendar(this)" onkeyup="timeOutSearch(event)"/>
-								<spring:message code="Person.age.or"/>
-								<input type="text" name="ageInput" id="age" size="5" value="" onkeyup="timeOutSearch(event)" />
+								<input type="text" name="birthdateInput" id="birthdateInput" size="11" value=""  onclick="showCalendar(this)" onkeyup="timeOutSearch(event)" onchange="clearAgeOrDOB(this)"/>
+								<span id="orTitle"><spring:message code="general.or"/></span>
+								<span id="ageTitle"><spring:message code="Person.age"/></span>
+								<input type="text" name="ageInput" id="ageInput" size="5" value="" onkeyup="timeOutSearch(event)" onchange="clearAgeOrDOB(this)"/>
 							</td>
 					</c:when>
 					<c:otherwise>
@@ -874,8 +898,8 @@
 									}
 									
 									function updateAge() {
-										var birthdateBox = document.getElementById('birthdate');
-										var ageBox = document.getElementById('age');
+										var birthdateBox = document.getElementById('birthdateInput');
+										var ageBox = document.getElementById('ageInput');
 										try {
 											var birthdate = parseSimpleDate(birthdateBox.value, '<openmrs:datePattern />');
 											var age = getAge(birthdate);

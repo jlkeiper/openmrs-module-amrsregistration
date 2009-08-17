@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component inherit-compiler-output="true">
-    <exclude-output />
-    <testFolder url="file://$MODULE_DIR$/../test" />
+	<exclude-output/>
+	<contentEntry url="file:///home/brian/IdeaProjects/amrsregistration">
+		<testFolder url="file:///home/brian/IdeaProjects/amrsregistration/test"/>
+	</contentEntry>
 </component>
-
