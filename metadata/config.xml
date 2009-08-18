@@ -99,7 +99,7 @@
             </convert>
             <convert converter="bean" match="org.openmrs.PatientIdentifier">
                 <param name="include" value="identifier,
-                    identifierType, location, voided"/>
+                    identifierType, location, voided, preferred"/>
             </convert>
             <convert converter="bean" match="org.openmrs.PatientIdentifierType">
                 <param name="include" value="patientIdentifierTypeId,

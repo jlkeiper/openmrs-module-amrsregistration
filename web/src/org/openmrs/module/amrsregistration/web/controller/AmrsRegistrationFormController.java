@@ -760,13 +760,29 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             HttpServletResponse response, Object command,
             BindException bindException) throws Exception {
         Patient patient = (Patient)command;
-    	
+
+        Boolean hasTargetId = false;
         Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
 		for (PatientIdentifier identifier : patient.getIdentifiers()) {
+            // If the patient has AMRS_TARGET_ID, then set it to be the preferred identifier
+            if (AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifier.getIdentifierType().getName())) {
+                identifier.setPreferred(true);
+                hasTargetId = true;
+            }
             if(StringUtils.isBlank(identifier.getIdentifier()))
             	identifiers.add(identifier);
         }
+        // Remove all blank identifiers from command object
 		patient.getIdentifiers().removeAll(identifiers);
+        // If patient has AMRS_TARGET_ID...
+        if (hasTargetId) {
+            // ... then make sure it is the only preferred identifier.
+            for (PatientIdentifier identifier : patient.getIdentifiers()) {
+                if (!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifier.getIdentifierType().getName())) {
+                    identifier.setPreferred(false);
+                }
+            }
+        }
 		
         if (patient != null) {
             Context.getPatientService().savePatient(patient);
