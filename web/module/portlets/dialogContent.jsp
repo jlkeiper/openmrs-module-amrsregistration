@@ -63,12 +63,24 @@ function renderPatientData(patient) {
 				fullname = fullname + names[i].middleName + ' ';
 			if (names[i].familyName.length > 0)
 				fullname = fullname + names[i].familyName;
-		    if (names[i].preferred)
-				name = name + '*&nbsp;';
-			name = name + fullname + '<br />';
+            if (fullname != personName) {
+		        if (names[i].preferred)
+				    name = name + '*&nbsp;';
+			    name = name + fullname + '<br />';
+            }
 		}
 	}
-	
+    if (name) {
+        name = 	'<div class="summaryInfo" style="width: 100%; padding: 2px; margin: 2px;">' +
+		            '<div class="infoHeading">Other Name(s)</div>' +
+		            '<table>' +
+			            '<tr>' +
+				            '<td valign="top">' + name + '</td>' +
+			            '</tr>' +
+		            '</table>' +
+	            '</div>';
+    }
+        
 	var address = "";
 	var addresses = patient.addresses;
 	for (i = 0; i < addresses.length; i ++) {
@@ -84,8 +96,8 @@ function renderPatientData(patient) {
 	    	address = address + replaceNull(addresses[i].stateProvince) + '</td><td>' + replaceNull(addresses[i].country) + '</td><td>' + replaceNull(addresses[i].postalCode) + '</td></tr>';
 		}
 	}
-	
-	var content = 
+
+	var content =
 	'<div id="summaryHeading" style="width: 100%; padding: 2px; margin: 2px;">' + 
 		'<div id="headingName" style="font-size: 1.5em">' + personName + '</div>' +
 		'<div id="headingPreferredIdentifier" style="font-size: 1em">' +
@@ -102,15 +114,7 @@ function renderPatientData(patient) {
 				'</td>' +
 			'</tr>' +
 		'</table>' +
-	'</div>' +
-	'<div class="summaryInfo" style="width: 100%; padding: 2px; margin: 2px;">' +
-		'<div class="infoHeading">Name(s)</div>' +
-		'<table>' +
-			'<tr>' +
-				'<td valign="top">' + name + '</td>' +
-			'</tr>' +
-		'</table>' +
-	'</div>' +
+	'</div>' + name +
 	'<div class="summaryInfo" style="width: 100%; padding: 2px; margin: 2px;">' +
 		'<div class="infoHeading">Address(es)</div>' +
 		'<table>' + address + '</table>' +
