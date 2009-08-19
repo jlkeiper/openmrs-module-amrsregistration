@@ -9,6 +9,19 @@
 <span><spring:message code="amrsregistration.start.review"/></span>
 <br/><br/>
 
+<script type="text/javascript">
+    function changeNameHeaderHack() {
+        var headers = document.getElementsByTagName("th");
+        for (var i=0; i<headers.length; i++) {
+            if (headers[i].innerHTML == "Given") {
+                headers[i].innerHTML = "First Name";
+            } else if (headers[i].innerHTML == "Middle") {
+                headers[i].innerHTML = "Middle Name";
+            }
+        }
+    }
+</script>
+
 <form id="identifierForm" method="post">
 	<spring:hasBindErrors name="patient">	
 		<c:forEach items="${errors.allErrors}" var="error">
@@ -94,4 +107,7 @@
 </form>
 <br/>
 <br />
+<script type="text/javascript">
+    changeNameHeaderHack();
+</script>
 <%@ include file="/WEB-INF/template/footer.jsp" %>

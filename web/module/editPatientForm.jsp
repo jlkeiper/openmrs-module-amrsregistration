@@ -586,6 +586,19 @@
             dob.value="";
         }
     }
+
+    function changeNameHeaderHack() {
+        var headers = document.getElementsByTagName("th");
+        for (var i=0; i<headers.length; i++) {
+            if (headers[i].innerHTML == "Given") {
+                headers[i].innerHTML = "First Name";
+            } else if (headers[i].innerHTML == "Middle") {
+                headers[i].innerHTML = "Middle Name";
+            }
+        }
+    }
+
+
 </script>
 
 <style>
@@ -1102,6 +1115,8 @@
 		var first = $j('#nameContent0 input[type=text]:eq(0)');
 		first.focus();
 	});
+
+    changeNameHeaderHack();
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
