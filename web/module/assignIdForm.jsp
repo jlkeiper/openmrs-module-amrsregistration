@@ -209,23 +209,26 @@
 			<div id="headingName">${patient.personName}</div>
 			<%@ include file="portlets/personInfo.jsp" %>
 		</div>
-		<div class="summaryInfo">
-			<div class="infoHeading">Name</div>
-			<table>
-				<tr>
-					<td>
-						<c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-							<c:if test="${!name.voided && name != patient.personName}">
-								<spring:nestedPath path="patient.names[${varStatus.index}]">
-									<openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
-								</spring:nestedPath>
-							</c:if>
-						</c:forEach>
-					</td>
-				</tr>
-			</table>
-		</div>
-	
+        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+           <c:if test="${varStatus.index == 1 && name != personName}">
+               <div class="summaryInfo">
+                   <div class="infoHeading">Other Name(s)</div>
+                   <table>
+                       <tr>
+                           <td>
+                               <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+                                   <c:if test="${!name.voided && name != patient.personName}">
+                                       <spring:nestedPath path="patient.names[${varStatus.index}]">
+                                           <openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
+                                       </spring:nestedPath>
+                                   </c:if>
+                               </c:forEach>
+                           </td>
+                       </tr>
+                   </table>
+               </div>
+           </c:if>
+        </c:forEach>
 		<div class="summaryInfo">
 			<div class="infoHeading"><spring:message code="Person.addresses"/></div>
 			<table>

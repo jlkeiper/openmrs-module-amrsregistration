@@ -32,6 +32,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PersonService.ATTR_VIEW_TYPE;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsregistration.AmrsSearchManager;
@@ -644,6 +645,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     protected void validatePage(Object command, Errors errors, int page, boolean finish) {
 		// only validate when process finish is being called
 		if (finish && page == AmrsRegistrationConstants.EDIT_PAGE) {
+		//if (page == AmrsRegistrationConstants.REVIEW_PAGE || page == AmrsRegistrationConstants.EDIT_PAGE) {
 			validate(command, errors, finish);
 		}
 		
@@ -699,21 +701,33 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		if (StringUtils.isEmpty(patient.getGender()))
 			errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
-		
-		if (finish) {
-			// only validate when processing finish, otherwise this will always shows error in edit page
-			PatientIdentifierValidator validator = new PatientIdentifierValidator();
-			for (PatientIdentifier identifier: patient.getIdentifiers()) {
-				PatientIdentifierType identifierType = identifier.getIdentifierType();
-				if (!identifier.isVoided() &&
-						identifierType != null &&
-						!StringUtils.isBlank(identifier.getIdentifier()) &&
-						!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName()))
-					validator.validate(identifier, errors);
-						
-			}
-		}
-		
+
+		PatientIdentifierValidator validator = new PatientIdentifierValidator() {
+            public void validate(Object obj, Errors errors) {
+                PatientIdentifier pi = (PatientIdentifier) obj;
+                try {
+                    validateRequiredFields(pi);
+                    validateIdentifier(pi);
+                }
+                catch (Exception e) {
+                    errors.reject(e.getMessage());
+                }
+            }
+            public void validateRequiredFields(PatientIdentifier pi) throws PatientIdentifierException {
+                if (pi.getIdentifierType() == null || !Context.getPatientService().getAllPatientIdentifierTypes().contains(pi.getIdentifierType())) {
+                    throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierType");
+                }
+                if (pi.getLocation() == null || !Context.getLocationService().getAllLocations().contains(pi.getLocation())
+                    && !AmrsRegistrationConstants.AMRS_TARGET_ID.equals(pi.getIdentifierType().getName())) {
+                        throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierLocation");
+                }
+            }
+        };
+		for (PatientIdentifier identifier: patient.getIdentifiers()) {
+			if (!StringUtils.isBlank(identifier.getIdentifier()))
+				validator.validate(identifier, errors);
+	    }
+
 		foundInvalid = false;
 		for (PersonAddress address: patient.getAddresses()) {
     		if (StringUtils.isBlank(address.getSubregion()) ||
