@@ -70,6 +70,30 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AmrsRegistrationFormController extends AbstractWizardFormController {
 	
     private Log log = LogFactory.getLog(AmrsRegistrationFormController.class);
+    private PatientIdentifierValidator validator = new PatientIdentifierValidator() {
+        public void validate(Object obj, Errors errors) {
+            PatientIdentifier pi = (PatientIdentifier) obj;
+            try {
+                validateRequiredFields(pi);
+                validateIdentifier(pi);
+            }
+            catch (Exception e) {
+                log.error(e.getMessage());
+                errors.reject(e.getMessage());
+            }
+        }
+        public void validateRequiredFields(PatientIdentifier pi) throws PatientIdentifierException {
+            if (pi.getIdentifierType() == null || pi.getIdentifierType().getPatientIdentifierTypeId() == null ||
+                    Context.getPatientService().getPatientIdentifierType(pi.getIdentifierType().getPatientIdentifierTypeId()) == null) {
+                throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierType");
+            }
+            if (!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(pi.getIdentifierType().getName()) &&
+                    (pi.getLocation() == null || pi.getLocation().getLocationId() == null ||
+                    Context.getLocationService().getLocation(pi.getLocation().getLocationId()) == null)) {
+                    throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierLocation");
+            }
+        }
+    };
 	
 	public AmrsRegistrationFormController() {
 	}
@@ -394,11 +418,17 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				try {
 					// search if the patient already have the targeted identifier or not
 					// if yes then do update
-	                PatientIdentifierValidator.validateIdentifier(amrsId, type);
+	                validator.validateIdentifier(amrsId, type);
 	                for (PatientIdentifier identifier : patient.getIdentifiers()) {
-	                    if (identifier.getIdentifierType().equals(type)) {
+                        if (patient.getIdentifiers().size() == 1 &&
+                                (identifier == null || identifier.getIdentifier() == null || identifier.getIdentifier() == "")) {
+                            patient.setIdentifiers(null);
+                            break;
+                        }
+                        if (identifier.getIdentifierType() != null && identifier.getIdentifierType().equals(type)) {
 	                    	foundAmrsId = true;
 	                    	identifier.setIdentifier(amrsId);
+                            validator.validateIdentifier(identifier);
 	                    }
 	                }
 	                // if not then create a new identifier
@@ -407,8 +437,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                	identifier.setIdentifier(amrsId);
 	                	identifier.setIdentifierType(type);
 	                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
-                        PatientIdentifierValidator.validateIdentifier(identifier);
-                		patient.addIdentifier(identifier);
+                        validator.validateIdentifier(identifier);
+                        patient.addIdentifier(identifier);
 	                }
                 }
                 catch (Exception e) {
@@ -651,12 +681,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		if (finish && page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
 			Patient patient = (Patient) command;
-			PatientIdentifierValidator validator = new PatientIdentifierValidator();
 			for (PatientIdentifier identifier: patient.getIdentifiers()) {
 				PatientIdentifierType identifierType = identifier.getIdentifierType();
-				if (!identifier.isVoided() &&
-						identifierType != null &&
-						AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName()))
+				if (!StringUtils.isBlank(identifier.getIdentifier()))
 					validator.validate(identifier, errors);
 			}
 		}
@@ -702,30 +729,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		if (StringUtils.isEmpty(patient.getGender()))
 			errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
 
-		PatientIdentifierValidator validator = new PatientIdentifierValidator() {
-            public void validate(Object obj, Errors errors) {
-                PatientIdentifier pi = (PatientIdentifier) obj;
-                try {
-                    validateRequiredFields(pi);
-                    validateIdentifier(pi);
-                }
-                catch (Exception e) {
-                    errors.reject(e.getMessage());
-                }
-            }
-            public void validateRequiredFields(PatientIdentifier pi) throws PatientIdentifierException {
-                if (pi.getIdentifierType() == null || !Context.getPatientService().getAllPatientIdentifierTypes().contains(pi.getIdentifierType())) {
-                    throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierType");
-                }
-                if (pi.getLocation() == null || !Context.getLocationService().getAllLocations().contains(pi.getLocation())
-                    && !AmrsRegistrationConstants.AMRS_TARGET_ID.equals(pi.getIdentifierType().getName())) {
-                        throw new PatientIdentifierException("amrsregistration.page.edit.invalidIdentifierLocation");
-                }
-            }
-        };
 		for (PatientIdentifier identifier: patient.getIdentifiers()) {
-			if (!StringUtils.isBlank(identifier.getIdentifier()))
+			if (!StringUtils.isBlank(identifier.getIdentifier())) {
 				validator.validate(identifier, errors);
+            }
 	    }
 
 		foundInvalid = false;
