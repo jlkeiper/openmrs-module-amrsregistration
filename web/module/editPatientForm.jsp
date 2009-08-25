@@ -995,7 +995,7 @@
 					</c:choose>
 				</td>
 			</tr>
-	        <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
+	        <c:forEach var="identifier" items="${patient.activeIdentifiers}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
 	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
