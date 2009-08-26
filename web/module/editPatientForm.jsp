@@ -18,7 +18,7 @@
 
     // Number of objects stored.  Needed for 'add new' purposes.
     var numObjs = new Array();
-    numObjs["identifier"] = ${fn:length(patient.identifiers)};
+    numObjs["identifier"] = ${fn:length(patient.activeIdentifiers)};
     numObjs["name"] = ${fn:length(patient.names)};
     numObjs["address"] = ${fn:length(patient.addresses)};
     
@@ -196,12 +196,13 @@
     	var prevIdSuffix = numObjs[type] - 1;
     	if (type == 'identifier')
     		// for identifier, total number rendered is subtracted by the number of targeted identifier attached to the patient
-    		prevIdSuffix = prevIdSuffix - requiredIdType;
+    		prevIdSuffix = prevIdSuffix - 1; //requiredIdType;
     		
     	var allowCreate = false;
-    	
-    	// alert('id: ' + prevIdSuffix);
-    	// alert('numObjs['+type+']: ' + numObjs[type]);
+
+         //alert('type: ' + type);
+    	 //alert('id: ' + prevIdSuffix);
+    	 //alert('numObjs['+type+']: ' + numObjs[type]);
 
 		// always allow creating new element where the number is less than 0
     	if (prevIdSuffix < 0) {
@@ -210,7 +211,7 @@
     		// when more than 0, then get all input element and check whethere one of them is filled
     		var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
     		
-	    	for (i = 0; i < allInputType.length; i ++) {
+	    	for (i = 0; i < allInputType.length; i++) {
 	    		var o = allInputType[i];
 	    		str = jQuery.trim(o.value);
 	    		// if one of the input element is not empty then allow creating new element
@@ -997,7 +998,6 @@
 			</tr>
 	        <c:forEach var="identifier" items="${patient.activeIdentifiers}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
-	            	<c:if test="${amrsIdType != identifier.identifierType.name}">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
 						<script type="text/javascript">
 							var hidden = ${fn:length(patient.identifiers) <= 1};
@@ -1005,7 +1005,6 @@
 							var container = $j('#identifierContent${varStatus.index}');
 							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
 			            </script>
-	            	</c:if>
 	            </spring:nestedPath>
 	        </c:forEach>
 	    	<tbody id="identifierPosition">

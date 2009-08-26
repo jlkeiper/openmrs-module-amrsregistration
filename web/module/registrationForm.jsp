@@ -45,9 +45,9 @@
 					<span class="error"><spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /></span>
 				</c:forEach>
 			</spring:hasBindErrors>
-			<form id="identifierForm" method="post" autocomplete="off">
+			<form id="identifierForm" method="post" autocomplete="off" style="text-align:center">
 		        <input type="hidden" id="scannedPatientId" name="scannedPatientId" />
-		        <input type="text" id="idCardInput" size="15" maxlength="15" name="idCardInput" style="margin-top: 15px;" tabindex="1"/>
+		        <input type="text" id="idCardInput" size="15" maxlength="15" name="idCardInput" style="margin-top: 15px; text-align: center" tabindex="1"/>
 				<input type="hidden" name="_page0" value="true" />
 				<input type="submit" name="_target1" value="  <spring:message code="amrsregistration.button.go"/>  " tabindex="2"/>
 			</form>

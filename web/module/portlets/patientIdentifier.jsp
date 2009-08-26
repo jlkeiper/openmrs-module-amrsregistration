@@ -9,12 +9,12 @@
                 <select id="${status.expression}" name="${status.expression}">
 					<option value=""></option>
                     <openmrs:forEachRecord name="patientIdentifierType">
-                    	<c:if test="${amrsIdType != record.name}">
+                    <!--	c:if test="${amrsIdType != record.name}" -->
 	                        <option value="${record.patientIdentifierTypeId}"
 	                        <c:if test="${record.patientIdentifierTypeId == status.value}">selected</c:if> >
 	                        	${record.name}
 	                        </option>
-                        </c:if>
+                    <!--    /c:if  -->
                     </openmrs:forEachRecord>
                 </select>
             </spring:bind>
