@@ -197,8 +197,10 @@
 	function duplicateElement(type, id) {
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
-		createPreferred(false, type, id, templateClone, false);
-		createDelete(type, id, templateClone);
+		if (type != 'identifier') {
+			createPreferred(false, type, id, templateClone, false);
+			createDelete(type, id, templateClone);
+		}
 		
 		// custom mods for address
 		if (type == 'address') {
