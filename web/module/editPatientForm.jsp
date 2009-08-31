@@ -975,7 +975,7 @@
 							<td style="padding-right: 4em;">
 								<script type="text/javascript">
 									function updateEstimated(txtbox) {
-										var input = document.getElementById("birthdateEstimatedInput");
+										var input = document.getElementById("patient.birthdateEstimated");
 										if (input) {
 											input.checked = false;
 											input.parentNode.className = "";
@@ -985,8 +985,8 @@
 									}
 									
 									function updateAge() {
-										var birthdateBox = document.getElementById('birthdateInput');
-										var ageBox = document.getElementById('ageInput');
+										var birthdateBox = document.getElementById('patient.birthdate');
+										var ageBox = document.getElementById('age');
 										try {
 											var birthdate = parseSimpleDate(birthdateBox.value, '<openmrs:datePattern />');
 											var age = getAge(birthdate);
@@ -1028,7 +1028,7 @@
 								</span>
 								
 								<script type="text/javascript">
-									if (document.getElementById("birthdateEstimatedInput").checked == false)
+									if (document.getElementById("patient.birthdateEstimated").checked == false)
 										updateEstimated();
 									updateAge();
 								</script>
