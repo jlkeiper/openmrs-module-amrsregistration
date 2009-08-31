@@ -117,10 +117,10 @@
 							<c:if test="${record == relationship.relationshipType}">
 								<c:choose>
 									<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
-										${record.bIsToA}
+										${record.aIsToB}
 									</c:when>
 									<c:otherwise>
-										${record.aIsToB}
+										${record.bIsToA}
 									</c:otherwise>
 								</c:choose>
 							</c:if>

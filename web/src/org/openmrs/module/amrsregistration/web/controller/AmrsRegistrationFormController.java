@@ -422,8 +422,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     			List<Relationship> relationships = new ArrayList<Relationship>();
     			if (amrsRegistration.getRelationships() != null) {
         			for (Relationship relationship : amrsRegistration.getRelationships()) {
+        				String relationshipId = "";
+        				if (relationship.getRelationshipId() != null)
+        					relationshipId = relationship.getRelationshipId().toString();
+        				
         				StringBuffer buffer = new StringBuffer();
-        				buffer.append(relationship.getRelationshipId()).append(separator);
+        				buffer.append(relationshipId).append(separator);
         				buffer.append(relationship.getRelationshipType()).append(separator);
         				buffer.append(relationship.getPersonA().getPersonName()).append(separator);
         				buffer.append(relationship.getPersonB().getPersonName());

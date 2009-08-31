@@ -21,7 +21,8 @@
     numObjs["identifier"] = ${fn:length(amrsRegistration.patient.activeIdentifiers)};
     numObjs["name"] = ${fn:length(amrsRegistration.patient.names)};
     numObjs["address"] = ${fn:length(amrsRegistration.patient.addresses)};
-    numObjs["relationship"] = ${fn:length(amrsRegistration.relationships)};
+
+    relationshipCounter = ${fn:length(amrsRegistration.relationships)};
         
     // Search time out variable. Need to clear this variable to cancel the server request, thus
     // preventing multiple request being submitted to the server.
@@ -134,7 +135,7 @@
 			$j(td).append(label);
 			
 			$j(container).prepend(element);
-        } else if (type = 'name') {
+        } else if (type == 'name') {
             element = $j(document.createElement('tr'));
 
             td = $j(document.createElement('td'));
@@ -243,10 +244,6 @@
 	}
 	
 	function duplicateElement(type, id) {
-
-        if (type == 'identifier') {
-            var element =
-        }
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
 		if (type == 'name') {
@@ -1297,8 +1294,7 @@
 <!-- Relationship Section -->
 		<table>
 			<c:forEach var="relationship" items="${amrsRegistration.relationships}" varStatus="varStatus">
-			<tbody id="relationshipContent${varStatus.index}">
-			<tr>
+			<tr id="relationshipContent${varStatus.index}">
 				<td id="patientName" style="white-space:nowrap;">
 					<c:choose>
 						<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
@@ -1314,10 +1310,10 @@
 						<c:if test="${record == relationship.relationshipType}">
 							<c:choose>
 								<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
-									${record.bIsToA}
+									${record.aIsToB}
 								</c:when>
 								<c:otherwise>
-									${record.aIsToB}
+									${record.bIsToA}
 								</c:otherwise>
 							</c:choose>
 						</c:if>
@@ -1340,10 +1336,9 @@
 				<td>&nbsp;</td>
 				<td style="white-space:nowrap;">
 					<input type="hidden" name="commandRelationship" value="${relationship.relationshipId}|${relationship.relationshipType}|${relationship.personA.personName}|${relationship.personB.personName}" />
-					<input type="button" value="Remove" class="addNew removeRelationship" />
+					<input type="button" value="Remove" class="addNew removeRelationship" onclick="return deleteRelationship(this);"/>
 				</td>
-			<tr>
-			</tbody>
+			</tr>
 			</c:forEach>
 			<tbody id="relationshipPosition" />
 		</table>
@@ -1356,36 +1351,38 @@
 			<span id="relationshipError" class="newError"></span>
 			<input type="button" onclick="return addNewRelationship();" class="addNew" value="Add New Relationship"/>
 		</div>
-		<div id="relationshipSearchPatient">
-			
-			<div id="relationshipCreatePerson">
-				
-			</div>
-		</div>
 		<script type="text/javascript">
 			function addNewRelationship() {
 				// only allow creating a new relationship when user is finish with searching or creating new person
 				if ($j('#personSearchResult').is(':hidden') && $j('#createRelationshipPerson').is(':hidden')) {
-					var clone = $j('#relationshipContent').clone(true);
-					$j(clone).attr('id', 'relationshipContent' + numObjs["relationship"]);
-					$j('#relationshipPosition').append(clone);
+					// each person will have the relationship content, the search result and the create person stub area
 					
-					clone = $j('#personSearchResult').clone(true);
-					$j(clone).attr('id', 'personSearchResult' + numObjs["relationship"]);
+					// relationship content: id --> relationshipContent<row> --> relationshipContent1, relationshipContent2
+					var clone = $j('#relationshipContent').clone(true);
+					$j(clone).attr('id', 'relationshipContent' + relationshipCounter);
 					$j('#relationshipPosition').append(clone);
-
+					// person search result: class --> relationshipSearchResult1, relationshipSearchResult2
+					// each relationship will have multiple relationshipSearchResult row will the same class
+					// relationshipContent1 --> relationshipSearchResult1, relationshipSearchResult1, ... relationshipSearchResult1
+					clone = $j('#personSearchResult').clone(true);
+					$j(clone).attr('id', 'personSearchResult' + relationshipCounter);
+					$j('#relationshipPosition').append(clone);
+					// create person: id --> createRelationshipPerson<row> --> createRelationshipPerson1, createRelationshipPerson2
 					clone = $j('#createRelationshipPerson').clone(true);
-					$j(clone).attr('id', 'createRelationshipPerson' + numObjs["relationship"]);
+					$j(clone).attr('id', 'createRelationshipPerson' + relationshipCounter);
 					$j('#relationshipPosition').append(clone);
 	
-					numObjs["relationship"] = numObjs["relationship"] + 1;
+					relationshipNum = relationshipCounter + 1;
 				} else {
 					$j('#relationshipError').html('Please finish searching or creating the person before adding new relationship');
 				}
 			}
 
+			// function to save hidden the new person in the relationship section
 			function saveHiddenPerson(personId, givenName, middleName, familyName, age, gender, birthdate, position) {
+				// get the row position
 				var id = '#relationshipContent' + position;
+				// set all the hidden value
 				$j(id + ' input[type=hidden][name=relationshipPersonId]').attr('value', personId);
 				$j(id + ' input[type=hidden][name=relationshipGivenName]').attr('value', givenName);
 				$j(id + ' input[type=hidden][name=relationshipMiddleName]').attr('value', middleName);
@@ -1393,7 +1390,8 @@
 				$j(id + ' input[type=hidden][name=relationshipAge]').attr('value', age);
 				$j(id + ' input[type=hidden][name=relationshipGender]').attr('value', gender);
 				$j(id + ' input[type=hidden][name=relationshipBirthdate]').attr('value', birthdate);
-				
+
+				// display the person full name in the text field
 				var personName = "";
 				if (givenName!= null && givenName.length > 0)
 					personName = personName + givenName + ' ';
@@ -1406,7 +1404,11 @@
 			
 			$j(document).ready(function () {
 
+				// function that will be run when the cancel button on the create person stub is clicked
+				// this function will hide the create person stub and show the person search result
+				// in this case, there's no search result, so the create person stub link will be shown again 
 				$j('.showHideCreatePerson').click(function() {
+					// get the row where the create person stub is located
 					var divParent = $j(this).parents('div');
 					var containerPositionId = $j(divParent).parent().parent().attr('id');
 					var position = containerPositionId.substring('createRelationshipPerson'.length);
@@ -1415,11 +1417,16 @@
 					$j('#createRelationshipPerson' + position).toggle();
 				});
 
+				// function that will be run when the create person button in the create person stub area is clicked
+				// the function will store all the person stub details inside the hidden field. the hidden field then
+				// will be processed by the controller.
 				$j('.createNewPerson').click(function() {
+					// get the row where the create person stub is located
 					var divParent = $j(this).parents('div');
 					var containerPositionId = $j(divParent).parent().parent().attr('id');
 					var position = containerPositionId.substring('createRelationshipPerson'.length);
-						
+
+					// get all the data for the person stub
 					var givenName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rGivenName]').attr('value');
 					var middleName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rMiddleName]').attr('value');
 					var familyName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rFamilyName]').attr('value');
@@ -1428,14 +1435,16 @@
 					var birthdate = $j('#createRelationshipPerson' + position + ' input[type=text][name=rDate]').attr('value');
 					saveHiddenPerson('N/A', givenName, middleName, familyName, age, gender, birthdate, position);
 
+					// hide the create person stub area
 					$j('#createRelationshipPerson' + position).hide();
 				});
 				
 			});
 
+			// delete a relationship
 			function deleteRelationship(element) {
+				// get the row position of the deleted row
 				var removedElement = $j(element).parent().parent();
-
 				var containerPositionId = $j(removedElement).attr('id');
 				var position = containerPositionId.substring('relationshipContent'.length);
 				// hide search result and create person
@@ -1447,30 +1456,39 @@
 				$j('#relationshipContent' + position).remove();
 			}
 
+			// toggle function to show which person to be shown to the user
+			// which person to be shown depends on the type of the relationship
+			// when an aIsToB type is shown then the current patient is the person B in the relationship
+			// when a bIsToA type is shown then the current patient is the person A in the relationship
 			function showActivePerson(element) {
+				// get the row position where the changes is coming from (select onchange event)
 				var row = $j(element).parent().parent();
 				var rowId = $j(row).attr('id');
 				var position = rowId.substring('relationshipContent'.length);
 				// logic to determince which of the field to be shown personA or personB
 				var selected = $j('#relationshipContent' + position).find('select[name=relationshipTypeId] option:selected');
-
-				var hidden = $j(row).find('td[class=personA]');
-				var show = $j(row).find('td[class=personB]');
+				var hidden = $j(row).find('td[class=personB]');
+				var show = $j(row).find('td[class=personA]');
 				if ($j(selected).attr('class') == 'aIsToB') {
-					hidden = $j(row).find('td[class=personB]');
-					show = $j(row).find('td[class=personA]');
+					hidden = $j(row).find('td[class=personA]');
+					show = $j(row).find('td[class=personB]');
 				}
 
-				$j(hidden).hide();
-				$j(show).show();
+				$j(hidden).toggle();
+				$j(show).toggle();
 			}
 
+			// timeout search variable
 			var relationshipTimeoutSearch;
+			// row position of the search originated
 			var handlerPosition;
-			
+
+			// function to search for a person based on the name typed in to the relationship text field
 			function searchPersonWithTimeout(e, element) {
 				c = e.keyCode;
 
+				// get the row position from which the search is originated
+				// get the id of the row --> tr --> td --> textfield (where the search is coming from)
 				var containerPositionId = $j(element).parent().parent().attr('id');
 				handlerPosition = containerPositionId.substring('relationshipContent'.length);
 				
@@ -1484,24 +1502,41 @@
 				DWRAmrsRegistrationService.findPerson(value, handlePersonResult);
 			}
 
+			// function to handle the search result when you type a person name in the relationship part
 			function handlePersonResult(persons) {
+				// global var: handlerPosition: row of the relationship.
+				// each row of the relationship will have a separate search and create person area
+				// so, this var will help us to make sure that we're working on the correct search or create person area
+				// convention: each row will have in search result will have --> personSearchResult<ROWNUM> class
+				// search result for the second relationship will have --> personSearchResult2 class
+				
+				// get the location where the search result will be appended
 				var tbody = $j('#personSearchResult' + handlerPosition);
+				// remove all previous search result from the list
 				$j('.personSearchResult' + handlerPosition).remove();
 
+				// if there's no search result, display a link to create a new person stub
 				if (persons.length == 0) {
+					// create a new row and assign the class name
 	    			var tr = $j(document.createElement('tr'));
 	    			$j(tr).addClass('personSearchResult' + handlerPosition);
+	    			// create a column where we will put the anchor link
 	    			var td = $j(document.createElement('td'));
 	    			$j(td).attr('colspan', '6');
 
+	    			// create the anchor tag
 	    			var anchor = $j(document.createElement('a'));
 	    			$j(anchor).attr('href', '#');
 	    			$j(anchor).html('Create New Person');
 	    			$j(anchor).click(function(e) {
+		    			// when you click the create person link, show the create person stub area
 						e.preventDefault();
+						// get the row position from the tr tag. the hierarchy is tr --> td --> a
 						var containerPositionId = $j(this).parent().parent().attr('class');
 						var position = containerPositionId.substring('personSearchResult'.length);
+						// hide the row
 						$j('.personSearchResult' + position).toggle();
+						// show create person stub area
 						$j('#createRelationshipPerson' + position).toggle();
 		    		});
 
@@ -1520,6 +1555,7 @@
 	    			else
 	    				$j(tr).addClass("oddRow");
 
+	    			// add marker that this row is a person search result row
     				$j(tr).addClass('personSearchResult' + handlerPosition);
 	    			
 	    			// bind highlight effect
@@ -1532,12 +1568,13 @@
 	    				}
 	    			);
 	    			
-	    			// create each cell for identifier, given, middle, family name, age, gender, and birthdate (+ estimated)
+	    			// create each cell for given, middle, family name, age
 	    			createCell(persons[i].personName.givenName, tr);
 	    			createCell(persons[i].personName.middleName, tr);
 	    			createCell(persons[i].personName.familyName, tr);
 	    			createCell(persons[i].age, tr);
-	    			
+
+	    			// create person id hidden input
 	    			var td = $j(document.createElement('td'));
 	    			
 	    			var input = $j(document.createElement('input'));
@@ -1545,7 +1582,8 @@
 	    			$j(input).attr('name', 'hiddenId' + i);
 	    			$j(input).attr('value', persons[i].personId);
 	    			$j(tr).append($j(input));
-	    			
+
+	    			// create the gender column
 	    			$j(td).css('text-align', 'center');
 	    			var data = $j(document.createElement('img'));
 	    			if (persons[i].gender == 'F')
@@ -1554,13 +1592,24 @@
 	    				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
 	    			$j(td).append($j(data));
 	    			$j(tr).append($j(td));
-	    			
+
+	    			// create the birthdate column
 	    			createCell(parseDate(persons[i].birthdate, '<openmrs:datePattern />'), tr);
-	    			// bind click to show the selected patient
+
+	    			// when a row is selected, assign the person name to the text field and then store the value
+	    			// in the hidden field. the hidden field will be processed by the controller
 	    			$j(tr).click(function() {
+		    			// get child element of this tr that is an input (for personId)
 						var children = $j(this).children(':input');
 						var personId = jQuery.trim($j(children).attr('value'));
-						
+
+						// other element are stored under td
+						// 1 => given name
+						// 2 => middle name
+						// 3 => family name
+						// 4 => age
+						// 5 => gender --> need some processing since it's actually an image
+						// 7 => birthdate
 						var givenName = $j(this).children('td:eq(0)').html();
 						var middleName = $j(this).children('td:eq(1').html();
 						var familyName = $j(this).children('td:eq(2)').html();
@@ -1574,12 +1623,17 @@
 						
 						var birthdate = $j(this).children('td:eq(6)').html();
 
+						// get the row position of this tr from the class attribute
+						// format of the class will be: "[odd|even] personSearchResult<row> searchHighlight"
+						// so, we need to substring until personSearchResult
+						// and then substring again until the first white-space
 						var cssClass = $j(this).attr('class');
 						var subLength = cssClass.indexOf('personSearchResult') + 'personSearchResult'.length;
 						var cssClassHighlight = cssClass.substring(subLength);
 						var position = cssClassHighlight.substring(0, cssClassHighlight.indexOf(' '));
-						
+						// save the value to the hidden field
 						saveHiddenPerson(personId, givenName, middleName, familyName, age, gender, birthdate, position);
+						// dismiss the search result
 						$j('.personSearchResult' + position).remove();
 	    			});
 	    			$j(tbody).after($j(tr));
