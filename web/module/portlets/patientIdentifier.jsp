@@ -1,5 +1,5 @@
     <tr id="identifierContent${varStatus.index}">
-        <td class="spacing">
+        <td class="spacing" style="white-space: nowrap">
             <spring:bind path="identifier">
                 <c:choose>
                     <c:when test="${identifier.dateCreated != null}">
@@ -11,7 +11,7 @@
                 </c:choose>
             </spring:bind>
         </td>
-        <td class="spacing">
+        <td class="spacing" style="white-space: nowrap">
             <spring:bind path="identifierType">
                 <c:choose>
                     <c:when test="${identifier.dateCreated != null}">
@@ -37,7 +37,7 @@
                 </c:choose>
             </spring:bind>
         </td>
-		<td class="spacing">
+		<td class="spacing" style="white-space: nowrap">
 			<spring:bind path="location">
                 <c:choose>
                     <c:when test="${identifier.dateCreated != null}">
@@ -61,9 +61,16 @@
                 </c:choose>
 			</spring:bind>
 		</td>
-        <td>
+            <c:choose>
+                <c:when test="${fn:length(amrsRegistration.patient.identifiers) > 1}">
+					<td style="display: block;">
+                </c:when>
+                <c:otherwise>
+					<td style="display: none;">
+                </c:otherwise>
+            </c:choose>
             <spring:bind path="preferred">
-                <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
+                <input type="checkbox" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
             </spring:bind>
         </td>
         <td>

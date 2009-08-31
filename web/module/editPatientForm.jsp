@@ -197,13 +197,14 @@
 	function duplicateElement(type, id) {
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
-		if (type != 'identifier') {
+		if (type == 'name') {
 			createPreferred(false, type, id, templateClone, false);
 			createDelete(type, id, templateClone);
 		}
 		
 		// custom mods for address
 		if (type == 'address') {
+			createPreferred(false, type, id, templateClone, false);
 			var td = $j(document.createElement('td'));
 			td.append(templateClone);
 			var tr = $j(document.createElement('tr'));
@@ -622,17 +623,6 @@
             dob.style.backgroundColor="#D3D3D3";
             dobMsg.style.color="#CCCCCC";
             dob.value="";
-        }
-    }
-
-    function changeNameHeaderHack() {
-        var headers = document.getElementsByTagName("th");
-        for (var i=0; i<headers.length; i++) {
-            if (headers[i].innerHTML == "Given") {
-                headers[i].innerHTML = "First Name";
-            } else if (headers[i].innerHTML == "Middle") {
-                headers[i].innerHTML = "Middle Name";
-            }
         }
     }
 
@@ -1057,7 +1047,7 @@
 			<td class="input">
 
 <!-- Patient Identifier Section -->
-		<table id="identifierPositionParent">
+		<table id="identifierPositionParent" width="100%">
             <tr>
                 <td style="font-weight: bold;">
                     <spring:message code="amrsregistration.labels.ID"/>
@@ -1497,8 +1487,6 @@
 		var first = $j('#nameContent0 input[type=text]:eq(0)');
 		first.focus();
 	});
-
-    changeNameHeaderHack();
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
