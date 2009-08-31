@@ -21,15 +21,7 @@
     numObjs["identifier"] = ${fn:length(patient.activeIdentifiers)};
     numObjs["name"] = ${fn:length(patient.names)};
     numObjs["address"] = ${fn:length(patient.addresses)};
-    
-    // number of identifier that is a target identifier	
-	requiredIdType = 0;
-    <c:forEach var="identifier" items="${patient.identifiers}" varStatus="varStatus">
-        <c:if test="${amrsIdType == identifier.identifierType.name}">
-        	requiredIdType ++;
-        </c:if>
-    </c:forEach>
-    
+        
     // Search time out variable. Need to clear this variable to cancel the server request, thus
     // preventing multiple request being submitted to the server.
     // Reset when:
@@ -121,6 +113,7 @@
 		$j(input).attr('type', 'radio');
 		$j(input).attr('name', type + 'Preferred');
 		$j(input).attr('value', id);
+		$j(input).attr('style', 'vertical-align: top');
 		if(preferred) {
 			$j(input).attr('checked', 'checked');
 		}
@@ -194,10 +187,7 @@
         
         // get the total number of element in the page (also used for id)
     	var prevIdSuffix = numObjs[type] - 1;
-    	if (type == 'identifier')
-    		// for identifier, total number rendered is subtracted by the number of targeted identifier attached to the patient
-    		prevIdSuffix = prevIdSuffix - 1; //requiredIdType;
-    		
+
     	var allowCreate = false;
 
          //alert('type: ' + type);
@@ -289,8 +279,6 @@
 		// new one when the previous one still blank (see addNew)
 		
 		var prevIdSuffix = numObjs[type] - 1;
-		if (type == 'identifier')
-			prevIdSuffix = prevIdSuffix - requiredIdType;
 		message = "";
     		
 		if (prevIdSuffix > 0) {
@@ -308,7 +296,6 @@
 	    	}
 	    	if (deleteInputs) {
     			// alert('id: ' + prevIdSuffix);
-    			// alert('type: ' + requiredIdType);
 	    		var success = $j('#' + type + "Content" + prevIdSuffix).remove();
 	    		numObjs[type] = numObjs[type] - 1;
 	    		prevIdSuffix = prevIdSuffix - 1;
@@ -603,6 +590,11 @@
 </script>
 
 <style>
+    #table-header {
+        align: left;
+        font-weight: bold;
+    }
+
 	.header {
 		border-top:1px solid lightgray;
 		vertical-align: top;
@@ -805,63 +797,129 @@
 	<table id="centeredContent">
 		<tr>
 			<th class="header">Names</th>
-			<td class="input">
+			<td class="input" align="left" width="120" space-before="0">
+                <table width="100%">
+                    <col width="80%"/>
+                    <col width="10%"/>
+                    <tr>
+                        <td>
+                            <!-- Patient Names Section -->
+                                    <table id="namePositionParent">
+                                        <!--
+                                        <col />
+                                        <col width="250"/>
+                                        <col width="250"/>
+                                        -->
+                                    <tr>
+                                        <td width="250" style="font-weight: bold;">
+                                            First Name
+                                        </td >
+                                        <td width="250" style="font-weight: bold;">
+                                            Middle Name
+                                        </td>
+                                        <td width="250" style="font-weight: bold;">
+                                            Family Name
+                                        </td>
+<!--
+                                        <thead style="font-weight: bold;">
+                                            <openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
+                                        <td style="font-weight: bold;">
+                                            <c:choose>
+                                                <c:when test="${fn:length(patient.names) > 1}">
+                                                       <span id="namePreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        </thead>
+-->
+                                    </tr>
+                                        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+                                        <tr>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${name.dateCreated != null}">
+                                                        <tr>
+                                                            <td>
+                                                                ${name.givenName}
+                                                            </td>
+                                                            <td>
+                                                                ${name.middleName}
+                                                           </td>
+                                                            <td>
+                                                                ${name.familyName}
+                                                            </td>
+                                                        </tr>
+                                                        <!--
+                                                        <tr>
+                                                            <spring:nestedPath path="patient.names[${varStatus.index}]">
+                                                                <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
+                                                            </spring:nestedPath>
+                                                        </tr>
+                                                        -->
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <spring:nestedPath path="patient.names[${varStatus.index}]">
+                                                            <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
+                                                        </spring:nestedPath>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                             </td>
+                                         </tr>
+                                            <script type="text/javascript">
+                                                $j(document).ready(function () {
+                                                    var hidden = ${fn:length(patient.names) <= 1};
+                                                    var preferred = ${name.preferred};
+                                                    var position = ${varStatus.index};
+                                                    var tbody = $j('#namePositionParent').find('tbody:eq(1)');
+                                                    var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
+                                                    $j(nameContentX).attr('id', 'nameContent' + position);
+                                                    createPreferred(preferred, 'name', position, nameContentX, hidden);
 
-<!-- Patient Names Section -->
-		<table id="namePositionParent">
-			<tr>
-				<thead>
-					<openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
-				<td>
-					<c:choose>
-						<c:when test="${fn:length(patient.names) > 1}">
-				   			<span id="namePreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
-						</c:when>
-						<c:otherwise>
-				    		<span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
-						</c:otherwise>
-					</c:choose>
-				</td>
-				</thead>
-			</tr>
-	        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-	            <spring:nestedPath path="patient.names[${varStatus.index}]">
-					<openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
-	            </spring:nestedPath>
-	            <script type="text/javascript">
-	            	$j(document).ready(function () {
-	            		var hidden = ${fn:length(patient.names) <= 1};
-						var preferred = ${name.preferred};
-	            		var position = ${varStatus.index};
-	            		var tbody = $j('#namePositionParent').find('tbody:eq(1)');
-	            		var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
-	            		$j(nameContentX).attr('id', 'nameContent' + position);
-	            		createPreferred(preferred, 'name', position, nameContentX, hidden);
-	            		
-	            		// bind onkeyup for each of the address layout text field
-	            		var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
-	            		$j(allTextInputs).bind('keyup', function(event){
-	            			timeOutSearch(event);
-	            		});
-	            	});
-	            </script>
-	        </c:forEach>
-	    	<tbody id="namePosition">
-		</table>
-		<div id="nameContent" style="display: none;">
-			<spring:nestedPath path="emptyName">
-				<table>
-					<openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
-				</table>
-			</spring:nestedPath>
-		</div>
-		<div class="tabBar" id="nameTabBar">
-			<span id="nameError" class="newError"></span>
-			<input type="button" onClick="return deleteLastRow('name');" class="addNew" id="name" value="Remove"/>
-			<input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
-		</div>
-<!-- End of Patient Names Section -->
-	
+                                                    // bind onkeyup for each of the address layout text field
+                                                    var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
+                                                    $j(allTextInputs).bind('keyup', function(event){
+                                                        timeOutSearch(event);
+                                                    });
+                                                });
+                                            </script>
+                                        </c:forEach>
+                                        <tbody id="namePosition">
+                                    </table>
+                                    <div id="nameContent" style="display: none;">
+                                        <spring:nestedPath path="emptyName">
+                                            <table>
+                                                <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
+                                            </table>
+                                        </spring:nestedPath>
+                                    </div>
+                                    <div class="tabBar" id="nameTabBar">
+                                        <span id="nameError" class="newError"></span>
+                                        <input type="button" onClick="return deleteLastRow('name');" class="addNew" id="name" value="Remove"/>
+                                        <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
+                                    </div>
+                            <!-- End of Patient Names Section -->
+                        </td>
+                        <td valign="top" border="0px" >
+                          <table valign="top" border="0px" >
+                              <tr valign="top">
+                                  <td valign="top" border-top="0px" style="font-weight: bold;">
+                                      header
+                                  </td>
+                              </tr>
+                              <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+                              <tr>
+                                  <td>
+                                     <a href="#delete" name="nameLayoutRow" style="color:red;">X</a>
+                                  </td>
+                              </tr>
+                              </c:forEach>
+                          </table>
+                        </td>
+                    </tr>
+                </table>
 			</td>
 		</tr>
 		<tr>
@@ -975,36 +1033,38 @@
 
 <!-- Patient Identifier Section -->
 		<table id="identifierPositionParent">
-			<tr>
-			    <td>
-			        <spring:message code="amrsregistration.labels.ID"/>
-			    </td>
-			    <td>
-			        <spring:message code="PatientIdentifier.identifierType"/>
-			    </td>
-				<td>
-					<spring:message code="PatientIdentifier.location"/>
-				</td>
-				<td>
-					<c:choose>
-						<c:when test="${fn:length(patient.identifiers) > 1}">
-				    		<span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
-						</c:when>
-						<c:otherwise>
-				    		<span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
-						</c:otherwise>
-					</c:choose>
-				</td>
-			</tr>
+            <tr>
+                <td style="font-weight: bold;">
+                    <spring:message code="amrsregistration.labels.ID"/>
+                </td>
+                <td style="font-weight: bold;">
+                    <spring:message code="PatientIdentifier.identifierType"/>
+                </td>
+                <td style="font-weight: bold;">
+                    <spring:message code="PatientIdentifier.location"/>
+                </td>
+                <td style="font-weight: bold;">
+                    <c:choose>
+                        <c:when test="${fn:length(patient.identifiers) > 1}">
+                            <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
+                        </c:when>
+                        <c:otherwise>
+                            <span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
 	        <c:forEach var="identifier" items="${patient.activeIdentifiers}" varStatus="varStatus">
 	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
+                        <!--
 						<script type="text/javascript">
 							var hidden = ${fn:length(patient.identifiers) <= 1};
 							var preferred = ${identifier.preferred};
 							var container = $j('#identifierContent${varStatus.index}');
 							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
 			            </script>
+			            -->
 	            </spring:nestedPath>
 	        </c:forEach>
 	    	<tbody id="identifierPosition">
@@ -1016,7 +1076,7 @@
         </spring:nestedPath>
         <div class="tabBar" id="identifierTabBar">
 			<span id="identifierError" class="newError"></span>
-            <input type="button" onClick="return deleteLastRow('identifier');" class="addNew" id="identifier" value="Remove"/>
+
             <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier" value="Add New Identifier"/>
         </div>
 <!-- End of Patient Identifier Section -->

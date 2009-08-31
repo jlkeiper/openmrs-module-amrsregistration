@@ -4,7 +4,6 @@
     <list default="true" readonly="true" id="61cbad40-1a96-4a5f-8e80-01db9499ede9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.iws" afterPath="$PROJECT_DIR$/amrsregistration.iws" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/build.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/build.xml" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/.classpath" afterPath="/home/brian/IdeaProjects/amrsregistration/.classpath" />
@@ -79,28 +78,10 @@
   <component name="FileColors" enabled="false" enabledForTabs="false" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="AmrsRegistrationFormController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="109" column="34" selection-start="4665" selection-end="4665" vertical-scroll-proportion="-7.5">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="viewPatientForm.jsp" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="24" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="editPatientForm.jsp" pinned="false" current="true" current-in-tab="true">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="90" selection-start="1814" selection-end="1814" vertical-scroll-proportion="0.5155483">
+            <state line="806" column="28" selection-start="28050" selection-end="28050" vertical-scroll-proportion="0.4074703">
               <folding />
             </state>
           </provider>
@@ -118,7 +99,16 @@
       <file leaf-file-name="patientIdentifier.jsp" pinned="false" current="false" current-in-tab="false">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="77" selection-start="338" selection-end="338" vertical-scroll-proportion="-45.0">
+            <state line="68" column="11" selection-start="3408" selection-end="3408" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="assignIdForm.jsp" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="143" column="31" selection-start="4870" selection-end="4870" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -127,7 +117,7 @@
       <file leaf-file-name="registrationForm.jsp" pinned="false" current="false" current-in-tab="false">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="80" selection-start="1157" selection-end="1157" vertical-scroll-proportion="-8.083333">
+            <state line="44" column="80" selection-start="1157" selection-end="1157" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -145,14 +135,14 @@
       <list>
         <option value="/home/brian/IdeaProjects/amrsregistration/build.xml" />
         <option value="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/dialogContent.jsp" />
-        <option value="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" />
         <option value="/home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" />
         <option value="/home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp" />
         <option value="/home/brian/IdeaProjects/amrsregistration/test/org/openmrs/module/amrsregistration/test/AmrsRegistrationServiceTest.java" />
         <option value="/home/brian/IdeaProjects/amrsregistration/metadata/messages.properties" />
-        <option value="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" />
-        <option value="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" />
         <option value="/home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp" />
+        <option value="/home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java" />
+        <option value="/home/brian/IdeaProjects/amrsregistration/metadata/config.xml" />
+        <option value="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" />
         <option value="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
       </list>
     </option>
@@ -232,6 +222,76 @@
           <option name="myItemId" value="web" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="web" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="module" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="src" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="org" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="openmrs" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="module" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="amrsregistration" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
         <PATH_ELEMENT>
           <option name="myItemId" value="src" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -253,7 +313,7 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
-          <option name="myItemId" value="web" />
+          <option name="myItemId" value="impl" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
       </PATH>
@@ -271,83 +331,7 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
-          <option name="myItemId" value="web" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="src" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="org" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="openmrs" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="module" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="web" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="controller" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="web" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="module" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="amrsregistration" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="web" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="module" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="portlets" />
+          <option name="myItemId" value="metadata" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
       </PATH>
@@ -588,7 +572,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1280" height="775" extended-state="6" />
+    <frame x="0" y="25" width="1280" height="775" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32840237" sideWeight="0.5" order="7" side_tool="false" />
@@ -596,9 +580,9 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24878444" sideWeight="0.660485" order="1" side_tool="false" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24797407" sideWeight="0.33579883" order="1" side_tool="false" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21231766" sideWeight="0.6612426" order="1" side_tool="true" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23338735" sideWeight="0.6612426" order="0" side_tool="false" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25202593" sideWeight="0.6612426" order="0" side_tool="false" />
       <window_info id="Web Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39940828" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38088444" sideWeight="0.5" order="2" side_tool="false" />
@@ -623,7 +607,7 @@
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration: Fixed bug where editPatientForm displayed voided PatientIdentifiers" />
+    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration: Fixed bug where you could not add identifers on editPatientForm.  Centered text in search box on start page.   Show the target_id on the editPatientForm if one exists for a user." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -652,6 +636,7 @@
     <MESSAGE value="amrsregistration: Fixed validation on Patient Identifier fields and fixed Other Name(s) list in assignIdForm" />
     <MESSAGE value="amrsregistration: Fixed critical bugs on validating PatientIdentifer that showed NULL message  on assignIdForm and 'could not initialize. no session' error on editPatientForm" />
     <MESSAGE value="amrsregistration: Fixed bug where editPatientForm displayed voided PatientIdentifiers" />
+    <MESSAGE value="amrsregistration: Fixed bug where you could not add identifers on editPatientForm.  Centered text in search box on start page.   Show the target_id on the editPatientForm if one exists for a user." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -673,61 +658,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/messages.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="55" selection-start="4148" selection-end="4148" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="ResourceBundle">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationConstants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="17" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="47" selection-start="2934" selection-end="2934" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/openmrs-1.4.x/src/api/org/openmrs/validator/PatientIdentifierValidator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="82" selection-start="4276" selection-end="4276" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/openmrs-1.4.x/src/api/org/openmrs/Patient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="195" column="16" selection-start="4792" selection-end="4792" vertical-scroll-proportion="-108.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/openmrs-1.4.x/src/api/org/openmrs/api/context/Context.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="277" column="34" selection-start="8706" selection-end="8706" vertical-scroll-proportion="-106.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///home/brian/IdeaProjects/openmrs-1.4.x/src/api/org/openmrs/api/LocationService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="59" column="16" selection-start="2082" selection-end="2082" vertical-scroll-proportion="-70.5">
@@ -742,9 +672,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp">
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="203" column="18" selection-start="7325" selection-end="7330" vertical-scroll-proportion="-9.489796">
+        <state line="287" column="79" selection-start="14430" selection-end="14430" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -756,6 +686,58 @@
         </state>
       </provider>
     </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="100" column="0" selection-start="4334" selection-end="4334" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/login.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="7" selection-start="1625" selection-end="1625" vertical-scroll-proportion="-6.8333335">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="20" selection-start="2437" selection-end="2437" vertical-scroll-proportion="-7.3157897">
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/resources/scripts/jquery-1.3.2.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/resources/css/smoothness/jquery-ui-1.7.1.custom.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="268" column="38" selection-start="16947" selection-end="16947" vertical-scroll-proportion="-2010.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/resources/css/amrsregistration.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="12" selection-start="1728" selection-end="1735" vertical-scroll-proportion="-840.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="16" column="13" selection-start="496" selection-end="496" vertical-scroll-proportion="0.0">
@@ -763,30 +745,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="80" selection-start="1157" selection-end="1157" vertical-scroll-proportion="-8.083333">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="77" selection-start="338" selection-end="338" vertical-scroll-proportion="-45.0">
+        <state line="68" column="11" selection-start="3408" selection-end="3408" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/controller/AmrsRegistrationFormController.java">
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="109" column="34" selection-start="4665" selection-end="4665" vertical-scroll-proportion="-7.5">
+        <state line="143" column="31" selection-start="4870" selection-end="4870" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/registrationForm.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="80" selection-start="1157" selection-end="1157" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="90" selection-start="1814" selection-end="1814" vertical-scroll-proportion="0.5155483">
+        <state line="806" column="28" selection-start="28050" selection-end="28050" vertical-scroll-proportion="0.4074703">
           <folding />
         </state>
       </provider>
