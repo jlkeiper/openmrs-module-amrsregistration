@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
@@ -123,5 +124,19 @@ public class AmrsSearchManager {
     
     private boolean isFilterableByBirthdate(Date birthdate) {
     	return (birthdate != null);
+    }
+
+	public List<Person> getPeople(String partialName) {
+		List<Person> returnedPersons = new ArrayList<Person>();
+		List<Person> persons = Context.getPersonService().getPeople(partialName, false);
+		int counter = 0;
+		for (Person person : persons) {
+			returnedPersons.add(person);
+			
+			counter ++;
+	        if (counter > MAX_RETURNED_PATIENTS)
+	        	break;
+        }
+		return returnedPersons;
     }
 }

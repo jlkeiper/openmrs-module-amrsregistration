@@ -3,6 +3,7 @@ package org.openmrs.module.amrsregistration.web.controller;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -30,11 +31,15 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.Relationship;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PatientIdentifierException;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.PersonService.ATTR_VIEW_TYPE;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.amrsregistration.AmrsRegistration;
 import org.openmrs.module.amrsregistration.AmrsSearchManager;
 import org.openmrs.propertyeditor.ConceptEditor;
 import org.openmrs.propertyeditor.LocationEditor;
@@ -99,7 +104,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	}
 	
 	protected Object formBackingObject(HttpServletRequest request) throws ModelAndViewDefiningException {
-		return getNewPatient();
+		AmrsRegistration amrsRegistration = new AmrsRegistration();
+		amrsRegistration.setPatient(getNewPatient());
+		return amrsRegistration;
 	}
 	
 	/**
@@ -120,6 +127,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				localHashMap.put("emptyIdentifier", new PatientIdentifier());
 				localHashMap.put("emptyName", new PersonName());
 				localHashMap.put("emptyAddress", new PersonAddress());
+				// add new template for relationship
+				localHashMap.put("emptyRelationship", new Relationship());
 				
 				// used to flag down whether to show the patient's attributes or not
 				List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
@@ -133,7 +142,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				String idCard = ServletRequestUtils.getStringParameter(request, "idCardInput", null);
 				String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
 				if (idCard == null && amrsId == null) {
-					Patient patient = (Patient) command;
+					
+					AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+					Patient patient = amrsRegistration.getPatient();
+					
 					AmrsSearchManager searchManager = new AmrsSearchManager();
 					
 					Set<Patient> matches = new HashSet<Patient>();
@@ -173,7 +185,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
      */
     @Override
     protected void postProcessPage(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
-    	Patient patient = (Patient) command;
+    	AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+    	Patient patient = amrsRegistration.getPatient();
     	
     	// post process each page that needs processing (have a form that is in the spring's command object).
     	if (page == AmrsRegistrationConstants.EDIT_PAGE) {
@@ -401,6 +414,86 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         				patient.addAddress(pa);
         			}
         		}
+        		
+        		// process relationship removal
+        		String[] commandRelationships = ServletRequestUtils.getStringParameters(request, "commandRelationship");
+    			// user remove one or more relationship
+    			String separator = "|";
+    			List<Relationship> relationships = new ArrayList<Relationship>();
+    			if (amrsRegistration.getRelationships() != null) {
+        			for (Relationship relationship : amrsRegistration.getRelationships()) {
+        				StringBuffer buffer = new StringBuffer();
+        				buffer.append(relationship.getRelationshipId()).append(separator);
+        				buffer.append(relationship.getRelationshipType()).append(separator);
+        				buffer.append(relationship.getPersonA().getPersonName()).append(separator);
+        				buffer.append(relationship.getPersonB().getPersonName());
+        				if (commandRelationships != null) {
+            				for (String string : commandRelationships) {
+                                if (buffer.toString().equals(string))
+                                	relationships.add(relationship);
+                            }
+        				}
+                    }
+    			}
+    			
+    			amrsRegistration.setRelationships(relationships);
+        		
+        		// process newly created relationship
+
+        		String[] personAs = ServletRequestUtils.getStringParameters(request, "personA");
+        		@SuppressWarnings("unused")
+                String[] personBs = ServletRequestUtils.getStringParameters(request, "personB");
+        		String[] relationshipTypeIds = ServletRequestUtils.getStringParameters(request, "relationshipTypeId");
+        		String[] relationshipPersonIds = ServletRequestUtils.getStringParameters(request, "relationshipPersonId");
+        		String[] relationshipGivenNames = ServletRequestUtils.getStringParameters(request, "relationshipGivenName");
+        		String[] relationshipMiddleNames = ServletRequestUtils.getStringParameters(request, "relationshipMiddleName");
+        		String[] relationshipFamilyNames = ServletRequestUtils.getStringParameters(request, "relationshipFamilyName");
+        		String[] relationshipGenders = ServletRequestUtils.getStringParameters(request, "relationshipGender");
+        		String[] relationshipAges = ServletRequestUtils.getStringParameters(request, "relationshipAge");
+        		String[] relationshipBirthdates = ServletRequestUtils.getStringParameters(request, "relationshipBirthdate");
+        		// all above arrays will have same length
+        		int counter = relationshipTypeIds.length;
+        		
+        		PersonService personService = Context.getPersonService();
+        		
+        		for (int i = 0; i < counter; i++) {
+	                Relationship relationship = new Relationship();
+	                
+	                RelationshipType relationshipType = personService.getRelationshipType(NumberUtils.toInt(relationshipTypeIds[i]));
+	                relationship.setRelationshipType(relationshipType);
+	                
+	                // the other person in the relationship
+	                Person otherPerson = null;
+	                if ("N/A".equals(relationshipPersonIds[i])) {
+	                	// don't create relationship for invalid data
+	                	if ("N/A".equals(relationshipGenders[i]))
+	                		continue;
+	                	// create a new person using given data
+	                	otherPerson = new Person();
+	                	
+	                	PersonName name = new PersonName();
+	                	name.setGivenName(relationshipGivenNames[i]);
+	                	name.setMiddleName(relationshipMiddleNames[i]);
+	                	name.setFamilyName(relationshipFamilyNames[i]);
+	                	otherPerson.addName(name);
+	                	
+	                	otherPerson.setGender(relationshipGenders[i]);
+	                	updateBirthdate(otherPerson, relationshipBirthdates[i].replaceAll("N/A", ""), relationshipAges[i].replaceAll("N/A", ""));
+	                } else {
+	                	otherPerson = personService.getPerson(NumberUtils.toInt(relationshipPersonIds[i]));
+	                }
+	                
+	                if ("N/A".equals(personAs[i])) {
+	                	// personA is the patient
+	                	relationship.setPersonA(patient);
+	                	relationship.setPersonB(otherPerson);
+	                } else {
+	                	relationship.setPersonA(otherPerson);
+	                	relationship.setPersonB(patient);
+	                }
+	                
+	                amrsRegistration.addRelationship(relationship);
+                }
     		}
     	}
     	
@@ -478,7 +571,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     @Override
     protected void onBindAndValidate(HttpServletRequest request, Object command, BindException errors, int page)
                                                                                                                 throws Exception {
-    	Patient patient = (Patient) command;
+    	AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+    	Patient patient = amrsRegistration.getPatient();
 		
 		if (page == AmrsRegistrationConstants.EDIT_PAGE) {
 			// update the patient age and birthdate
@@ -573,9 +667,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		
 		int targetPage = super.getTargetPage(request, command, errors, page);
 		
-		Patient patient = (Patient) command;
+		AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+		Patient patient = amrsRegistration.getPatient();
 		
 		PatientService patientService = Context.getPatientService();
+		PersonService personService = Context.getPersonService();
 		
 		// if current page is the start page, then try to search the identifier
 		if (page == AmrsRegistrationConstants.START_PAGE) {
@@ -603,6 +699,11 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 						Patient matchedPatient = patients.get(0);
 						copyPatient(patient, matchedPatient);
 						patient.getAttributeMap();
+						List<Relationship> relationships = personService.getRelationshipsByPerson(patient);
+						for (Relationship relationship : relationships) {
+	                        amrsRegistration.initRelationship(relationship);
+                        }
+						
 						if (targetIdentifierExists(patient))
 							// send user to review page if the target identifier is found
 							targetPage = AmrsRegistrationConstants.REVIEW_PAGE;
@@ -620,6 +721,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				if (matchedPatient != null) {
 					copyPatient(patient, matchedPatient);
 					patient.getAttributeMap();
+					List<Relationship> relationships = personService.getRelationshipsByPerson(patient);
+					for (Relationship relationship : relationships) {
+                        amrsRegistration.initRelationship(relationship);
+                    }
 				}
 			}
 			
@@ -641,6 +746,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				if (matchedPatient != null) {
 					copyPatient(patient, matchedPatient);
 					patient.getAttributeMap();
+					List<Relationship> relationships = personService.getRelationshipsByPerson(patient);
+					for (Relationship relationship : relationships) {
+                        amrsRegistration.initRelationship(relationship);
+                    }
 					
 					// set the default to return to assign id page
 					targetPage = AmrsRegistrationConstants.ASSIGN_ID_PAGE;
@@ -680,7 +789,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		}
 		
 		if (finish && page == AmrsRegistrationConstants.ASSIGN_ID_PAGE) {
-			Patient patient = (Patient) command;
+			AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+			Patient patient = amrsRegistration.getPatient();
 			for (PatientIdentifier identifier: patient.getIdentifiers()) {
 				PatientIdentifierType identifierType = identifier.getIdentifierType();
 				if (!StringUtils.isBlank(identifier.getIdentifier()))
@@ -692,7 +802,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	private void validate(Object command, Errors errors, boolean finish) {
 		// finish flag will determine whether we need to check for the validity of the patient identifier
 		
-		Patient patient = (Patient) command;
+		AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+		Patient patient = amrsRegistration.getPatient();
 		
 		boolean foundInvalid = false;
 		for (PersonName name: patient.getNames()) {
@@ -720,14 +831,14 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		}
 		
 		if (patient.getBirthdate() == null)
-			errors.rejectValue("birthdate", "amrsregistration.page.edit.invalidDate");
+			errors.rejectValue("patient.birthdate", "amrsregistration.page.edit.invalidDate");
 		else {
 			if (patient.getBirthdate().after(new Date()))
-    			errors.rejectValue("birthdate", "amrsregistration.page.edit.futureDate");
+    			errors.rejectValue("patient.birthdate", "amrsregistration.page.edit.futureDate");
 		}
 		
 		if (StringUtils.isEmpty(patient.getGender()))
-			errors.rejectValue("gender", "amrsregistration.page.edit.invalidGender");
+			errors.rejectValue("patient.gender", "amrsregistration.page.edit.invalidGender");
 
 		for (PatientIdentifier identifier: patient.getIdentifiers()) {
 			if (!StringUtils.isBlank(identifier.getIdentifier())) {
@@ -780,37 +891,59 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             HttpServletRequest request,
             HttpServletResponse response, Object command,
             BindException bindException) throws Exception {
-        Patient patient = (Patient)command;
-
-        Boolean hasTargetId = false;
-        Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
+        AmrsRegistration amrsRegistration = (AmrsRegistration) command;
+    	Patient patient = amrsRegistration.getPatient();
+    	
+        List<PatientIdentifier> identifiers = new ArrayList<PatientIdentifier>();
 		for (PatientIdentifier identifier : patient.getIdentifiers()) {
-            // If the patient has AMRS_TARGET_ID, then set it to be the preferred identifier
-            if (AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifier.getIdentifierType().getName())) {
-                identifier.setPreferred(true);
-                hasTargetId = true;
-            }
-            if(StringUtils.isBlank(identifier.getIdentifier()))
+            if(StringUtils.isNotBlank(identifier.getIdentifier()))
             	identifiers.add(identifier);
         }
-        // Remove all blank identifiers from command object
-		patient.getIdentifiers().removeAll(identifiers);
-        // If patient has AMRS_TARGET_ID...
-        if (hasTargetId) {
-            // ... then make sure it is the only preferred identifier.
-            for (PatientIdentifier identifier : patient.getIdentifiers()) {
-                if (!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifier.getIdentifierType().getName())) {
-                    identifier.setPreferred(false);
-                }
+		Set<PatientIdentifier> patientIdentifiers = new TreeSet<PatientIdentifier>();
+		patientIdentifiers.addAll(identifiers);
+		patient.setIdentifiers(patientIdentifiers);
+		
+        for (PatientIdentifier identifier : patient.getIdentifiers()) {
+            if (!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifier.getIdentifierType().getName())) {
+                identifier.setPreferred(false);
+            } else {
+            	identifier.setPreferred(true);
             }
         }
 		
         if (patient != null) {
-            Context.getPatientService().savePatient(patient);
+            Patient savedPatient = Context.getPatientService().savePatient(patient);
+            for (Relationship relationship : amrsRegistration.getRelationships()) {
+            	if (isSimilar(savedPatient, relationship.getPersonA())) {
+	                relationship.setPersonA(savedPatient);
+	                Person otherPerson = relationship.getPersonB();
+	                if (otherPerson.getPersonId() == null) {
+	                	Person personB = Context.getPersonService().savePerson(otherPerson);
+	                	relationship.setPersonB(personB);
+	                }
+                } else {
+                	relationship.setPersonB(savedPatient);
+                	Person otherPerson = relationship.getPersonA();
+                	if (otherPerson.getPersonId() == null) {
+                		Person personA = Context.getPersonService().savePerson(otherPerson);
+                		relationship.setPersonA(personA);
+                	}
+                }
+    	        Context.getPersonService().saveRelationship(relationship);
+            }
         }
         return new ModelAndView(new RedirectView(request
                 .getContextPath()
                 + "/module/amrsregistration/registration.form"));
+    }
+    
+    private boolean isSimilar(Person a, Person b) {
+    	if (a != null && b != null) {
+    		return a.getGender().equals(b.getGender()) && 
+    				a.getBirthdate().equals(b.getBirthdate()) &&
+    				a.getPersonName().equals(b.getPersonName());
+    	}
+    	return false;
     }
 
     private Patient getNewPatient() {
@@ -863,7 +996,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 		to.setIdentifiers(from.getIdentifiers());
     }
     
-    private void updateBirthdate(Patient patient, String date, String age) {
+    private void updateBirthdate(Person person, String date, String age) {
     	Date birthdate = null;
 		boolean birthdateEstimated = false;
 		if (date != null && !date.equals("")) {
@@ -900,8 +1033,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			}
 		}
 		if (birthdate != null) {
-			patient.setBirthdate(birthdate);
-			patient.setBirthdateEstimated(birthdateEstimated);
+			person.setBirthdate(birthdate);
+			person.setBirthdateEstimated(birthdateEstimated);
 		}
     }
 }

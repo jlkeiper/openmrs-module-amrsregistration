@@ -198,7 +198,7 @@
 </c:choose>
 	<span>Please assign an ID for the following patient</span>
 	<br />
-	<spring:hasBindErrors name="patient">
+	<spring:hasBindErrors name="amrsRegistration">
 		<c:forEach items="${errors.allErrors}" var="error">
 			<br />
 			<span class="error"><spring:message code="${error.code}" arguments="${error.arguments}" /></span>
@@ -206,19 +206,19 @@
 	</spring:hasBindErrors>
 	<form id="patientForm" method="post" autocomplete="off">
 		<div id="summaryHeading">
-			<div id="headingName">${patient.personName}</div>
+			<div id="headingName">${amrsRegistration.patient.personName}</div>
 			<%@ include file="portlets/personInfo.jsp" %>
 		</div>
-        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-           <c:if test="${varStatus.index == 1 && name != personName}">
+        <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
+           <c:if test="${varStatus.index == 1 && name != amrsRegistration.patient.personName}">
                <div class="summaryInfo">
                    <div class="infoHeading">Other Name(s)</div>
                    <table>
                        <tr>
                            <td>
-                               <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
-                                   <c:if test="${!name.voided && name != patient.personName}">
-                                       <spring:nestedPath path="patient.names[${varStatus.index}]">
+                               <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
+                                   <c:if test="${!name.voided && name != amrsRegistration.patient.personName}">
+                                       <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                            <openmrs:portlet url="nameLayout" id="namePortlet" size="quickView" parameters="layoutShowExtended=true" />
                                        </spring:nestedPath>
                                    </c:if>
@@ -234,9 +234,9 @@
 			<table>
 				<tr>
 					<td>
-						<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+						<c:forEach var="address" items="${amrsRegistration.patient.addresses}" varStatus="varStatus">
 							<c:if test="${!address.voided}">
-								<spring:nestedPath path="patient.addresses[${varStatus.index}]">
+								<spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
 									<openmrs:portlet url="addressLayout" id="addressPortlet" size="inOneRow" parameters="layoutMode=view|layoutShowTable=false|layoutShowExtended=false" />
 								</spring:nestedPath>
 							</c:if>
@@ -252,12 +252,59 @@
                 <openmrs:forEachDisplayAttributeType personType="" displayType="viewing" var="attrType">
                     <tr>
                         <td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/> :</td>
-                        <td>${patient.attributeMap[attrType.name].hydratedObject}</td>
+                        <td>${amrsRegistration.patient.attributeMap[attrType.name].hydratedObject}</td>
                     </tr>
                 </openmrs:forEachDisplayAttributeType>
             </table>
         </div>
         </c:if>
+        <div class="summaryInfo">
+        	<div class="infoHeading">Relationships</div>
+        	<table>
+				<c:forEach var="relationship" items="${amrsRegistration.relationships}" varStatus="varStatus">
+					<tr>
+						<td id="patientName" style="white-space:nowrap;">
+							<c:choose>
+								<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
+									${amrsRegistration.patient.personName}'s
+								</c:when>
+								<c:otherwise>
+									This patient's
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td style="white-space:nowrap;">
+							<openmrs:forEachRecord name="relationshipType">
+								<c:if test="${record == relationship.relationshipType}">
+									<c:choose>
+										<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+											${record.bIsToA}
+										</c:when>
+										<c:otherwise>
+											${record.aIsToB}
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</openmrs:forEachRecord>
+						</td>
+						<td style="white-space:nowrap;">
+							is
+						</td>
+						<td style="white-space:nowrap;">
+							<c:choose>
+								<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+									${relationship.personB.personName}
+								</c:when>
+								<c:otherwise>
+									${relationship.personA.personName}
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td width="80%">&nbsp;</td>
+					<tr>
+				</c:forEach>
+			</table>
+        </div>
 		<div style="clear: both">&nbsp;</div>
 		<div id="idFormSection">
 			<span style="font: bold 2em verdana;">Assign New ID: </span><br />

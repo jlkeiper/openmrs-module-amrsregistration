@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -44,7 +45,7 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
 
         if (paramPersonName != null) {
             if ((paramPersonName.getPrefix() != null)
-                    && (!(paramPersonName.getPrefix().isEmpty()))) {
+                    && (StringUtils.isNotBlank(paramPersonName.getPrefix()))) {
                 localCriteria.add(Expression.like("names.prefix",
                         paramPersonName.getPrefix(), MatchMode.START));
             }
@@ -59,7 +60,7 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
                         paramPersonName.getMiddleName(), MatchMode.START));
             }
             if ((paramPersonName.getFamilyNamePrefix() != null)
-                    && (!(paramPersonName.getFamilyNamePrefix().isEmpty()))) {
+                    && (StringUtils.isNotBlank(paramPersonName.getFamilyNamePrefix()))) {
                 localCriteria
                         .add(Expression.like("names.familyNamePrefix",
                                 paramPersonName.getFamilyNamePrefix(),
@@ -155,8 +156,7 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
                 localObject2 = (PersonAttribute) attributeIterator
                         .next();
                 if ((((PersonAttribute) localObject2).getValue() != null)
-                        && (!(((PersonAttribute) localObject2).getValue()
-                                .isEmpty()))) {
+                        && (StringUtils.isNotBlank(((PersonAttribute) localObject2).getValue()))) {
                     localCriteria.add(Expression.and(Expression.eq(
                             "attributeType.name",
                             ((PersonAttribute) localObject2).getAttributeType()
@@ -170,7 +170,7 @@ public class HibernateAmrsRegistrationDAO implements AmrsRegistrationDAO {
 
         }
 
-        if ((paramString != null) && (!(paramString.isEmpty()))) {
+        if ((paramString != null) && (StringUtils.isNotBlank(paramString))) {
             localCriteria.add(Expression.eq("person.gender", paramString));
         }
 

@@ -39,7 +39,7 @@
 	<span><spring:message code="amrsregistration.start.details"/></span>
 	<div id="amrsForm">
 		<div id="centeredForm">
-			<spring:hasBindErrors name="patient">
+			<spring:hasBindErrors name="amrsRegistration">
 				<c:forEach items="${errors.allErrors}" var="error">
 					<br />
 					<span class="error"><spring:message code="${error.code}" arguments="${error.arguments}" text="${error.defaultMessage}" /></span>

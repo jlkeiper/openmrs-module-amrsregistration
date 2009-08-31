@@ -118,6 +118,7 @@
                 <param name="class" value="org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService"/>
                 <include method="getPatients"/>
                 <include method="getPatientByIdentifier"/>
+                <include method="findPerson"/>
             </create>
         </allow>
 
@@ -129,6 +130,7 @@
             import org.openmrs.module.amrsregistration.web.DWRAmrsRegistrationService;
             DWRAmrsRegistrationService.getPatients(PersonName name, PersonAddress address, PersonIdentifier identifier, Set<PersonAttribute> attributes, String gender, Date birthdate, Integer age);
             DWRAmrsRegistrationService.getPatientByIdentifier(String identifier);
+            DWRAmrsRegistrationService.findPerson(String partialName);
             ]]>
         </signatures>
     </dwr>
@@ -150,7 +152,7 @@
     </messages>
 <!-- /Internationalization -->
     <tomcat>
-        <home>C:/Documents and Settings/nribeka/My Documents/Work/apache-tomcat-6.0.18</home>
+        <home>/home/nribeka/Desktop/Work/ApacheTomcat</home>
         <brian>
             <home>/opt/tomcat</home>
         </brian>

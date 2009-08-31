@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="web/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib-common/openmrs-api-1.4.4.00.9299.jar" sourcepath="/openmrs-1.4.x/src/api"/>
+	<classpathentry kind="lib" path="lib-common/openmrs-api-1.4.4.00.9299.jar" sourcepath="/openmrs-trunk-ori/src/api"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.4.4.00.9299.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.4.4.00.9299.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-fileupload-1.2.1.jar"/>
@@ -33,10 +33,5 @@
 	<classpathentry kind="lib" path="lib-common/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/mysql-connector-java-3.1.10-bin.jar"/>
 	<classpathentry kind="lib" path="lib-common/velocity-1.6-beta1.jar"/>
-	<classpathentry kind="lib" path="/openmrs-1.4.x/lib/jstl/jstl-1.1.jar" sourcepath="/openmrs-source/apache-tomcat-5.5.20-src.zip"/>
-	<classpathentry kind="lib" path="/openmrs-1.4.x/lib/jakarta-taglibs/taglibs-page-1.1.jar"/>
-	<classpathentry kind="lib" path="/openmrs-1.4.x/lib/jakarta-taglibs/taglibs-request-1.1.jar"/>
-	<classpathentry kind="lib" path="/openmrs-1.4.x/lib/jakarta-taglibs/taglibs-response-1.1.jar"/>
-	<classpathentry kind="lib" path="/openmrs-1.4.x/lib/jakarta-taglibs/taglibs-standard-1.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

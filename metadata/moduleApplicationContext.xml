@@ -48,14 +48,10 @@
 
     <!-- Controllers -->
     <bean id="amrsRegistrationWizardForm" class="org.openmrs.module.amrsregistration.web.controller.AmrsRegistrationFormController">
-        <!--property name="sessionForm"><value>true</value></property -->
-        <!-- property name="bindOnNewForm"><value>false</value></property -->
-        <property name="commandName"><value>patient</value></property>
-<!--
-        <property name="commandClass">
-            <value>org.openmrs.Patient</value>
-        </property>
--->
+        <property name="sessionForm"><value>true</value></property>
+        <property name="bindOnNewForm"><value>false</value></property>
+        <property name="commandName"><value>amrsRegistration</value></property>
+		<property name="commandClass"><value>org.openmrs.module.amrsregistration.AmrsRegistration</value></property>
         <property name="pages">
             <list>
                 <value>/module/amrsregistration/registrationForm</value>

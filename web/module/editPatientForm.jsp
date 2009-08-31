@@ -18,9 +18,10 @@
 
     // Number of objects stored.  Needed for 'add new' purposes.
     var numObjs = new Array();
-    numObjs["identifier"] = ${fn:length(patient.activeIdentifiers)};
-    numObjs["name"] = ${fn:length(patient.names)};
-    numObjs["address"] = ${fn:length(patient.addresses)};
+    numObjs["identifier"] = ${fn:length(amrsRegistration.patient.activeIdentifiers)};
+    numObjs["name"] = ${fn:length(amrsRegistration.patient.names)};
+    numObjs["address"] = ${fn:length(amrsRegistration.patient.addresses)};
+    numObjs["relationship"] = ${fn:length(amrsRegistration.relationships)};
         
     // Search time out variable. Need to clear this variable to cancel the server request, thus
     // preventing multiple request being submitted to the server.
@@ -262,6 +263,16 @@
 		obj = document.getElementById("addressContent");
 		if (obj != null)
 			obj.parentNode.removeChild(obj);
+		// remove the relationship templates
+		obj = document.getElementById("relationshipContent");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
+		obj = document.getElementById("personSearchResult");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
+		obj = document.getElementById("createRelationshipPerson");
+		if (obj != null)
+			obj.parentNode.removeChild(obj);
 		
 		// remove added element but still blank from the form
 		for (key in numObjs)
@@ -471,30 +482,30 @@
     function patientSearch() {
 
         var personName = {
-        	givenName: $j('input[name=names[0].givenName]').attr('value'),
-        	middleName: $j('input[name=names[0].middleName]').attr('value'),
-        	familyName: $j('input[name=names[0].familyName]').attr('value')
+        	givenName: $j('input[name=patient\\.names\\[0\\]\\.givenName]').attr('value'),
+        	middleName: $j('input[name=patient\\.names\\[0\\]\\.middleName]').attr('value'),
+        	familyName: $j('input[name=patient\\.names\\[0\\]\\.familyName]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personName, 2));
         
         var personAddress = {
-        	address1: $j('input[name=addresses[0].address1]').attr('value'),
-        	address2: $j('input[name=addresses[0].address2]').attr('value'),
-        	neighborhoodCell: $j('input[name=addresses[0].neighborhoodCell]').attr('value'),
-        	cityVillage: $j('input[name=addresses[0].cityVillage]').attr('value'),
-        	townshipDivision: $j('input[name=addresses[0].townshipDivision]').attr('value'),
-        	countyDistrict: $j('input[name=addresses[0].countyDistrict]').attr('value'),
-        	stateProvince: $j('input[name=addresses[0].stateProvince]').attr('value'),
-        	region: $j('input[name=addresses[0].region]').attr('value'),
-        	subregion: $j('input[name=addresses[0].subregion]').attr('value'),
-        	country: $j('input[name=addresses[0].country]').attr('value'),
-        	postalCode: $j('input[name=addresses[0].postalCode]').attr('value')
+        	address1: $j('input[name=patient\\.addresses\\[0\\]\\.address1]').attr('value'),
+        	address2: $j('input[name=patient\\.addresses\\[0\\]\\.address2]').attr('value'),
+        	neighborhoodCell: $j('input[name=patient\\.addresses\\[0\\]\\.neighborhoodCell]').attr('value'),
+        	cityVillage: $j('input[name=patient\\.addresses\\[0\\]\\.cityVillage]').attr('value'),
+        	townshipDivision: $j('input[name=patient\\.addresses\\[0\\]\\.townshipDivision]').attr('value'),
+        	countyDistrict: $j('input[name=patient\\.addresses\\[0\\]\\.countyDistrict]').attr('value'),
+        	stateProvince: $j('input[name=patient\\.addresses\\[0\\]\\.stateProvince]').attr('value'),
+        	region: $j('input[name=patient\\.addresses\\[0\\]\\.region]').attr('value'),
+        	subregion: $j('input[name=patient\\.addresses\\[0\\]\\.subregion]').attr('value'),
+        	country: $j('input[name=patient\\.addresses\\[0\\]\\.country]').attr('value'),
+        	postalCode: $j('input[name=patient\\.addresses\\[0\\]\\.postalCode]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personAddress, 2));
         
         var patientIdentifier = {
-        	identifier: $j('input[name=identifiers[0].identifier]').attr('value'),
-        	identifierType: $j('input[name=identifiers[0].identifierType]').attr('value')
+        	identifier: $j('input[name=patient\\.identifiers\\[0\\]\\.identifier]').attr('value'),
+        	identifierType: $j('input[name=patient\\.identifiers\\[0\\]\\.identifierType]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(patientIdentifier, 2));
         
@@ -516,12 +527,12 @@
         if (typeof(birthStr) != 'undefined' && birthStr.length > 0)
         	birthdate = new Date(Date.parse(birthStr));
         else {
-        	birthStr = $j('input:text[name=birthdate]').attr('value');
+        	birthStr = $j('input:text[name=patient\\.birthdate]').attr('value');
         	if (typeof(birthStr) != 'undefined' && birthStr.length > 0)
         		birthdate = new Date(Date.parse(birthStr));
         }
         
-        var gender = $j('input:radio[name=gender]:checked').attr('value');
+        var gender = $j('input:radio[name=patient\\.gender]:checked').attr('value');
         if (!gender)
         	gender = null;
         	
@@ -787,7 +798,7 @@
 	</div>
 	<br />
 
-	<spring:hasBindErrors name="patient">
+	<spring:hasBindErrors name="amrsRegistration">
 		<c:forEach items="${errors.allErrors}" var="error">
 			<br />
 			<span class="error"><spring:message code="${error.code}"/></span>
@@ -825,7 +836,7 @@
                                             <openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
                                         <td style="font-weight: bold;">
                                             <c:choose>
-                                                <c:when test="${fn:length(patient.names) > 1}">
+                                                <c:when test="${fn:length(amrsRegistration.patient.names) > 1}">
                                                        <span id="namePreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
                                                 </c:when>
                                                 <c:otherwise>
@@ -836,7 +847,7 @@
                                         </thead>
 -->
                                     </tr>
-                                        <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+                                        <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
                                         <tr>
                                             <td>
                                                 <c:choose>
@@ -854,14 +865,14 @@
                                                         </tr>
                                                         <!--
                                                         <tr>
-                                                            <spring:nestedPath path="patient.names[${varStatus.index}]">
+                                                            <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                                                 <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                                                             </spring:nestedPath>
                                                         </tr>
                                                         -->
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <spring:nestedPath path="patient.names[${varStatus.index}]">
+                                                        <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                                             <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                                                         </spring:nestedPath>
                                                     </c:otherwise>
@@ -870,7 +881,7 @@
                                          </tr>
                                             <script type="text/javascript">
                                                 $j(document).ready(function () {
-                                                    var hidden = ${fn:length(patient.names) <= 1};
+                                                    var hidden = ${fn:length(amrsRegistration.patient.names) <= 1};
                                                     var preferred = ${name.preferred};
                                                     var position = ${varStatus.index};
                                                     var tbody = $j('#namePositionParent').find('tbody:eq(1)');
@@ -909,7 +920,7 @@
                                       header
                                   </td>
                               </tr>
-                              <c:forEach var="name" items="${patient.names}" varStatus="varStatus">
+                              <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
                               <tr>
                                   <td>
                                      <a href="#delete" name="nameLayoutRow" style="color:red;">X</a>
@@ -935,20 +946,20 @@
 					<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
 				</td>
     		</tr>
-			<spring:nestedPath path="patient">
+			<spring:nestedPath path="amrsRegistration.patient">
 				<tr>
 				<c:if test="${empty INCLUDE_PERSON_GENDER || (INCLUDE_PERSON_GENDER == 'true')}">
 						<td style="padding-right: 3.6em;">
-							<spring:bind path="patient.gender">
+							<spring:bind path="amrsRegistration.patient.gender">
 								<openmrs:forEachRecord name="gender">
-									<input type="radio" name="gender" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onclick="clickTimeOutSearch()" />
+									<input type="radio" name="${status.expression}" id="${record.key}" value="${record.key}" <c:if test="${record.key == status.value}">checked</c:if> onclick="clickTimeOutSearch()" />
 										<label for="${record.key}"> <spring:message code="Person.gender.${record.value}"/> </label>
 								</openmrs:forEachRecord>
 							</spring:bind>
 						</td>
 				</c:if>
 				<c:choose>
-					<c:when test="${patient.birthdate == null}">
+					<c:when test="${amrsRegistration.patient.birthdate == null}">
 							<td style="padding-right: 4em;">
 								<input type="text" name="birthdateInput" id="birthdateInput" size="11" value=""  onclick="showCalendar(this)" onkeyup="timeOutSearch(event)" onchange="clearAgeOrDOB(this)"/>
 								<span id="orTitle"><spring:message code="general.or"/></span>
@@ -990,9 +1001,9 @@
 										}
 									}
 								</script>
-								<spring:bind path="patient.birthdate">			
+								<spring:bind path="amrsRegistration.patient.birthdate">			
 									<input type="text" 
-											name="${status.expression}" size="10" id="birthdate"
+											name="${status.expression}" size="10" id="${status.expression}"
 											value="${status.value}"
 											readonly="readonly"
 											onchange="updateAge(); updateEstimated(this);"
@@ -1002,12 +1013,12 @@
 								<span id="age"></span> &nbsp; 
 								
 								<span id="birthdateEstimatedCheckbox" class="listItemChecked" style="padding: 5px;">
-									<spring:bind path="patient.birthdateEstimated">
+									<spring:bind path="amrsRegistration.patient.birthdateEstimated">
 										<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
 										<input type="hidden" name="_${status.expression}">
 										<input type="checkbox" name="${status.expression}" value="true" 
 											   <c:if test="${status.value == true}">checked</c:if> 
-											   id="birthdateEstimatedInput" 
+											   id="${status.expression}" 
 											   onclick="if (!this.checked) updateEstimated()" />
 									</spring:bind>
 								</span>
@@ -1045,7 +1056,7 @@
                 </td>
                 <td style="font-weight: bold;">
                     <c:choose>
-                        <c:when test="${fn:length(patient.identifiers) > 1}">
+                        <c:when test="${fn:length(amrsRegistration.patient.identifiers) > 1}">
                             <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
                         </c:when>
                         <c:otherwise>
@@ -1054,12 +1065,12 @@
                     </c:choose>
                 </td>
             </tr>
-	        <c:forEach var="identifier" items="${patient.activeIdentifiers}" varStatus="varStatus">
-	            <spring:nestedPath path="patient.identifiers[${varStatus.index}]">
+	        <c:forEach var="identifier" items="${amrsRegistration.patient.activeIdentifiers}" varStatus="varStatus">
+	            <spring:nestedPath path="amrsRegistration.patient.identifiers[${varStatus.index}]">
 	            		<%@ include file="portlets/patientIdentifier.jsp" %>
                         <!--
 						<script type="text/javascript">
-							var hidden = ${fn:length(patient.identifiers) <= 1};
+							var hidden = ${fn:length(amrsRegistration.patient.identifiers) <= 1};
 							var preferred = ${identifier.preferred};
 							var container = $j('#identifierContent${varStatus.index}');
 							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
@@ -1089,15 +1100,15 @@
 
 <!-- Patient Address Section -->
 		<table>
-			<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
+			<c:forEach var="address" items="${amrsRegistration.patient.addresses}" varStatus="varStatus">
 				<tr><td>
-			    <spring:nestedPath path="patient.addresses[${varStatus.index}]">
+			    <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
 			    	<openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
 			    </spring:nestedPath>
 				</td></tr>
 	            <script type="text/javascript">
 	            	$j(document).ready(function () {
-		            	var hidden = ${fn:length(patient.addresses) <= 1};
+		            	var hidden = ${fn:length(amrsRegistration.patient.addresses) <= 1};
 						var preferred = ${address.preferred};
 	            		var position = ${varStatus.index};
 	            		var nameContentX = $j('#addressPortlet' + position).find('table');
@@ -1136,7 +1147,7 @@
     
 <!-- Patient Attributes Section -->
     	<table>
-			<spring:nestedPath path="patient">
+			<spring:nestedPath path="amrsRegistration.patient">
 				<openmrs:forEachDisplayAttributeType personType="" displayType="listing" var="attrType">
 					<tr>
 						<td><spring:message code="PersonAttributeType.${fn:replace(attrType.name, ' ', '')}" text="${attrType.name}"/></td>
@@ -1158,6 +1169,304 @@
 			</td>
 		</tr>
 		</c:if>
+		<tr>
+			<th class="header footer">Relationship(s)</th>
+			<td class="input footer">
+<!-- Relationship Section -->
+		<table>
+			<c:forEach var="relationship" items="${amrsRegistration.relationships}" varStatus="varStatus">
+			<tbody id="relationshipContent${varStatus.index}">
+			<tr>
+				<td id="patientName" style="white-space:nowrap;">
+					<c:choose>
+						<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
+							${amrsRegistration.patient.personName}'s
+						</c:when>
+						<c:otherwise>
+							This patient's
+						</c:otherwise>
+					</c:choose>
+				</td>
+				<td style="white-space:nowrap;">
+					<openmrs:forEachRecord name="relationshipType">
+						<c:if test="${record == relationship.relationshipType}">
+							<c:choose>
+								<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+									${record.bIsToA}
+								</c:when>
+								<c:otherwise>
+									${record.aIsToB}
+								</c:otherwise>
+							</c:choose>
+						</c:if>
+					</openmrs:forEachRecord>
+				</td>
+				<td style="white-space:nowrap;">
+					is
+				</td>
+				<td style="white-space:nowrap;">
+					<c:choose>
+						<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+							${relationship.personB.personName}
+						</c:when>
+						<c:otherwise>
+							${relationship.personA.personName}
+						</c:otherwise>
+					</c:choose>
+				</td>
+				<td width="80%">&nbsp;</td>
+				<td>&nbsp;</td>
+				<td style="white-space:nowrap;">
+					<input type="hidden" name="commandRelationship" value="${relationship.relationshipId}|${relationship.relationshipType}|${relationship.personA.personName}|${relationship.personB.personName}" />
+					<input type="button" value="Remove" class="addNew removeRelationship" />
+				</td>
+			<tr>
+			</tbody>
+			</c:forEach>
+			<tbody id="relationshipPosition" />
+		</table>
+		<spring:nestedPath path="emptyRelationship">
+			<table style="display: none;">
+				<%@ include file="portlets/patientRelationship.jsp" %>
+			</table>
+		</spring:nestedPath>
+		<div class="tabBar" id="relationshipTabBar">
+			<span id="relationshipError" class="newError"></span>
+			<input type="button" onclick="return addNewRelationship();" class="addNew" value="Add New Relationship"/>
+		</div>
+		<div id="relationshipSearchPatient">
+			
+			<div id="relationshipCreatePerson">
+				
+			</div>
+		</div>
+		<script type="text/javascript">
+			function addNewRelationship() {
+				// only allow creating a new relationship when user is finish with searching or creating new person
+				if ($j('#personSearchResult').is(':hidden') && $j('#createRelationshipPerson').is(':hidden')) {
+					var clone = $j('#relationshipContent').clone(true);
+					$j(clone).attr('id', 'relationshipContent' + numObjs["relationship"]);
+					$j('#relationshipPosition').append(clone);
+					
+					clone = $j('#personSearchResult').clone(true);
+					$j(clone).attr('id', 'personSearchResult' + numObjs["relationship"]);
+					$j('#relationshipPosition').append(clone);
+
+					clone = $j('#createRelationshipPerson').clone(true);
+					$j(clone).attr('id', 'createRelationshipPerson' + numObjs["relationship"]);
+					$j('#relationshipPosition').append(clone);
+	
+					numObjs["relationship"] = numObjs["relationship"] + 1;
+				} else {
+					$j('#relationshipError').html('Please finish searching or creating the person before adding new relationship');
+				}
+			}
+
+			function saveHiddenPerson(personId, givenName, middleName, familyName, age, gender, birthdate, position) {
+				var id = '#relationshipContent' + position;
+				$j(id + ' input[type=hidden][name=relationshipPersonId]').attr('value', personId);
+				$j(id + ' input[type=hidden][name=relationshipGivenName]').attr('value', givenName);
+				$j(id + ' input[type=hidden][name=relationshipMiddleName]').attr('value', middleName);
+				$j(id + ' input[type=hidden][name=relationshipFamilyName]').attr('value', familyName);
+				$j(id + ' input[type=hidden][name=relationshipAge]').attr('value', age);
+				$j(id + ' input[type=hidden][name=relationshipGender]').attr('value', gender);
+				$j(id + ' input[type=hidden][name=relationshipBirthdate]').attr('value', birthdate);
+				
+				var personName = "";
+				if (givenName!= null && givenName.length > 0)
+					personName = personName + givenName + ' ';
+				if (middleName != null && middleName.length > 0)
+					personName = personName + middleName + ' ';
+				if (familyName != null && familyName.length > 0)
+					personName = personName + familyName;
+				$j(id + ' input[type=text]').attr('value', personName);
+			}
+			
+			$j(document).ready(function () {
+
+				$j('.showHideCreatePerson').click(function() {
+					var divParent = $j(this).parents('div');
+					var containerPositionId = $j(divParent).parent().parent().attr('id');
+					var position = containerPositionId.substring('createRelationshipPerson'.length);
+					// toggle search result and create person when the cancel in the create person is pressed
+					$j('.personSearchResult' + position).toggle();
+					$j('#createRelationshipPerson' + position).toggle();
+				});
+
+				$j('.createNewPerson').click(function() {
+					var divParent = $j(this).parents('div');
+					var containerPositionId = $j(divParent).parent().parent().attr('id');
+					var position = containerPositionId.substring('createRelationshipPerson'.length);
+						
+					var givenName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rGivenName]').attr('value');
+					var middleName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rMiddleName]').attr('value');
+					var familyName = $j('#createRelationshipPerson' + position + ' input[type=text][name=rFamilyName]').attr('value');
+					var age = $j('#createRelationshipPerson' + position + ' input[type=text][name=rAge]').attr('value');
+					var gender = $j('#createRelationshipPerson' + position + ' input[type=radio][name=rGender]').attr('value');
+					var birthdate = $j('#createRelationshipPerson' + position + ' input[type=text][name=rDate]').attr('value');
+					saveHiddenPerson('N/A', givenName, middleName, familyName, age, gender, birthdate, position);
+
+					$j('#createRelationshipPerson' + position).hide();
+				});
+				
+			});
+
+			function deleteRelationship(element) {
+				var removedElement = $j(element).parent().parent();
+
+				var containerPositionId = $j(removedElement).attr('id');
+				var position = containerPositionId.substring('relationshipContent'.length);
+				// hide search result and create person
+				$j('.personSearchResult' + position).hide();
+				$j('#createRelationshipPerson' + position).hide();
+
+				// hide all error message
+				$j('#relationshipError').html('');
+				$j('#relationshipContent' + position).remove();
+			}
+
+			function showActivePerson(element) {
+				var row = $j(element).parent().parent();
+				var rowId = $j(row).attr('id');
+				var position = rowId.substring('relationshipContent'.length);
+				// logic to determince which of the field to be shown personA or personB
+				var selected = $j('#relationshipContent' + position).find('select[name=relationshipTypeId] option:selected');
+
+				var hidden = $j(row).find('td[class=personA]');
+				var show = $j(row).find('td[class=personB]');
+				if ($j(selected).attr('class') == 'aIsToB') {
+					hidden = $j(row).find('td[class=personB]');
+					show = $j(row).find('td[class=personA]');
+				}
+
+				$j(hidden).hide();
+				$j(show).show();
+			}
+
+			var relationshipTimeoutSearch;
+			var handlerPosition;
+			
+			function searchPersonWithTimeout(e, element) {
+				c = e.keyCode;
+
+				var containerPositionId = $j(element).parent().parent().attr('id');
+				handlerPosition = containerPositionId.substring('relationshipContent'.length);
+				
+				if (isAlphaNumericCharacter(c) || isDashCharacter(c) || isBackspaceDelete(c)) {
+					clearTimeout(relationshipTimeoutSearch);
+					relationshipTimeoutSearch = setTimeout("searchPerson(\"" + element.value + "\")", 1000);
+				}
+			}
+
+			function searchPerson(value) {
+				DWRAmrsRegistrationService.findPerson(value, handlePersonResult);
+			}
+
+			function handlePersonResult(persons) {
+				var tbody = $j('#personSearchResult' + handlerPosition);
+				$j('.personSearchResult' + handlerPosition).remove();
+
+				if (persons.length == 0) {
+	    			var tr = $j(document.createElement('tr'));
+	    			$j(tr).addClass('personSearchResult' + handlerPosition);
+	    			var td = $j(document.createElement('td'));
+	    			$j(td).attr('colspan', '6');
+
+	    			var anchor = $j(document.createElement('a'));
+	    			$j(anchor).attr('href', '#');
+	    			$j(anchor).html('Create New Person');
+	    			$j(anchor).click(function(e) {
+						e.preventDefault();
+						var containerPositionId = $j(this).parent().parent().attr('class');
+						var position = containerPositionId.substring('personSearchResult'.length);
+						$j('.personSearchResult' + position).toggle();
+						$j('#createRelationshipPerson' + position).toggle();
+		    		});
+
+	    			$(td).append(anchor);
+	    			$(tr).append(td);
+	    			$(tbody).after(tr);
+				}
+	    		
+	    		// loop through all result and display it
+	    		for(i = 0; i < persons.length; i ++) {
+	    			// create new row
+	    			var tr = $j(document.createElement('tr'));
+	    			// zebra like row
+	    			if (i % 2 == 0)
+	    				$j(tr).addClass("evenRow");
+	    			else
+	    				$j(tr).addClass("oddRow");
+
+    				$j(tr).addClass('personSearchResult' + handlerPosition);
+	    			
+	    			// bind highlight effect
+	    			$j(tr).hover(
+	    				function() {
+							$j(this).addClass("searchHighlight");
+	    				},
+	    				function() {
+							$j(this).removeClass("searchHighlight");
+	    				}
+	    			);
+	    			
+	    			// create each cell for identifier, given, middle, family name, age, gender, and birthdate (+ estimated)
+	    			createCell(persons[i].personName.givenName, tr);
+	    			createCell(persons[i].personName.middleName, tr);
+	    			createCell(persons[i].personName.familyName, tr);
+	    			createCell(persons[i].age, tr);
+	    			
+	    			var td = $j(document.createElement('td'));
+	    			
+	    			var input = $j(document.createElement('input'));
+	    			$j(input).attr('type', 'hidden');
+	    			$j(input).attr('name', 'hiddenId' + i);
+	    			$j(input).attr('value', persons[i].personId);
+	    			$j(tr).append($j(input));
+	    			
+	    			$j(td).css('text-align', 'center');
+	    			var data = $j(document.createElement('img'));
+	    			if (persons[i].gender == 'F')
+	    				$j(data).attr('src', "${pageContext.request.contextPath}/images/female.gif");
+	    			else
+	    				$j(data).attr('src', "${pageContext.request.contextPath}/images/male.gif");
+	    			$j(td).append($j(data));
+	    			$j(tr).append($j(td));
+	    			
+	    			createCell(parseDate(persons[i].birthdate, '<openmrs:datePattern />'), tr);
+	    			// bind click to show the selected patient
+	    			$j(tr).click(function() {
+						var children = $j(this).children(':input');
+						var personId = jQuery.trim($j(children).attr('value'));
+						
+						var givenName = $j(this).children('td:eq(0)').html();
+						var middleName = $j(this).children('td:eq(1').html();
+						var familyName = $j(this).children('td:eq(2)').html();
+						var age = $j(this).children('td:eq(3)').html();
+
+						var genderImageLoc = $j(this).children('td:eq(4)').children().attr('src');
+						var gender = 'F';
+						if (genderImageLoc.match('male')) {
+							gender = 'M';
+						}
+						
+						var birthdate = $j(this).children('td:eq(6)').html();
+
+						var cssClass = $j(this).attr('class');
+						var subLength = cssClass.indexOf('personSearchResult') + 'personSearchResult'.length;
+						var cssClassHighlight = cssClass.substring(subLength);
+						var position = cssClassHighlight.substring(0, cssClassHighlight.indexOf(' '));
+						
+						saveHiddenPerson(personId, givenName, middleName, familyName, age, gender, birthdate, position);
+						$j('.personSearchResult' + position).remove();
+	    			});
+	    			$j(tbody).after($j(tr));
+	    		}
+			}
+		</script>
+<!-- End of Relationship Section -->
+			</td>
+		</tr>
 	</table>
 	<input type="hidden" name="_page1" value="true" />
 	&nbsp;
