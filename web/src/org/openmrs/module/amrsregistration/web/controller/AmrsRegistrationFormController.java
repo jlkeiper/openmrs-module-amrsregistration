@@ -540,28 +540,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                 }
 			}
     	}
-		
-    	// when going to the edit page, then make sure the patient at least have one non targeted identifier
-    	// if not, then the identifier section in the jsp will be blank
-		if (targetPage == AmrsRegistrationConstants.EDIT_PAGE) {
-			int nonTargetedIdentifier = 0;
-			for (PatientIdentifier identifier : patient.getIdentifiers()) {
-				PatientIdentifierType identifierType = identifier.getIdentifierType();
-				if (identifierType != null) {
-						if (!identifier.isVoided() &&
-								!AmrsRegistrationConstants.AMRS_TARGET_ID.equals(identifierType.getName())) {
-							nonTargetedIdentifier ++;
-						}
-				} else
-					// assume null type to be non target identifier
-					nonTargetedIdentifier ++;
-            }
-			if (nonTargetedIdentifier <= 0) {
-		        PatientIdentifier identifier = new PatientIdentifier();
-		        identifier.setIdentifier("");
-		        patient.addIdentifier(identifier);
-			}
-		}
     }
 
 	/**
