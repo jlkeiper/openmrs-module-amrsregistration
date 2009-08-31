@@ -95,6 +95,8 @@
         </table>
     </div>
 	</c:if>
+	
+	<c:if test="${fn:length(amrsRegistration.relationships) > 0}">
 	<div class="summaryInfo">
 		<div class="infoHeading">Relationships</div>
 		<table>
@@ -142,6 +144,7 @@
 			</c:forEach>
 		</table>
 	</div>
+	</c:if>
 	
 	<br />
 	<input type="hidden" name="_page3" value="true" />
