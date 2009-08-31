@@ -134,6 +134,26 @@
 			$j(td).append(label);
 			
 			$j(container).prepend(element);
+        } else if (type = 'name') {
+            element = $j(document.createElement('tr'));
+
+            td = $j(document.createElement('td'));
+            $j(td).attr('colspan', '2');
+
+            $j(element).append(td);
+
+            $j(td).append(input);
+
+            var tbody = document.getElementById('namePositionParentExtra');
+
+            var row = tbody.getElementsByTagName('tr').length;
+
+            var elemId = 'namePreferred' + row;
+
+            $j(element).attr('id', elemId);
+
+            $j('#namePositionParentExtra').append(element);
+
 		} else {
 			// for identifier and name, the element is a cell
 			element = $j(document.createElement('td'));
@@ -173,16 +193,44 @@
 			$j(td).append(label);
 			
 			$j(container).prepend(element);
+        } else if (type == 'name') {
+            // for identifier and name, the element is a cell
+            element = $j(document.createElement('td'));
+
+            $j(element).append(anchor);
+
+            var tbody = document.getElementById('namePositionParentExtra');
+
+            var row = tbody.getElementsByTagName('tr').length - 1;
+
+            var elemId = 'rm_namePositionParentRow' + row;
+            var elemOnClick = 'removeRow("nameContent' + row + '"); removeRow("namePreferred' + row + '")';
+
+            $j(element).attr('id', elemId);
+            $j(element).attr('onClick', elemOnClick);
+
+            $j('#namePreferred' + row).append(element);
 		} else {
 			// for identifier and name, the element is a cell
 			element = $j(document.createElement('td'));
 			
 			$j(element).append(anchor);
-			
-			$j(container).append(element);
+
+            if (type == 'identifier') {
+
+                var onclick = "removeRow('identifierContent" + id + "')";
+                $(element).attr('onclick', onclick);
+            }
+
+            $j(container).append(element);
+
 		}
 	}
-	
+
+    function removeRow(elemName) {
+        $j('#' + elemName).hide();
+    }
+
 	function getTemplateType(type) {
 		// the following are the id of the template for name, address and identifier
 		// this element must exist and must be bind to an emptyName, emptyAddress and emptyIdentifier
@@ -195,12 +243,16 @@
 	}
 	
 	function duplicateElement(type, id) {
+
+        if (type == 'identifier') {
+            var element =
+        }
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
 		if (type == 'name') {
 			createPreferred(false, type, id, templateClone, false);
 			createDelete(type, id, templateClone);
-		}
+        }
 		
 		// custom mods for address
 		if (type == 'address') {
@@ -211,7 +263,18 @@
 			tr.append(td);
 			return tr;
 		}
-		
+
+        if (type == 'identifier') {
+            //createPreferred(false, type, id, templateClone, false);
+            //createDelete(type, id, templateClone);
+            //var
+            //templateClone.attr('onclick', )
+           // var children = $j(templateClone:last-child);
+           // alert(children);
+           //templateClone.lastChild.onclick = 'removeRow("identifierContent' + id + '"';
+           alert(templateClone);
+        }
+
 		return templateClone;
 	}
 	
@@ -219,6 +282,7 @@
 		// method that will be called when "add new" button is pressed
 		var element = duplicateElement(type, id);
 		$j(element).attr('id', type + 'Content' + id);
+
 		return element;
 	}
 
@@ -958,7 +1022,8 @@
                             <!-- End of Patient Names Section -->
                         </td>
                         <td valign="top" border="0px" >
-                          <table valign="top" border="0px" >
+                          <table  valign="top" border="0px" >
+                              <thead>
                               <tr valign="top">
                                   <td valign="top" border-top="0px" style="font-weight: bold;">
                                       <spring:message code="general.preferred"/>
@@ -967,20 +1032,23 @@
                               <tr>
                                   <td><div></div></td>
                               </tr>
+                              </thead>
+                              <tbody id="namePositionParentExtra">
                               <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
                                 <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
-                                    <tr>
-                                        <td>
+                                    <tr id="namePreferred${varStatus.index}" >
+                                        <td colspan="2">
                                             <spring:bind path="preferred">
                                                 <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
                                             </spring:bind>
                                         </td>
                                         <td>
-                                           <a href="#delete" id="rm_namePositionParentRow${varStatus.index + 2}" name="nameLayoutRow" onClick="alert(this.id)" style="color:red;">X</a>
+                                           <a href="#delete" id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow('nameContent${varStatus.index}'); removeRow('namePreferred${varStatus.index}')" style="color:red;">X</a>
                                         </td>
                                     </tr>
                                 </spring:nestedPath>
                               </c:forEach>
+                              </tbody>
                           </table>
                             <div class="tabBar" id="nameTabBar">
                                 <span id="nameError" class="newError"></span>
@@ -1102,6 +1170,7 @@
 
 <!-- Patient Identifier Section -->
 		<table id="identifierPositionParent" width="100%">
+            <thead>
             <tr>
                 <td style="font-weight: bold;">
                     <spring:message code="amrsregistration.labels.ID"/>
@@ -1116,20 +1185,22 @@
                     <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
                 </td>
             </tr>
-	        <c:forEach var="identifier" items="${amrsRegistration.patient.activeIdentifiers}" varStatus="varStatus">
-	            <spring:nestedPath path="amrsRegistration.patient.identifiers[${varStatus.index}]">
-	            		<%@ include file="portlets/patientIdentifier.jsp" %>
+            </thead>
+            <tbody id="identifierPosition">
+            <c:forEach var="identifier" items="${amrsRegistration.patient.activeIdentifiers}" varStatus="varStatus">
+                <spring:nestedPath path="amrsRegistration.patient.identifiers[${varStatus.index}]">
+                        <%@ include file="portlets/patientIdentifier.jsp" %>
                         <!--
-						<script type="text/javascript">
-							var hidden = ${fn:length(amrsRegistration.patient.identifiers) <= 1};
-							var preferred = ${identifier.preferred};
-							var container = $j('#identifierContent${varStatus.index}');
-							createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
-			            </script>
-			            -->
-	            </spring:nestedPath>
-	        </c:forEach>
-	    	<tbody id="identifierPosition">
+                        <script type="text/javascript">
+                            var hidden = ${fn:length(amrsRegistration.patient.identifiers) <= 1};
+                            var preferred = ${identifier.preferred};
+                            var container = $j('#identifierContent${varStatus.index}');
+                            createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
+                        </script>
+                        -->
+                </spring:nestedPath>
+            </c:forEach>
+            </tbody>
       	</table>
         <spring:nestedPath path="emptyIdentifier">
 			<table style="display: none;">

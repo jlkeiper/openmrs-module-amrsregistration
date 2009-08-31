@@ -70,10 +70,10 @@
                 </c:otherwise>
             </c:choose>
             <spring:bind path="preferred">
-                <input type="checkbox" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
+                <input type="checkbox" id="identifierPreferred" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
             </spring:bind>
         </td>
         <td>
-            <a href="#delete" onclick="alert(this.parentNode.parentNode.id)" style="color:red;" id="rm_identifierContent${varStatus.index}">X</a>
+            <a href="#delete" onclick='removeRow("identifierContent")' style="color:red;" id="rm_identifierContent">X</a>
         </td>
 	</tr>
