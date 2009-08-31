@@ -114,7 +114,7 @@
 		$j(input).attr('type', 'checkbox');
 		$j(input).attr('name', type + 'Preferred');
 		$j(input).attr('value', id);
-		$j(input).attr('style', 'vertical-align: top');
+		$j(input).attr('valign', 'top');
 		if(preferred) {
 			$j(input).attr('checked', 'checked');
 		}
@@ -231,6 +231,10 @@
 
     	var allowCreate = false;
 
+         //alert('type: ' + type);
+    	 //alert('id: ' + prevIdSuffix);
+    	 //alert('numObjs['+type+']: ' + numObjs[type]);
+
 		// always allow creating new element where the number is less than 0
     	if (prevIdSuffix < 0) {
     		allowCreate = true;
@@ -254,7 +258,8 @@
     		}
 		}
     	
-        if (allowCreate) {
+        //if (allowCreate) {
+        if (true) {
         	// create a new element using the above function
             var newElement = createElement(type, (prevIdSuffix + 1));
             
@@ -269,7 +274,8 @@
             // added element: <type>ContentXX
             $j('#' + type + 'Position').append(newElement);
             
-            if (prevIdSuffix == 0) {
+            //if (prevIdSuffix == 0) {
+            if (true) {
             	// alert('show flag');
             	
             	// show the preferred label and the preferred radio button when the total number of element more than 1
@@ -287,7 +293,8 @@
             numObjs[type] = numObjs[type] + 1;
         }
         
-        if (!allowCreate){
+        //if (!allowCreate){
+        if (false){
         	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' is blank');
         }
     }
@@ -626,6 +633,17 @@
         }
     }
 
+    function changeNameHeaderHack() {
+        var headers = document.getElementsByTagName("th");
+        for (var i=0; i<headers.length; i++) {
+            if (headers[i].innerHTML == "Given") {
+                headers[i].innerHTML = "First Name";
+            } else if (headers[i].innerHTML == "Middle") {
+                headers[i].innerHTML = "Middle Name";
+            }
+        }
+    }
+
 
 </script>
 
@@ -839,10 +857,17 @@
 			<th class="header">Names</th>
 			<td class="input" align="left" width="120" space-before="0">
                 <table width="100%">
+                    <col width="80%"/>
+                    <col width="10%"/>
                     <tr>
-                        <td>
+                        <td valign="top">
                             <!-- Patient Names Section -->
                                     <table id="namePositionParent">
+                                        <!--
+                                        <col />
+                                        <col width="250"/>
+                                        <col width="250"/>
+                                        -->
                                     <tr>
                                         <td width="250" style="font-weight: bold;">
                                             First Name
@@ -853,6 +878,9 @@
                                         <td width="250" style="font-weight: bold;">
                                             Family Name
                                         </td>
+<!--
+                                        <thead style="font-weight: bold;">
+                                            <openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
                                         <td style="font-weight: bold;">
                                             <c:choose>
                                                 <c:when test="${fn:length(amrsRegistration.patient.names) > 1}">
@@ -863,9 +891,12 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td>&nbsp;</td>
+                                        </thead>
+-->
                                     </tr>
                                         <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
+                                        <tr>
+                                            <td>
                                                 <c:choose>
                                                     <c:when test="${name.dateCreated != null}">
                                                         <tr id="nameContent${varStatus.index}">
@@ -878,45 +909,42 @@
                                                             <td>
                                                                 ${name.familyName}
                                                             </td>
-					                                            <c:choose>
-					                                                <c:when test="${fn:length(amrsRegistration.patient.names) > 1}">
-	                                                            		<td style="display: block;">
-					                                                </c:when>
-					                                                <c:otherwise>
-	                                                            		<td style="display: none;">
-					                                                </c:otherwise>
-					                                            </c:choose>
-                                                            	<input type="checkbox" name="namePreferred" value="true" <c:if test='${name.preferred == "true"}'>checked</c:if>">
-                                                            </td>
-													        <td>
-													            <a href="#delete" onclick="alert(this.parentNode.parentNode.id)" style="color:red;" id="identifier">X</a>
-													        </td>
                                                         </tr>
+                                                        <!--
+                                                        <tr>
+                                                            <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
+                                                                <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
+                                                            </spring:nestedPath>
+                                                        </tr>
+                                                        -->
                                                     </c:when>
                                                     <c:otherwise>
                                                         <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                                             <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                                                         </spring:nestedPath>
-			                                            <script type="text/javascript">
-			                                                $j(document).ready(function () {
-			                                                    var hidden = ${fn:length(amrsRegistration.patient.names) <= 1};
-			                                                    var preferred = ${name.preferred};
-			                                                    var position = ${varStatus.index};
-			                                                    var tbody = $j('#namePositionParent').find('tbody:eq(0)');
-			                                                    var nameContentX = $j(tbody).find('tr:eq(' + (position + 1) + ')');
-			                                                    $j(nameContentX).attr('id', 'nameContent' + position);
-			                                                    createPreferred(preferred, 'name', position, nameContentX, hidden);
-			                                                    createDelete('name', position, nameContentX);
-			
-			                                                    // bind onkeyup for each of the address layout text field
-			                                                    var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
-			                                                    $j(allTextInputs).bind('keyup', function(event){
-			                                                        timeOutSearch(event);
-			                                                    });
-			                                                });
-			                                            </script>
                                                     </c:otherwise>
                                                 </c:choose>
+                                             </td>
+                                         </tr>
+<!--
+                                            <script type="text/javascript">
+                                                $j(document).ready(function () {
+                                                    var hidden = ${fn:length(amrsRegistration.patient.names) <= 1};
+                                                    var preferred = ${name.preferred};
+                                                    var position = ${varStatus.index};
+                                                    var tbody = $j('#namePositionParent').find('tbody:eq(1)');
+                                                    var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
+                                                    $j(nameContentX).attr('id', 'nameContent' + position);
+                                                    createPreferred(preferred, 'name', position, nameContentX, hidden);
+
+                                                    // bind onkeyup for each of the address layout text field
+                                                    var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
+                                                    $j(allTextInputs).bind('keyup', function(event){
+                                                        timeOutSearch(event);
+                                                    });
+                                                });
+                                            </script>
+-->
                                         </c:forEach>
                                         <tbody id="namePosition">
                                     </table>
@@ -927,11 +955,37 @@
                                             </table>
                                         </spring:nestedPath>
                                     </div>
-                                    <div class="tabBar" id="nameTabBar">
-                                        <span id="nameError" class="newError"></span>
-                                        <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
-                                    </div>
                             <!-- End of Patient Names Section -->
+                        </td>
+                        <td valign="top" border="0px" >
+                          <table valign="top" border="0px" >
+                              <tr valign="top">
+                                  <td valign="top" border-top="0px" style="font-weight: bold;">
+                                      <spring:message code="general.preferred"/>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td><div></div></td>
+                              </tr>
+                              <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
+                                <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
+                                    <tr>
+                                        <td>
+                                            <spring:bind path="preferred">
+                                                <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
+                                            </spring:bind>
+                                        </td>
+                                        <td>
+                                           <a href="#delete" id="rm_namePositionParentRow${varStatus.index + 2}" name="nameLayoutRow" onClick="alert(this.id)" style="color:red;">X</a>
+                                        </td>
+                                    </tr>
+                                </spring:nestedPath>
+                              </c:forEach>
+                          </table>
+                            <div class="tabBar" id="nameTabBar">
+                                <span id="nameError" class="newError"></span>
+                                <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -944,8 +998,8 @@
 <!-- Gender and Birthdate Section -->
     	<table>
     		<tr>
-				<td><spring:message code="Person.gender"/></td>
-				<td id="birthdateTitle">
+				<td style="font-weight: bold;"><spring:message code="Person.gender"/></td>
+				<td style="font-weight: bold;" id="birthdateTitle">
 					<spring:message code="Person.birthdate"/>
 					<i style="font-weight: normal; font-size: .8em;">(<spring:message code="general.format"/>: <openmrs:datePattern />)</i>
 				</td>
@@ -966,8 +1020,8 @@
 					<c:when test="${amrsRegistration.patient.birthdate == null}">
 							<td style="padding-right: 4em;">
 								<input type="text" name="birthdateInput" id="birthdateInput" size="11" value=""  onclick="showCalendar(this)" onkeyup="timeOutSearch(event)" onchange="clearAgeOrDOB(this)"/>
-								<span id="orTitle"><spring:message code="general.or"/></span>
-								<span id="ageTitle"><spring:message code="Person.age"/></span>
+								<span style="font-weight: bold;" id="orTitle"><spring:message code="general.or"/></span>
+								<span style="font-weight: bold;" id="ageTitle"><spring:message code="Person.age"/></span>
 								<input type="text" name="ageInput" id="ageInput" size="5" value="" onkeyup="timeOutSearch(event)" onchange="clearAgeOrDOB(this)"/>
 							</td>
 					</c:when>
@@ -1059,14 +1113,7 @@
                     <spring:message code="PatientIdentifier.location"/>
                 </td>
                 <td style="font-weight: bold;">
-                    <c:choose>
-                        <c:when test="${fn:length(amrsRegistration.patient.identifiers) > 1}">
-                            <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
-                        </c:when>
-                        <c:otherwise>
-                            <span id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
-                        </c:otherwise>
-                    </c:choose>
+                    <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
                 </td>
             </tr>
 	        <c:forEach var="identifier" items="${amrsRegistration.patient.activeIdentifiers}" varStatus="varStatus">
@@ -1487,6 +1534,8 @@
 		var first = $j('#nameContent0 input[type=text]:eq(0)');
 		first.focus();
 	});
+
+    changeNameHeaderHack();
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

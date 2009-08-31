@@ -74,6 +74,6 @@
             </spring:bind>
         </td>
         <td>
-            <a href="#delete" onclick="alert(this.parentNode.parentNode.id)" style="color:red;" id="identifier">X</a>
+            <a href="#delete" onclick="alert(this.parentNode.parentNode.id)" style="color:red;" id="rm_identifierContent${varStatus.index}">X</a>
         </td>
 	</tr>
