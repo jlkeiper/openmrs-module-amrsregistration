@@ -73,7 +73,7 @@
                 <input type="checkbox" id="identifierPreferred" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
             </spring:bind>
         </td>
-        <td>
-            <a href="#delete" onclick='removeRow("identifierContent")' style="color:red;" id="rm_identifierContent">X</a>
+        <td onclick='removeRow(this.parentNode)' id="rm_identifierContent">
+            <a href="#delete"  style="color:red;">X</a>
         </td>
 	</tr>

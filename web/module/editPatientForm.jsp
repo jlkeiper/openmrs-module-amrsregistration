@@ -205,7 +205,7 @@
             var row = tbody.getElementsByTagName('tr').length - 1;
 
             var elemId = 'rm_namePositionParentRow' + row;
-            var elemOnClick = 'removeRow("nameContent' + row + '"); removeRow("namePreferred' + row + '")';
+            var elemOnClick = 'removeRow(this.parentNode)';
 
             $j(element).attr('id', elemId);
             $j(element).attr('onClick', elemOnClick);
@@ -228,8 +228,20 @@
 		}
 	}
 
-    function removeRow(elemName) {
-        $j('#' + elemName).hide();
+    function removeRow(tableRow) {
+        if (tableRow.tagName == 'TR') {
+            if (tableRow.id.search('namePreferred') > -1) {
+                var nameContentId = tableRow.id.replace('namePreferred', 'nameContent');
+                var nameContent = document.getElementById(nameContentId);
+                nameContent.style.display = 'none';
+            }
+            tableRow.style.display = 'none';
+        }
+        /* debug
+        else {
+            alert('could not delete ' + tableRow + ", " + tableRow.tagName);
+        }
+        */
     }
 
 	function getTemplateType(type) {
@@ -260,7 +272,7 @@
 			tr.append(td);
 			return tr;
 		}
-
+/*
         if (type == 'identifier') {
             //createPreferred(false, type, id, templateClone, false);
             //createDelete(type, id, templateClone);
@@ -269,9 +281,8 @@
            // var children = $j(templateClone:last-child);
            // alert(children);
            //templateClone.lastChild.onclick = 'removeRow("identifierContent' + id + '"';
-           alert(templateClone);
         }
-
+*/
 		return templateClone;
 	}
 	
@@ -279,6 +290,29 @@
 		// method that will be called when "add new" button is pressed
 		var element = duplicateElement(type, id);
 		$j(element).attr('id', type + 'Content' + id);
+/*
+        if (type == 'identifier') {
+            var $test = $j(element).children();
+            var remove = 'removeRow("identifierContent' + id + '")' ;
+            for (var i = $test.length-1; i >=0; i--) {
+                $test[i].innerHTML.replace('identifierContent', rowName);
+                if (i == $test.length-1) {
+                    var removeRow = document.createElement('a');
+                    removeRow.href='#delete';
+                    removeRow.onclick=remove;
+                    removeRow.style = 'color: red;';
+                    $test[i].replaceChild()
+                    alert($test[i].innerHTML);
+                }
+                //if ($test[i].innerHTML == '<a href="#delete" onclick='removeRow("identifierContent")' style="color: red;" id="rm_identifierContent">X</a>')
+
+                var $in = $test[i].children();
+                for (var j = $in.length; j >=0; j--) {
+                    alert($in[j].id);
+                }
+            }
+        }
+                */
 
 		return element;
 	}
@@ -323,6 +357,10 @@
         if (true) {
         	// create a new element using the above function
             var newElement = createElement(type, (prevIdSuffix + 1));
+            //var lastChild = $j(newElement).find(:last-child);
+            //var lastChild = $j(newElement).find(:last-child);
+            //alert('lastChild: ' + lastChild);
+            //lastChild.click(alert(this.id));
             
             // put the new element to the correct position
             // each type will have their own template and position id
@@ -352,6 +390,8 @@
             ele.focus();
             
             numObjs[type] = numObjs[type] + 1;
+
+            
         }
         
         //if (!allowCreate){
@@ -1039,8 +1079,8 @@
                                                 <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
                                             </spring:bind>
                                         </td>
-                                        <td>
-                                           <a href="#delete" id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow('nameContent${varStatus.index}'); removeRow('namePreferred${varStatus.index}')" style="color:red;">X</a>
+                                        <td id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow(this.parentNode)" >
+                                           <a href="#delete"  style="color:red;">X</a>
                                         </td>
                                     </tr>
                                 </spring:nestedPath>
