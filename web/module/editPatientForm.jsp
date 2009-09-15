@@ -1338,10 +1338,10 @@
 				<td id="patientName" style="white-space:nowrap;">
 					<c:choose>
 						<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
-							${amrsRegistration.patient.personName}'s
+							${amrsRegistration.patient.personName}
 						</c:when>
 						<c:otherwise>
-							This patient's
+							This patient
 						</c:otherwise>
 					</c:choose>
 				</td>
@@ -1350,17 +1350,16 @@
 						<c:if test="${record == relationship.relationshipType}">
 							<c:choose>
 								<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
-									${record.aIsToB}
+									is ${record.aIsToB} to
 								</c:when>
 								<c:otherwise>
-									${record.bIsToA}
+									's ${record.bIsToA} is
 								</c:otherwise>
 							</c:choose>
 						</c:if>
 					</openmrs:forEachRecord>
 				</td>
 				<td style="white-space:nowrap;">
-					is
 				</td>
 				<td style="white-space:nowrap;">
 					<c:choose>
@@ -1412,7 +1411,7 @@
 					$j(clone).attr('id', 'createRelationshipPerson' + relationshipCounter);
 					$j('#relationshipPosition').append(clone);
 	
-					relationshipNum = relationshipCounter + 1;
+					relationshipCounter = relationshipCounter + 1;
 				} else {
 					$j('#relationshipError').html('Please finish searching or creating the person before adding new relationship');
 				}
@@ -1507,11 +1506,11 @@
 				var position = rowId.substring('relationshipContent'.length);
 				// logic to determince which of the field to be shown personA or personB
 				var selected = $j('#relationshipContent' + position).find('select[name=relationshipTypeId] option:selected');
-				var hidden = $j(row).find('td[class=personB]');
-				var show = $j(row).find('td[class=personA]');
+				var hidden = $j(row).find('td[class=personA]');
+				var show = $j(row).find('td[class=personB]');
 				if ($j(selected).attr('class') == 'aIsToB') {
-					hidden = $j(row).find('td[class=personA]');
-					show = $j(row).find('td[class=personB]');
+					hidden = $j(row).find('td[class=personB]');
+					show = $j(row).find('td[class=personA]');
 				}
 
 				$j(hidden).toggle();
