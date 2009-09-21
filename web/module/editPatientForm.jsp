@@ -1349,7 +1349,7 @@
 					<openmrs:forEachRecord name="relationshipType">
 						<c:if test="${record == relationship.relationshipType}">
 							<c:choose>
-								<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+								<c:when test="${amrsRegistration.patient.personName == relationship.personA.personName}">
 									${record.aIsToB}
 								</c:when>
 								<c:otherwise>
@@ -1364,7 +1364,7 @@
 				</td>
 				<td style="white-space:nowrap;">
 					<c:choose>
-						<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
+						<c:when test="${amrsRegistration.patient.personName == relationship.personA.personName}">
 							${relationship.personB.personName}
 						</c:when>
 						<c:otherwise>
@@ -1412,7 +1412,7 @@
 					$j(clone).attr('id', 'createRelationshipPerson' + relationshipCounter);
 					$j('#relationshipPosition').append(clone);
 	
-					relationshipNum = relationshipCounter + 1;
+					relationshipCounter = relationshipCounter + 1;
 				} else {
 					$j('#relationshipError').html('Please finish searching or creating the person before adding new relationship');
 				}

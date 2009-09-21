@@ -2,10 +2,10 @@
 	<td id="patientName" style="white-space:nowrap;">
 		<c:choose>
 			<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
-				${amrsRegistration.patient.personName}
+				${amrsRegistration.patient.personName}'s
 			</c:when>
 			<c:otherwise>
-				This patient
+				This patient's
 			</c:otherwise>
 		</c:choose>
 	</td>
@@ -14,17 +14,17 @@
 			<openmrs:forEachRecord name="relationshipType">
 				<option value="${record.relationshipTypeId}" class="bIsToA"
 					<c:if test="${record == relationship.relationshipType && amrsRegistration.patient.personId == relationship.personA.personId}">selected</c:if>>
-						is ${record.bIsToA}
+						${record.bIsToA}
 				</option>
 				<option value="${record.relationshipTypeId}" class="aIsToB"
 					<c:if test="${record == relationship.relationshipType && amrsRegistration.patient.personId == relationship.personB.personId}">selected</c:if>>
-						is ${record.aIsToB}
+						${record.aIsToB}
 				</option>
 			</openmrs:forEachRecord>
 		</select>
 	</td>
 	<td style="white-space:nowrap;">
-		to
+		&nbsp;
 	</td>
 	<td style="white-space:nowrap; display:none;" class="personA">
 		<input type="text" name="personA" value="${relationship.personA.personName}" onkeyup="searchPersonWithTimeout(event, this)"/>
