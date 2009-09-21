@@ -105,10 +105,10 @@
 					<td id="patientName" style="white-space:nowrap;">
 						<c:choose>
 							<c:when test="${not empty fn:trim(amrsRegistration.patient.personName)}">
-								${amrsRegistration.patient.personName}
+								${amrsRegistration.patient.personName}'s
 							</c:when>
 							<c:otherwise>
-								This patient
+								This patient's
 							</c:otherwise>
 						</c:choose>
 					</td>
@@ -117,16 +117,17 @@
 							<c:if test="${record == relationship.relationshipType}">
 								<c:choose>
 									<c:when test="${amrsRegistration.patient.personId == relationship.personA.personId}">
-										is ${record.aIsToB} to
+										${record.aIsToB}
 									</c:when>
 									<c:otherwise>
-										's ${record.bIsToA} is
+										${record.bIsToA}
 									</c:otherwise>
 								</c:choose>
 							</c:if>
 						</openmrs:forEachRecord>
 					</td>
 					<td style="white-space:nowrap;">
+						is
 					</td>
 					<td style="white-space:nowrap;">
 						<c:choose>
