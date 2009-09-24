@@ -35,6 +35,9 @@
     
     // variable that will hold the attributes shown in the screen and their values
     var attributes = null;
+
+    // variable for assigning rowID for patient name section.
+    var nameRow = -1;
     
     $j(document).ready(function() {
 		// selecting a patient from the potential matches
@@ -145,7 +148,7 @@
 
             $j(td).append(input);
 
-            var tbody = document.getElementById('namePositionParentExtra');
+            var tbody = document.getElementById('namePositionExtra');
 
             var row = tbody.getElementsByTagName('tr').length;
 
@@ -153,7 +156,7 @@
 
             $j(element).attr('id', elemId);
 
-            $j('#namePositionParentExtra').append(element);
+            $j('#namePositionExtra').append(element);
 
 		} else {
 			// for identifier and name, the element is a cell
@@ -175,37 +178,40 @@
 			
 		var anchor = $j(document.createElement('a'));
 		$j(anchor).attr('href', '#delete');
-		$j(anchor).attr('id', type);
+		$j(anchor).attr('id', type + id);
 		$j(anchor).attr('style', 'color:red');
 		$j(anchor).html('X');
+        $j(anchor).attr("onclick", "removeRow(" + id + ", '" + type + "')");
 		
 		if (type == 'address') {
 			// for address, element is a row
-			element = $j(document.createElement('tr'));
+			element = $j(document.createElement('td'));
 			
-			td = $j(document.createElement('td'));
-			$j(td).attr('colspan', '2');
+			//td = $j(document.createElement('td'));
+			//s$j(element).attr('colspan', '2');
+            $j(element).attr('style', 'text-align: right');
+            $j(element).attr('align', 'right');
+
+			///$j(element).append(td);
 			
-			$j(element).append(td);
+			$j(element).append(anchor);
 			
-			$j(td).append(anchor);
-			
-			var label = $j(document.createTextNode('Preferred'));
-			$j(td).append(label);
-			
-			$j(container).prepend(element);
+			//var label = $j(document.createTextNode('Preferred'));
+			//$j(td).append(label);
+
+			$j(container).append(element);
         } else if (type == 'name') {
             // for identifier and name, the element is a cell
             element = $j(document.createElement('td'));
 
             $j(element).append(anchor);
 
-            var tbody = document.getElementById('namePositionParentExtra');
+            var tbody = document.getElementById('namePositionExtra');
 
             var row = tbody.getElementsByTagName('tr').length - 1;
 
             var elemId = 'rm_namePositionParentRow' + row;
-            var elemOnClick = 'removeRow(this.parentNode)';
+            var elemOnClick = 'removeRow(this.parentNode, ' + type + ')';
 
             $j(element).attr('id', elemId);
             $j(element).attr('onClick', elemOnClick);
@@ -219,7 +225,7 @@
 
             if (type == 'identifier') {
 
-                var onclick = "removeRow('identifierContent" + id + "')";
+                var onclick = "removeRow('identifierContent" + id + "', " + type + ")";
                 $(element).attr('onclick', onclick);
             }
 
@@ -228,20 +234,32 @@
 		}
 	}
 
-    function removeRow(tableRow) {
+    function removeRow(tableRow, type) {
+        /**
+         * This screws everything up since the entire page
+         * uses labeled row ids for indexing instead of
+         * the actual index.  too bad.  TODO: fix it??
+        var parent = $j(tableRow).parent();
+        var index = $j(parent).find('tr').index(tableRow);
+        alert($j(parent).get(0).id + " " + index);
+        if ($j(parent).get(0).id == 'namePositionExtra') {
+            $j('#namePosition').find('tr').eq(index).hide();
+        }
+        $j(tableRow).hide();
+        */
+
         if (tableRow.tagName == 'TR') {
             if (tableRow.id.search('namePreferred') > -1) {
                 var nameContentId = tableRow.id.replace('namePreferred', 'nameContent');
                 var nameContent = document.getElementById(nameContentId);
                 nameContent.style.display = 'none';
             }
+        }
+        if (type == 'address') {
+            $j('#addressContent' + tableRow).remove();
+        } else {
             tableRow.style.display = 'none';
         }
-        /* debug
-        else {
-            alert('could not delete ' + tableRow + ", " + tableRow.tagName);
-        }
-        */
     }
 
 	function getTemplateType(type) {
@@ -258,31 +276,75 @@
 	function duplicateElement(type, id) {
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
+
+        if (type == 'identifier') {
+            $j(templateClone).find('td').show();
+            $j(templateClone).find("#addNewIdentifierData").replaceWith("<td></td>");
+            $j("#identifierPreferredLabel").show();
+        }
+
+        if (type == 'address') {
+            $j.each($j(templateClone).find('tr'), function(i, n) {
+                $j(n).find('td:first').remove();
+            });
+            $j.each($j(templateClone).find('td'), function(i, n) {
+                if ($j(n).find('input').length < 1) {
+                    n.innerHTML='';
+                }
+            });            
+        }
+        $j.each($j(templateClone).find('input'), function(i, n) {
+            return n.parentNode.innerHTML=n.value;
+        });
+        $j.each($j(templateClone).find('select'), function(i, n) {
+            n.selectedIndex = $j('#' + type + 'Content').find('select').get(i).selectedIndex;
+            n.parentNode.innerHTML = n.options[n.selectedIndex].text; 
+        });
 		if (type == 'name') {
 			createPreferred(false, type, id, templateClone, false);
 			createDelete(type, id, templateClone);
         }
+
 		
 		// custom mods for address
 		if (type == 'address') {
+            $j(templateClone).attr('style', 'display=""');
+            $j(templateClone).attr('width', '100%');
+            /*
+            $j.each($j('#addressContent').find('input'), function(i, n) {
+                //$j.each($j(templateClone).find('input'), function(j, m) {
+                //   if (i == j) {
+                //       return m.parentNode.innerHTML
+                //   }
+                //});
+                $j(templateClone).find('input').eq(i).tagName;//.parentNode.innerHTML=n.value;
+                if (n.value != null && n.value != '')
+                    alert(i + " " + n.value + " .. " + $j(templateClone).find('input').get(i));
+            });
+            $j.each($j('#addressContent').find('select'), function(i, n) {
+                n.selectedIndex = $j('#' + type + 'Content').find('select').get(i).selectedIndex;
+                n.parentNode.innerHTML = n.options[n.selectedIndex].text;
+            });
+            */
 			createPreferred(false, type, id, templateClone, false);
+            //alert($j(templateClone).find('tr:first').length);
+            //$j(templateClone).find('tr:first').append('<td>Hello</td>');
+            createDelete(type, id, templateClone.find('tr:first'));
+            //var deleteAnchor = $j(document.createElement('a'))
+            //deleteAnchor.href = "#delete";
+            //deleteAnchor.style.color = "red";
+            //deleteAnchor.onclick = "removeRow(this.parentNode)";
+            //deleteAnchor.text = "X";
+            //var deleteTd = $j(document.createElement('td'));
+            //$j(deleteTd).append(deleteAnchor);
+            //alert($j(templateClone).find('tr:first')); //.append(deleteTd);
 			var td = $j(document.createElement('td'));
+            $j(td).attr('style', 'border: thin outset lightgray');
 			td.append(templateClone);
-			var tr = $j(document.createElement('tr'));
-			tr.append(td);
-			return tr;
+			//var tr = $j(document.createElement('tr'));
+			//tr.append(td);
+			return td;
 		}
-/*
-        if (type == 'identifier') {
-            //createPreferred(false, type, id, templateClone, false);
-            //createDelete(type, id, templateClone);
-            //var
-            //templateClone.attr('onclick', )
-           // var children = $j(templateClone:last-child);
-           // alert(children);
-           //templateClone.lastChild.onclick = 'removeRow("identifierContent' + id + '"';
-        }
-*/
 		return templateClone;
 	}
 	
@@ -290,30 +352,6 @@
 		// method that will be called when "add new" button is pressed
 		var element = duplicateElement(type, id);
 		$j(element).attr('id', type + 'Content' + id);
-/*
-        if (type == 'identifier') {
-            var $test = $j(element).children();
-            var remove = 'removeRow("identifierContent' + id + '")' ;
-            for (var i = $test.length-1; i >=0; i--) {
-                $test[i].innerHTML.replace('identifierContent', rowName);
-                if (i == $test.length-1) {
-                    var removeRow = document.createElement('a');
-                    removeRow.href='#delete';
-                    removeRow.onclick=remove;
-                    removeRow.style = 'color: red;';
-                    $test[i].replaceChild()
-                    alert($test[i].innerHTML);
-                }
-                //if ($test[i].innerHTML == '<a href="#delete" onclick='removeRow("identifierContent")' style="color: red;" id="rm_identifierContent">X</a>')
-
-                var $in = $test[i].children();
-                for (var j = $in.length; j >=0; j--) {
-                    alert($in[j].id);
-                }
-            }
-        }
-                */
-
 		return element;
 	}
 
@@ -335,11 +373,13 @@
     		allowCreate = true;
     	} else {
     		// when more than 0, then get all input element and check whethere one of them is filled
-    		var allInputType = $j('#' + type + 'Content' + prevIdSuffix + ' input[type=text]');
+    		var allInputType = $j('#' + type + 'Content' + ' input[type=text]');
+            //alert('length: ' + allInputType.length);
     		if (allInputType.length > 0) {
         		
     	    	for (i = 0; i < allInputType.length; i++) {
     	    		var o = allInputType[i];
+                    //alert(o.value);
     	    		str = jQuery.trim(o.value);
     	    		// if one of the input element is not empty then allow creating new element
     	    		if (str.length > 0) {
@@ -353,8 +393,8 @@
     		}
 		}
     	
-        //if (allowCreate) {
-        if (true) {
+        if (allowCreate) {
+        //if (true) {
         	// create a new element using the above function
             var newElement = createElement(type, (prevIdSuffix + 1));
             //var lastChild = $j(newElement).find(:last-child);
@@ -371,10 +411,27 @@
             // template: <type>Content
             // position: <type>Position
             // added element: <type>ContentXX
-            $j('#' + type + 'Position').append(newElement);
-            
+            if (type == 'address') {
+                var appended = false;
+                $j.each($j('#' + type + 'Position').children('tr'), function(i, n) {
+                    if ($j(n).children('td').length < 3 && !appended) {
+                        $j(n).append(newElement);
+                        appended = true;
+                    }
+                });
+                if (!appended) {
+                    var tr = $j(document.createElement('tr'));
+                    $j(tr).append(newElement);
+                    $j('#' + type + 'Position').append(tr);
+                }
+            } else {
+                $j('#' + type + 'Position').append(newElement);
+            }
+            // clear inputs
+            $j('#' + type + 'Content').find('input[type=text],select').val("");
+
             //if (prevIdSuffix == 0) {
-            if (true) {
+            if (type != 'identifier') {
             	// alert('show flag');
             	
             	// show the preferred label and the preferred radio button when the total number of element more than 1
@@ -394,9 +451,8 @@
             
         }
         
-        //if (!allowCreate){
-        if (false){
-        	$j('#' + type + 'Error').html('Adding new row not permitted when the current ' + type + ' is blank');
+        if (!allowCreate){
+        	$j('#' + type + 'Error').html('<span style="color: red;">Please fill in values before adding ' + type + '.</span>');
         }
     }
 	
@@ -999,18 +1055,26 @@
                                         <tr>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${name.dateCreated != null}">
+                                                    <c:when test="${name.givenName != null}">
+                                                        <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                                         <tr id="nameContent${varStatus.index}">
-                                                            <td>
-                                                                ${name.givenName}
-                                                            </td>
-                                                            <td>
-                                                                ${name.middleName}
-                                                           </td>
-                                                            <td>
-                                                                ${name.familyName}
-                                                            </td>
+                                                            <spring:bind path="givenName">
+                                                                <td>
+                                                                    ${status.value}
+                                                                </td>
+                                                            </spring:bind>
+                                                            <spring:bind path="middleName">
+                                                                <td>
+                                                                    ${status.value}
+                                                               </td>
+                                                            </spring:bind>
+                                                            <spring:bind path="familyName">
+                                                                <td>
+                                                                    ${status.value}
+                                                                </td>
+                                                            </spring:bind>
                                                         </tr>
+                                                        </spring:nestedPath>
                                                         <!--
                                                         <tr>
                                                             <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
@@ -1020,9 +1084,11 @@
                                                         -->
                                                     </c:when>
                                                     <c:otherwise>
+                                                        <!--
                                                         <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                                             <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                                                         </spring:nestedPath>
+                                                        -->
                                                     </c:otherwise>
                                                 </c:choose>
                                              </td>
@@ -1049,13 +1115,16 @@
                                         </c:forEach>
                                         <tbody id="namePosition">
                                     </table>
-                                    <div id="nameContent" style="display: none;">
+                                    <div id="nameContent">
                                         <spring:nestedPath path="emptyName">
                                             <table>
                                                 <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
                                             </table>
                                         </spring:nestedPath>
                                     </div>
+                            <div class="tabBar" id="nameTabBar">
+                                <span id="nameError" class="newError"></span>
+                            </div>
                             <!-- End of Patient Names Section -->
                         </td>
                         <td valign="top" border="0px" >
@@ -1070,16 +1139,16 @@
                                   <td><div></div></td>
                               </tr>
                               </thead>
-                              <tbody id="namePositionParentExtra">
+                              <tbody id="namePositionExtra">
                               <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
                                 <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
-                                    <tr id="namePreferred${varStatus.index}" >
+                                    <tr id="namePreferred${varStatus.index}" <c:if test="${varStatus.index == 0 && (name.givenName == null || name.givenName == '') && (name.familyName == null || name.familyName == '')}">style="display: none;"</c:if> >
                                         <td colspan="2">
                                             <spring:bind path="preferred">
                                                 <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
                                             </spring:bind>
                                         </td>
-                                        <td id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow(this.parentNode)" >
+                                        <td id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow(this.parentNode, 'name')" >
                                            <a href="#delete"  style="color:red;">X</a>
                                         </td>
                                     </tr>
@@ -1088,7 +1157,6 @@
                               </tbody>
                           </table>
                             <div class="tabBar" id="nameTabBar">
-                                <span id="nameError" class="newError"></span>
                                 <input type="button" onClick="return addNew('name');" class="addNew" id="name" value="Add New Name"/>
                             </div>
                         </td>
@@ -1218,8 +1286,8 @@
                 <td style="font-weight: bold;">
                     <spring:message code="PatientIdentifier.location"/>
                 </td>
-                <td style="font-weight: bold;">
-                    <span id="identifierPreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
+                <td style="font-weight: bold;" name="addedIdentifierData">
+                    <span name="addedIdentifierData" id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
                 </td>
             </tr>
             </thead>
@@ -1240,14 +1308,12 @@
             </tbody>
       	</table>
         <spring:nestedPath path="emptyIdentifier">
-			<table style="display: none;">
-            	<%@ include file="portlets/patientIdentifier.jsp" %>
+            <table id="emptyIdentifierTable">
+                <%@ include file="portlets/patientIdentifier.jsp" %>
             </table>
         </spring:nestedPath>
         <div class="tabBar" id="identifierTabBar">
 			<span id="identifierError" class="newError"></span>
-
-            <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier" value="Add New Identifier"/>
         </div>
 <!-- End of Patient Identifier Section -->
 	
@@ -1259,40 +1325,65 @@
 
 <!-- Patient Address Section -->
 		<table>
+            <col width="33%"/>
+            <col width="33%"/>
+            <col width="34%"/>
+            <tbody id="addressPosition">
 			<c:forEach var="address" items="${amrsRegistration.patient.addresses}" varStatus="varStatus">
-				<tr><td>
-			    <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
-			    	<openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
-			    </spring:nestedPath>
-				</td></tr>
-	            <script type="text/javascript">
-	            	$j(document).ready(function () {
-		            	var hidden = ${fn:length(amrsRegistration.patient.addresses) <= 1};
-						var preferred = ${address.preferred};
-	            		var position = ${varStatus.index};
-	            		var nameContentX = $j('#addressPortlet' + position).find('table');
-	            		$j(nameContentX).attr('id', 'addressContent' + position);
-	            		createPreferred(preferred, 'address', position, nameContentX, hidden);
-	            		
-	            		// bind all inputs
-	            		var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
-	            		$j(allTextInputs).bind('keyup', function(event){
-	            			timeOutSearch(event);
-	            		});
-	            	});
-	            </script>
+                <c:if test="${varStatus.index % 3 == 0}"><tr valign="top"></c:if>
+                        <td  id="addressContent${varStatus.index}" style='border: thin outset lightgray'>
+<!--
+                            <span>
+                                <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
+                                    <spring:bind path="preferred">
+                                        <input type="checkbox" <c:if test='${address.preferred}'>checked</c:if>>Preferred</input>
+                                    </spring:bind>
+                                </spring:nestedPath>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="#delete" align="right" id="rmPatientAddressView${varStatus.index}" style="color: red;" onclick="removeRow(this.parentNode.parentNode, 'address')">X</a>
+                            </span>
+-->
+                            <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
+                                <openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="compact" parameters="layoutMode=view|layoutShowTable=true|layoutShowExtended=false" />
+                            </spring:nestedPath>
+                        </td>
+                <script type="text/javascript">
+                    $j(document).ready(function () {
+                        var hidden = ${fn:length(amrsRegistration.patient.addresses) <= 1};
+                        var preferred = ${address.preferred};
+                        var position = ${varStatus.index};
+                        var nameContentX = $j('#addressPortlet' + position).find('table');
+                        $j(nameContentX).attr('width', '100%');
+                        //$j(nameContentX).attr('id', 'addressContent' + position);
+                        createPreferred(preferred, 'address', position, nameContentX, hidden);
+                        createDelete('address', position, nameContentX.find('tr:first'));
+                        //$j(nameContentX).find('tr:first').attr('align', 'right');
+
+                        // bind all inputs
+                        var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
+                        $j(allTextInputs).bind('keyup', function(event){
+                            timeOutSearch(event);
+                        });
+                    });
+                </script>
+
 			</c:forEach>
-	        <tbody id="addressPosition" />
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <div id="addressContent">
+                        <spring:nestedPath path="emptyAddress">
+                            <openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
+                        </spring:nestedPath>
+                    </div>
+                </td>
+            </tr>
 		</table>
         <div id="addressPositionClear" style="clear:both"></div>
-		<div id="addressContent" style="display: none;">
-			<spring:nestedPath path="emptyAddress">
-				<openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
-			</spring:nestedPath>
-	    </div>
 	    <div class="tabBar" id="addressTabBar">
 			<span id="addressError" class="newError"></span>
-	        <input type="button" onClick="return deleteLastRow('address');" class="addNew" id="address" value="Remove"/>
 	        <input type="button" onClick="return addNew('address');" class="addNew" id="address" value="Add New Address"/>
 	    </div>
 <!-- End of Patient Address Section -->

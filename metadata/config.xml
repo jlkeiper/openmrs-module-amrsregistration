@@ -30,7 +30,7 @@
 
 <!-- Required Privileges-->
     <privilege>
-        <name>Registration</name>
+        <name>Register Patients</name>
         <description>Allows user to register new patients, find patients through name, id and barcode.</description>
     </privilege>
 <!--Required Privileges -->

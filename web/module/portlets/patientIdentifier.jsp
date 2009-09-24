@@ -1,4 +1,4 @@
-    <tr id="identifierContent${varStatus.index}">
+    <tr id="identifierContent${varStatus.index}" <c:if test='${varStatus.index == 0 && (identifier.identifier == null || identifier.identifier == "")}'>style="display: none;"</c:if> >
         <td class="spacing" style="white-space: nowrap">
             <spring:bind path="identifier">
                 <c:choose>
@@ -61,19 +61,15 @@
                 </c:choose>
 			</spring:bind>
 		</td>
-            <c:choose>
-                <c:when test="${fn:length(amrsRegistration.patient.identifiers) > 1}">
-					<td style="display: block;">
-                </c:when>
-                <c:otherwise>
-					<td style="display: none;">
-                </c:otherwise>
-            </c:choose>
+        <td name="addedIdentifierData" <c:choose><c:when test="${identifier.dateCreated != null}">style="display: '';"</c:when><c:otherwise>style="display: none;"</c:otherwise></c:choose>>
             <spring:bind path="preferred">
                 <input type="checkbox" id="identifierPreferred" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
             </spring:bind>
         </td>
-        <td onclick='removeRow(this.parentNode)' id="rm_identifierContent">
+        <td onclick='removeRow(this.parentNode)' id="rm_identifierContent" name="addedIdentifierData" <c:choose><c:when test="${identifier.dateCreated != null}">style="display: '';"</c:when><c:otherwise>style="display: none;"</c:otherwise></c:choose>>
             <a href="#delete"  style="color:red;">X</a>
+        </td>
+        <td id="addNewIdentifierData" <c:if test='${identifier.dateCreated != null}'>style="display: none;"</c:if> >
+            <input type="button" onClick="return addNew('identifier');" class="addNew" id="identifier" value="Add New Identifier"/>
         </td>
 	</tr>
