@@ -115,13 +115,13 @@
 		var element = null;
 			
 		var input = $j(document.createElement('input'));
-		$j(input).attr('type', 'checkbox');
+		$j(input).attr('type', 'radio');
 		$j(input).attr('name', type + 'Preferred');
 		$j(input).attr('value', id);
 		$j(input).attr('valign', 'top');
-		if(preferred) {
+		//if(preferred) {
 			$j(input).attr('checked', 'checked');
-		}
+		//}
 			
 		if (type == 'address') {
 			// for address, element is a row
@@ -129,6 +129,7 @@
 			
 			td = $j(document.createElement('td'));
 			$j(td).attr('colspan', '2');
+            $j(td).attr('width', '100');
 			
 			$j(element).append(td);
 			
@@ -150,9 +151,9 @@
 
             var tbody = document.getElementById('namePositionExtra');
 
-            var row = tbody.getElementsByTagName('tr').length;
+            //var row = tbody.getElementsByTagName('tr').length;
 
-            var elemId = 'namePreferred' + row;
+            var elemId = 'namePreferred' + id;
 
             $j(element).attr('id', elemId);
 
@@ -181,8 +182,8 @@
 		$j(anchor).attr('id', type + id);
 		$j(anchor).attr('style', 'color:red');
 		$j(anchor).html('X');
-        $j(anchor).attr("onclick", "removeRow(" + id + ", '" + type + "')");
-		
+        //$j(anchor.parentNode).attr("onclick", "removeRow(this.parentNode, '" + type + "')");
+
 		if (type == 'address') {
 			// for address, element is a row
 			element = $j(document.createElement('td'));
@@ -193,9 +194,10 @@
             $j(element).attr('align', 'right');
 
 			///$j(element).append(td);
-			
+            $j(anchor).attr("onclick", "removeRow(" + id + ", '" + type + "')");
+
 			$j(element).append(anchor);
-			
+
 			//var label = $j(document.createTextNode('Preferred'));
 			//$j(td).append(label);
 
@@ -208,15 +210,15 @@
 
             var tbody = document.getElementById('namePositionExtra');
 
-            var row = tbody.getElementsByTagName('tr').length - 1;
+            //var row = tbody.getElementsByTagName('tr').length - 1;
 
-            var elemId = 'rm_namePositionParentRow' + row;
-            var elemOnClick = 'removeRow(this.parentNode, ' + type + ')';
+            var elemId = 'rm_namePositionParentRow' + id;
+            var elemOnClick = "removeRow(this.parentNode, '" + type + "')";
 
             $j(element).attr('id', elemId);
             $j(element).attr('onClick', elemOnClick);
 
-            $j('#namePreferred' + row).append(element);
+            $j('#namePreferred' + id).append(element);
 		} else {
 			// for identifier and name, the element is a cell
 			element = $j(document.createElement('td'));
@@ -225,7 +227,7 @@
 
             if (type == 'identifier') {
 
-                var onclick = "removeRow('identifierContent" + id + "', " + type + ")";
+                var onclick = "removeRow('identifierContent" + id + "', '" + type + "')";
                 $(element).attr('onclick', onclick);
             }
 
@@ -235,30 +237,18 @@
 	}
 
     function removeRow(tableRow, type) {
-        /**
-         * This screws everything up since the entire page
-         * uses labeled row ids for indexing instead of
-         * the actual index.  too bad.  TODO: fix it??
-        var parent = $j(tableRow).parent();
-        var index = $j(parent).find('tr').index(tableRow);
-        alert($j(parent).get(0).id + " " + index);
-        if ($j(parent).get(0).id == 'namePositionExtra') {
-            $j('#namePosition').find('tr').eq(index).hide();
-        }
-        $j(tableRow).hide();
-        */
-
-        if (tableRow.tagName == 'TR') {
+        if (type == 'name') {
             if (tableRow.id.search('namePreferred') > -1) {
                 var nameContentId = tableRow.id.replace('namePreferred', 'nameContent');
                 var nameContent = document.getElementById(nameContentId);
-                nameContent.style.display = 'none';
+                $j(nameContent).remove();
             }
         }
         if (type == 'address') {
             $j('#addressContent' + tableRow).remove();
         } else {
-            tableRow.style.display = 'none';
+            var row = $j(tableRow).get(0);
+            $j(row).remove();
         }
     }
 
@@ -294,7 +284,9 @@
             });            
         }
         $j.each($j(templateClone).find('input'), function(i, n) {
-            return n.parentNode.innerHTML=n.value;
+            if (n.id != 'identifierPreferred') {
+                return n.parentNode.innerHTML=n.value;
+            }
         });
         $j.each($j(templateClone).find('select'), function(i, n) {
             n.selectedIndex = $j('#' + type + 'Content').find('select').get(i).selectedIndex;
@@ -305,44 +297,15 @@
 			createDelete(type, id, templateClone);
         }
 
-		
 		// custom mods for address
 		if (type == 'address') {
             $j(templateClone).attr('style', 'display=""');
             $j(templateClone).attr('width', '100%');
-            /*
-            $j.each($j('#addressContent').find('input'), function(i, n) {
-                //$j.each($j(templateClone).find('input'), function(j, m) {
-                //   if (i == j) {
-                //       return m.parentNode.innerHTML
-                //   }
-                //});
-                $j(templateClone).find('input').eq(i).tagName;//.parentNode.innerHTML=n.value;
-                if (n.value != null && n.value != '')
-                    alert(i + " " + n.value + " .. " + $j(templateClone).find('input').get(i));
-            });
-            $j.each($j('#addressContent').find('select'), function(i, n) {
-                n.selectedIndex = $j('#' + type + 'Content').find('select').get(i).selectedIndex;
-                n.parentNode.innerHTML = n.options[n.selectedIndex].text;
-            });
-            */
 			createPreferred(false, type, id, templateClone, false);
-            //alert($j(templateClone).find('tr:first').length);
-            //$j(templateClone).find('tr:first').append('<td>Hello</td>');
             createDelete(type, id, templateClone.find('tr:first'));
-            //var deleteAnchor = $j(document.createElement('a'))
-            //deleteAnchor.href = "#delete";
-            //deleteAnchor.style.color = "red";
-            //deleteAnchor.onclick = "removeRow(this.parentNode)";
-            //deleteAnchor.text = "X";
-            //var deleteTd = $j(document.createElement('td'));
-            //$j(deleteTd).append(deleteAnchor);
-            //alert($j(templateClone).find('tr:first')); //.append(deleteTd);
 			var td = $j(document.createElement('td'));
             $j(td).attr('style', 'border: thin outset lightgray');
 			td.append(templateClone);
-			//var tr = $j(document.createElement('tr'));
-			//tr.append(td);
 			return td;
 		}
 		return templateClone;
@@ -364,22 +327,16 @@
 
     	var allowCreate = false;
 
-         //alert('type: ' + type);
-    	 //alert('id: ' + prevIdSuffix);
-    	 //alert('numObjs['+type+']: ' + numObjs[type]);
-
 		// always allow creating new element where the number is less than 0
     	if (prevIdSuffix < 0) {
     		allowCreate = true;
     	} else {
     		// when more than 0, then get all input element and check whethere one of them is filled
     		var allInputType = $j('#' + type + 'Content' + ' input[type=text]');
-            //alert('length: ' + allInputType.length);
     		if (allInputType.length > 0) {
         		
     	    	for (i = 0; i < allInputType.length; i++) {
     	    		var o = allInputType[i];
-                    //alert(o.value);
     	    		str = jQuery.trim(o.value);
     	    		// if one of the input element is not empty then allow creating new element
     	    		if (str.length > 0) {
@@ -394,14 +351,9 @@
 		}
     	
         if (allowCreate) {
-        //if (true) {
         	// create a new element using the above function
-            var newElement = createElement(type, (prevIdSuffix + 1));
-            //var lastChild = $j(newElement).find(:last-child);
-            //var lastChild = $j(newElement).find(:last-child);
-            //alert('lastChild: ' + lastChild);
-            //lastChild.click(alert(this.id));
-            
+            var newElement = createElement(type, (numObjs[type]++));
+
             // put the new element to the correct position
             // each type will have their own template and position id
             // address: --> template: addressContent
@@ -436,7 +388,7 @@
             	
             	// show the preferred label and the preferred radio button when the total number of element more than 1
             	$j('#' + type + 'PreferredLabel').show();
-            	var parent = $j('input:checkbox[name=' + type + 'Preferred]').parent();
+            	var parent = $j('input:radio[name=' + type + 'Preferred]').parent();
             	if (type != 'address')
             		parent.show();
             	else
@@ -445,9 +397,6 @@
             // focus to the first element
             ele = $j('#' + type + 'Content' + numObjs[type] + ' input[type=text]:eq(0)');
             ele.focus();
-            
-            numObjs[type] = numObjs[type] + 1;
-
             
         }
         
@@ -510,7 +459,6 @@
 	    		}
 	    	}
 	    	if (deleteInputs) {
-    			// alert('id: ' + prevIdSuffix);
 	    		var success = $j('#' + type + "Content" + prevIdSuffix).remove();
 	    		numObjs[type] = numObjs[type] - 1;
 	    		prevIdSuffix = prevIdSuffix - 1;
@@ -1019,109 +967,54 @@
                     <tr>
                         <td valign="top">
                             <!-- Patient Names Section -->
-                                    <table id="namePositionParent">
-                                        <!--
-                                        <col />
-                                        <col width="250"/>
-                                        <col width="250"/>
-                                        -->
-                                    <tr>
-                                        <td width="250" style="font-weight: bold;">
-                                            First Name
-                                        </td >
-                                        <td width="250" style="font-weight: bold;">
-                                            Middle Name
-                                        </td>
-                                        <td width="250" style="font-weight: bold;">
-                                            Family Name
-                                        </td>
-<!--
-                                        <thead style="font-weight: bold;">
-                                            <openmrs:portlet url="nameLayout" id="namePortlet" size="columnHeaders" parameters="layoutShowTable=false|layoutShowExtended=false" />
-                                        <td style="font-weight: bold;">
-                                            <c:choose>
-                                                <c:when test="${fn:length(amrsRegistration.patient.names) > 1}">
-                                                       <span id="namePreferredLabel" style="display: block"><spring:message code="general.preferred"/></span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span id="namePreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        </thead>
--->
-                                    </tr>
-                                        <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
-                                        <tr>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${name.givenName != null}">
-                                                        <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
-                                                        <tr id="nameContent${varStatus.index}">
-                                                            <spring:bind path="givenName">
-                                                                <td>
-                                                                    ${status.value}
-                                                                </td>
-                                                            </spring:bind>
-                                                            <spring:bind path="middleName">
-                                                                <td>
-                                                                    ${status.value}
-                                                               </td>
-                                                            </spring:bind>
-                                                            <spring:bind path="familyName">
-                                                                <td>
-                                                                    ${status.value}
-                                                                </td>
-                                                            </spring:bind>
-                                                        </tr>
-                                                        </spring:nestedPath>
-                                                        <!--
-                                                        <tr>
-                                                            <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
-                                                                <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
-                                                            </spring:nestedPath>
-                                                        </tr>
-                                                        -->
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <!--
-                                                        <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
-                                                            <openmrs:portlet url="nameLayout" id="namePortlet${varStatus.index}" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
-                                                        </spring:nestedPath>
-                                                        -->
-                                                    </c:otherwise>
-                                                </c:choose>
-                                             </td>
-                                         </tr>
-<!--
-                                            <script type="text/javascript">
-                                                $j(document).ready(function () {
-                                                    var hidden = ${fn:length(amrsRegistration.patient.names) <= 1};
-                                                    var preferred = ${name.preferred};
-                                                    var position = ${varStatus.index};
-                                                    var tbody = $j('#namePositionParent').find('tbody:eq(1)');
-                                                    var nameContentX = $j(tbody).find('tr:eq(' + position + ')');
-                                                    $j(nameContentX).attr('id', 'nameContent' + position);
-                                                    createPreferred(preferred, 'name', position, nameContentX, hidden);
-
-                                                    // bind onkeyup for each of the address layout text field
-                                                    var allTextInputs = $j('#nameContent' + position + ' input[type=text]');
-                                                    $j(allTextInputs).bind('keyup', function(event){
-                                                        timeOutSearch(event);
-                                                    });
-                                                });
-                                            </script>
--->
-                                        </c:forEach>
-                                        <tbody id="namePosition">
+                            <table id="namePositionParent">
+                            <tr>
+                                <td width="245" style="font-weight: bold;">
+                                    First Name
+                                </td >
+                                <td width="240" style="font-weight: bold;">
+                                    Middle Name
+                                </td>
+                                <td width="270" style="font-weight: bold;">
+                                    Family Name
+                                </td>
+                            </tr>
+                                <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
+                                <tr>
+                                    <td>
+                                        <c:if test="${name.givenName != null}">
+                                            <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
+                                            <tr id="nameContent${varStatus.index}">
+                                                <spring:bind path="givenName">
+                                                    <td>
+                                                        ${status.value}
+                                                    </td>
+                                                </spring:bind>
+                                                <spring:bind path="middleName">
+                                                    <td>
+                                                        ${status.value}
+                                                   </td>
+                                                </spring:bind>
+                                                <spring:bind path="familyName">
+                                                    <td>
+                                                        ${status.value}
+                                                    </td>
+                                                </spring:bind>
+                                            </tr>
+                                            </spring:nestedPath>
+                                        </c:if>
+                                     </td>
+                                 </tr>
+                                </c:forEach>
+                                <tbody id="namePosition">
+                            </table>
+                            <div id="nameContent">
+                                <spring:nestedPath path="emptyName">
+                                    <table>
+                                        <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
                                     </table>
-                                    <div id="nameContent">
-                                        <spring:nestedPath path="emptyName">
-                                            <table>
-                                                <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
-                                            </table>
-                                        </spring:nestedPath>
-                                    </div>
+                                </spring:nestedPath>
+                            </div>
                             <div class="tabBar" id="nameTabBar">
                                 <span id="nameError" class="newError"></span>
                             </div>
@@ -1130,8 +1023,8 @@
                         <td valign="top" border="0px" >
                           <table  valign="top" border="0px" >
                               <thead>
-                              <tr valign="top">
-                                  <td valign="top" border-top="0px" style="font-weight: bold;">
+                              <tr valign="top" height="20">
+                                  <td id="namePreferredLabel" valign="top" border-top="0px" style="font-weight: bold; display: none;">
                                       <spring:message code="general.preferred"/>
                                   </td>
                               </tr>
@@ -1143,9 +1036,14 @@
                               <c:forEach var="name" items="${amrsRegistration.patient.names}" varStatus="varStatus">
                                 <spring:nestedPath path="amrsRegistration.patient.names[${varStatus.index}]">
                                     <tr id="namePreferred${varStatus.index}" <c:if test="${varStatus.index == 0 && (name.givenName == null || name.givenName == '') && (name.familyName == null || name.familyName == '')}">style="display: none;"</c:if> >
+                                        <c:if test="${varStatus.index == 1}">
+                                            <script type="text/javascript">
+                                                $j('#namePreferredLabel').attr("style", "font-weight: bold; display: ''");    
+                                            </script>
+                                        </c:if>
                                         <td colspan="2">
                                             <spring:bind path="preferred">
-                                                <input type="checkbox" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
+                                                <input type="radio" name="namePreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
                                             </spring:bind>
                                         </td>
                                         <td id="rm_namePositionParentRow${varStatus.index}" name="nameLayoutRow" onClick="removeRow(this.parentNode, 'name')" >
@@ -1247,7 +1145,7 @@
 									<spring:bind path="amrsRegistration.patient.birthdateEstimated">
 										<label for="birthdateEstimatedInput"><spring:message code="Person.birthdateEstimated"/></label>
 										<input type="hidden" name="_${status.expression}">
-										<input type="checkbox" name="${status.expression}" value="true" 
+										<input type="radio" name="${status.expression}" value="true"
 											   <c:if test="${status.value == true}">checked</c:if> 
 											   id="${status.expression}" 
 											   onclick="if (!this.checked) updateEstimated()" />
@@ -1277,32 +1175,29 @@
 		<table id="identifierPositionParent" width="100%">
             <thead>
             <tr>
-                <td style="font-weight: bold;">
+                <td style="font-weight: bold;" width="190">
                     <spring:message code="amrsregistration.labels.ID"/>
                 </td>
-                <td style="font-weight: bold;">
+                <td style="font-weight: bold;" width="275">
                     <spring:message code="PatientIdentifier.identifierType"/>
                 </td>
-                <td style="font-weight: bold;">
+                <td style="font-weight: bold;" width="250" >
                     <spring:message code="PatientIdentifier.location"/>
                 </td>
                 <td style="font-weight: bold;" name="addedIdentifierData">
-                    <span name="addedIdentifierData" id="identifierPreferredLabel" style="display: none"><spring:message code="general.preferred"/></span>
+                    <span name="addedIdentifierData" id="identifierPreferredLabel" style="display: none;"><spring:message code="general.preferred"/></span>
                 </td>
             </tr>
             </thead>
             <tbody id="identifierPosition">
             <c:forEach var="identifier" items="${amrsRegistration.patient.activeIdentifiers}" varStatus="varStatus">
                 <spring:nestedPath path="amrsRegistration.patient.identifiers[${varStatus.index}]">
-                        <%@ include file="portlets/patientIdentifier.jsp" %>
-                        <!--
+                    <c:if test="${varStatus.index == 1}">
                         <script type="text/javascript">
-                            var hidden = ${fn:length(amrsRegistration.patient.identifiers) <= 1};
-                            var preferred = ${identifier.preferred};
-                            var container = $j('#identifierContent${varStatus.index}');
-                            createPreferred(preferred, 'identifier', ${varStatus.index}, container, hidden);
+                            $j("#identifierPreferredLabel").attr("style", "display: ''");
                         </script>
-                        -->
+                    </c:if>
+                        <%@ include file="portlets/patientIdentifier.jsp" %>
                 </spring:nestedPath>
             </c:forEach>
             </tbody>
@@ -1331,22 +1226,13 @@
             <tbody id="addressPosition">
 			<c:forEach var="address" items="${amrsRegistration.patient.addresses}" varStatus="varStatus">
                 <c:if test="${varStatus.index % 3 == 0}"><tr valign="top"></c:if>
-                        <td  id="addressContent${varStatus.index}" style='border: thin outset lightgray'>
-<!--
-                            <span>
-                                <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
-                                    <spring:bind path="preferred">
-                                        <input type="checkbox" <c:if test='${address.preferred}'>checked</c:if>>Preferred</input>
-                                    </spring:bind>
-                                </spring:nestedPath>
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                <a href="#delete" align="right" id="rmPatientAddressView${varStatus.index}" style="color: red;" onclick="removeRow(this.parentNode.parentNode, 'address')">X</a>
-                            </span>
--->
-                            <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
-                                <openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="compact" parameters="layoutMode=view|layoutShowTable=true|layoutShowExtended=false" />
-                            </spring:nestedPath>
-                        </td>
+                <c:if test="${varStatus.index > 1}">
+                    <td  id="addressContent${varStatus.index}" style='border: thin outset lightgray'>
+                        <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
+                            <openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="compact" parameters="layoutMode=view|layoutShowTable=true|layoutShowExtended=false" />
+                        </spring:nestedPath>
+                    </td>
+                </c:if>
                 <script type="text/javascript">
                     $j(document).ready(function () {
                         var hidden = ${fn:length(amrsRegistration.patient.addresses) <= 1};
@@ -1354,10 +1240,8 @@
                         var position = ${varStatus.index};
                         var nameContentX = $j('#addressPortlet' + position).find('table');
                         $j(nameContentX).attr('width', '100%');
-                        //$j(nameContentX).attr('id', 'addressContent' + position);
                         createPreferred(preferred, 'address', position, nameContentX, hidden);
                         createDelete('address', position, nameContentX.find('tr:first'));
-                        //$j(nameContentX).find('tr:first').attr('align', 'right');
 
                         // bind all inputs
                         var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
@@ -1366,11 +1250,10 @@
                         });
                     });
                 </script>
-
 			</c:forEach>
             </tbody>
         </table>
-        <table>
+        <table >
             <tr>
                 <td>
                     <div id="addressContent">
