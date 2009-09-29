@@ -66,7 +66,7 @@
                 <input type="radio" id="identifierPreferred${varStatus.index}" name="identifierPreferred" value="${status.value}" <c:if test='${status.value == "true"}'>checked</c:if>">
             </spring:bind>
         </td>
-        <td onclick='removeRow(this.parentNode)' id="rm_identifierContent" name="addedIdentifierData" <c:choose><c:when test="${identifier.dateCreated != null}">style="display: '';"</c:when><c:otherwise>style="display: none;"</c:otherwise></c:choose>>
+        <td onclick="removeRow(this.parentNode, 'identifier')" id="rm_identifierContent" name="addedIdentifierData" <c:choose><c:when test="${identifier.dateCreated != null}">style="display: '';"</c:when><c:otherwise>style="display: none;"</c:otherwise></c:choose>>
             <a href="#delete"  style="color:red;">X</a>
         </td>
         <td id="addNewIdentifierData" <c:if test='${identifier.dateCreated != null}'>style="display: none;"</c:if> >

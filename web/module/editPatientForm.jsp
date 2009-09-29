@@ -250,6 +250,12 @@
             var row = $j(tableRow).get(0);
             $j(row).remove();
         }
+        // If this is the last item left, set as preferred.
+        if ($j("input[name=" + type + "Preferred]:visible").length < 2) {
+            $j.each($j("input[name=" + type + "Preferred]:visible"), function(i, n) {
+                n.checked = true;
+            });
+        }
     }
 
 	function getTemplateType(type) {
@@ -271,6 +277,8 @@
             $j(templateClone).find('td').show();
             $j(templateClone).find("#addNewIdentifierData").replaceWith("<td></td>");
             $j("#identifierPreferredLabel").show();
+            $j(templateClone).find("#identifierPreferred").attr("checked", "checked");
+            $j(templateClone).find("#identifierPreferred").attr("id", "identifierPreferred" + id);
         }
 
         if (type == 'address') {
@@ -284,7 +292,7 @@
             });            
         }
         $j.each($j(templateClone).find('input'), function(i, n) {
-            if (n.id != 'identifierPreferred') {
+            if (n.id != ('identifierPreferred' + id)) {
                 return n.parentNode.innerHTML=n.value;
             }
         });
@@ -634,30 +642,30 @@
     function patientSearch() {
 
         var personName = {
-        	givenName: $j('input[name=patient\\.names\\[0\\]\\.givenName]').attr('value'),
-        	middleName: $j('input[name=patient\\.names\\[0\\]\\.middleName]').attr('value'),
-        	familyName: $j('input[name=patient\\.names\\[0\\]\\.familyName]').attr('value')
+        	givenName: $j('input[name=givenName]').attr('value'),
+        	middleName: $j('input[name=middleName]').attr('value'),
+        	familyName: $j('input[name=familyName]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personName, 2));
         
         var personAddress = {
-        	address1: $j('input[name=patient\\.addresses\\[0\\]\\.address1]').attr('value'),
-        	address2: $j('input[name=patient\\.addresses\\[0\\]\\.address2]').attr('value'),
-        	neighborhoodCell: $j('input[name=patient\\.addresses\\[0\\]\\.neighborhoodCell]').attr('value'),
-        	cityVillage: $j('input[name=patient\\.addresses\\[0\\]\\.cityVillage]').attr('value'),
-        	townshipDivision: $j('input[name=patient\\.addresses\\[0\\]\\.townshipDivision]').attr('value'),
-        	countyDistrict: $j('input[name=patient\\.addresses\\[0\\]\\.countyDistrict]').attr('value'),
-        	stateProvince: $j('input[name=patient\\.addresses\\[0\\]\\.stateProvince]').attr('value'),
-        	region: $j('input[name=patient\\.addresses\\[0\\]\\.region]').attr('value'),
-        	subregion: $j('input[name=patient\\.addresses\\[0\\]\\.subregion]').attr('value'),
-        	country: $j('input[name=patient\\.addresses\\[0\\]\\.country]').attr('value'),
-        	postalCode: $j('input[name=patient\\.addresses\\[0\\]\\.postalCode]').attr('value')
+        	address1: $j('input[name=address1]').attr('value'),
+        	address2: $j('input[name=address2]').attr('value'),
+        	neighborhoodCell: $j('input[name=neighborhoodCell]').attr('value'),
+        	cityVillage: $j('input[name=cityVillage]').attr('value'),
+        	townshipDivision: $j('input[name=townshipDivision]').attr('value'),
+        	countyDistrict: $j('input[name=countyDistrict]').attr('value'),
+        	stateProvince: $j('input[name=stateProvince]').attr('value'),
+        	region: $j('input[name=region]').attr('value'),
+        	subregion: $j('input[name=subregion]').attr('value'),
+        	country: $j('input[name=country]').attr('value'),
+        	postalCode: $j('input[name=postalCode]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(personAddress, 2));
         
         var patientIdentifier = {
-        	identifier: $j('input[name=patient\\.identifiers\\[0\\]\\.identifier]').attr('value'),
-        	identifierType: $j('input[name=patient\\.identifiers\\[0\\]\\.identifierType]').attr('value')
+        	identifier: $j('input[name=identifier]').attr('value'),
+        	identifierType: $j('select[name=identifierType]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(patientIdentifier, 2));
         
@@ -1013,6 +1021,13 @@
                                     <table>
                                         <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
                                     </table>
+                                    <script type="text/javascript">
+                                        // bind all inputs
+                                        var allTextInputs = $j('#namePortlet input[type=text]');
+                                        $j(allTextInputs).bind('keyup', function(event){
+                                            timeOutSearch(event);
+                                        });
+                                    </script>
                                 </spring:nestedPath>
                             </div>
                             <div class="tabBar" id="nameTabBar">
@@ -1206,6 +1221,13 @@
             <table id="emptyIdentifierTable">
                 <%@ include file="portlets/patientIdentifier.jsp" %>
             </table>
+            <script type="text/javascript">
+                // bind all inputs
+                var allTextInputs = $j('#emptyIdentifierTable input[type=text]');
+                $j(allTextInputs).bind('keyup', function(event){
+                    timeOutSearch(event);
+                });
+            </script>
         </spring:nestedPath>
         <div class="tabBar" id="identifierTabBar">
 			<span id="identifierError" class="newError"></span>
@@ -1244,10 +1266,10 @@
                         createDelete('address', position, nameContentX.find('tr:first'));
 
                         // bind all inputs
-                        var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
-                        $j(allTextInputs).bind('keyup', function(event){
-                            timeOutSearch(event);
-                        });
+                        //var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
+                        //$j(allTextInputs).bind('keyup', function(event){
+                        //    timeOutSearch(event);
+                        //});
                     });
                 </script>
 			</c:forEach>
@@ -1260,6 +1282,13 @@
                         <spring:nestedPath path="emptyAddress">
                             <openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                         </spring:nestedPath>
+                        <script type="text/javascript">
+                            // bind all inputs
+                            var allTextInputs = $j('#addressPortlet input[type=text]');
+                            $j(allTextInputs).bind('keyup', function(event){
+                                timeOutSearch(event);
+                            });
+                        </script>
                     </div>
                 </td>
             </tr>
