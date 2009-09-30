@@ -3,7 +3,6 @@
   <component name="ChangeListManager" verified="true">
     <list default="true" readonly="true" id="61cbad40-1a96-4a5f-8e80-01db9499ede9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
-      <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" afterPath="/home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amrsregistration.iws" afterPath="$PROJECT_DIR$/amrsregistration.iws" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/build.xml" afterPath="/home/brian/IdeaProjects/amrsregistration/build.xml" />
       <change type="MODIFICATION" beforePath="/home/brian/IdeaProjects/amrsregistration/.classpath" afterPath="/home/brian/IdeaProjects/amrsregistration/.classpath" />
@@ -69,7 +68,34 @@
       <file leaf-file-name="editPatientForm.jsp" pinned="false" current="true" current-in-tab="true">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1025" column="69" selection-start="37187" selection-end="37187" vertical-scroll-proportion="0.024429968">
+            <state line="1678" column="71" selection-start="67250" selection-end="67250" vertical-scroll-proportion="0.36332768">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AmrsSearchManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="124" column="31" selection-start="4489" selection-end="4489" vertical-scroll-proportion="-645.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="65" column="83" selection-start="2427" selection-end="2427" vertical-scroll-proportion="-30.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DWRAmrsRegistrationService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="13" selection-start="523" selection-end="523" vertical-scroll-proportion="-30.0">
               <folding />
             </state>
           </provider>
@@ -78,7 +104,7 @@
       <file leaf-file-name="patientIdentifier.jsp" pinned="false" current="false" current-in-tab="false">
         <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="68" column="59" selection-start="3917" selection-end="3917" vertical-scroll-proportion="0.0">
+            <state line="68" column="59" selection-start="3917" selection-end="3917" vertical-scroll-proportion="-36.208332">
               <folding />
             </state>
           </provider>
@@ -112,15 +138,15 @@
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientRelationship.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/personInfo.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/viewPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/dialogContent.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/assignIdForm.jsp" />
-    <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/patientIdentifier.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/editPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/personInfo.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/dialogContent.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/assignIdForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/patientAddress.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/editPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/patientName.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/editPatientForm.jsp" />
+    <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientAddress.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
     <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientName.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp" />
-    <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/localHeader.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/web/module/viewPatientForm.jsp" />
+    <jsp-to-context jsp-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/portlets/patientIdentifier.jsp" context-file="file:///home/brian/IdeaProjects/amrsregistration/build/web/module/editPatientForm.jsp" />
   </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
@@ -225,6 +251,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -247,6 +275,30 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="amrsregistration" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openmrs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="amrsregistration" />
@@ -297,10 +349,52 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openmrs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="amrsregistration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="metadata" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
-      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -320,9 +414,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RunManager" selected="Tomcat Server.Tomcat6">
     <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP" break_at_first_line="false" browser="DEFAULT" open_page_automatically="true" session_id="" session_after_first_page="false" web_path="">
@@ -537,12 +631,13 @@
     <frame x="0" y="25" width="1280" height="775" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2514793" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952926" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24878444" sideWeight="0.660485" order="1" side_tool="false" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21231766" sideWeight="0.6612426" order="1" side_tool="true" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23581848" sideWeight="0.7381657" order="0" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23743922" sideWeight="0.7381657" order="0" side_tool="false" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39940828" sideWeight="0.5" order="3" side_tool="false" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38088444" sideWeight="0.5" order="2" side_tool="false" />
@@ -552,7 +647,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32840237" sideWeight="0.5" order="1" side_tool="false" />
       <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2514793" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" />
       <window_info id="Web Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" />
@@ -569,7 +663,7 @@
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration: Cleanup layout of adding/removing name/identifier/address.  Uses radio buttons instead of check boxes. This is partial and functionality is not complete." />
+    <option name="LAST_COMMIT_MESSAGE" value="amrsregistration:  Radio buttons for Preferred set to checked for new items and for when only one item is listed on editPatient.form.  Patient search is still broken in this commit." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -582,7 +676,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="local_changes_20090708" />
     <MESSAGE value="amrsregistration: refactoring class names to contain AmrsRegistration and moved test files into correct package." />
     <MESSAGE value="amrsregistration: added deploy-web hack" />
     <MESSAGE value="amrsregistration: small fix to set familyName on controller" />
@@ -607,6 +700,7 @@
     <MESSAGE value="amrsregistration: fixed add/remove rows for identifier and name on editPatientForm" />
     <MESSAGE value="amrsregistration: Changed layout of adding/removing name/identifier/address.  This is partial and functionality is not complete." />
     <MESSAGE value="amrsregistration: Cleanup layout of adding/removing name/identifier/address.  Uses radio buttons instead of check boxes. This is partial and functionality is not complete." />
+    <MESSAGE value="amrsregistration:  Radio buttons for Preferred set to checked for new items and for when only one item is listed on editPatient.form.  Patient search is still broken in this commit." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -628,16 +722,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="198" column="33" selection-start="6559" selection-end="6559" vertical-scroll-proportion="0.023584906" />
-      </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="45" selection-start="81" selection-end="98" vertical-scroll-proportion="0.0" />
@@ -679,16 +763,11 @@
       </provider>
     </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/moduleApplicationContext.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
       <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
         <state />
       </provider>
-    </entry>
-    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="83" selection-start="2427" selection-end="2427" vertical-scroll-proportion="0.0" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/login.jsp">
@@ -701,16 +780,37 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/metadata/config.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="83" selection-start="2427" selection-end="2427" vertical-scroll-proportion="-30.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/src/org/openmrs/module/amrsregistration/web/DWRAmrsRegistrationService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="13" selection-start="523" selection-end="523" vertical-scroll-proportion="-30.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///home/brian/IdeaProjects/amrsregistration/src/org/openmrs/module/amrsregistration/AmrsSearchManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="124" column="31" selection-start="4489" selection-end="4489" vertical-scroll-proportion="-645.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/portlets/patientIdentifier.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="59" selection-start="3917" selection-end="3917" vertical-scroll-proportion="0.0">
+        <state line="68" column="59" selection-start="3917" selection-end="3917" vertical-scroll-proportion="-36.208332">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file:///home/brian/IdeaProjects/amrsregistration/web/module/editPatientForm.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1025" column="69" selection-start="37187" selection-end="37187" vertical-scroll-proportion="0.024429968">
+        <state line="1678" column="71" selection-start="67250" selection-end="67250" vertical-scroll-proportion="0.36332768">
           <folding />
         </state>
       </provider>

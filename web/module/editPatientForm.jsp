@@ -640,7 +640,6 @@
 	}
 
     function patientSearch() {
-
         var personName = {
         	givenName: $j('input[name=givenName]').attr('value'),
         	middleName: $j('input[name=middleName]').attr('value'),
@@ -665,7 +664,7 @@
         
         var patientIdentifier = {
         	identifier: $j('input[name=identifier]').attr('value'),
-        	identifierType: $j('select[name=identifierType]').attr('value')
+        	identifierType: $j('input[name=identifierType]').attr('value')
         }
         // alert(DWRUtil.toDescriptiveString(patientIdentifier, 2));
         
@@ -1021,13 +1020,6 @@
                                     <table>
                                         <openmrs:portlet url="nameLayout" id="namePortlet" size="inOneRow" parameters="layoutMode=edit|layoutShowTable=false|layoutShowExtended=false" />
                                     </table>
-                                    <script type="text/javascript">
-                                        // bind all inputs
-                                        var allTextInputs = $j('#namePortlet input[type=text]');
-                                        $j(allTextInputs).bind('keyup', function(event){
-                                            timeOutSearch(event);
-                                        });
-                                    </script>
                                 </spring:nestedPath>
                             </div>
                             <div class="tabBar" id="nameTabBar">
@@ -1221,13 +1213,6 @@
             <table id="emptyIdentifierTable">
                 <%@ include file="portlets/patientIdentifier.jsp" %>
             </table>
-            <script type="text/javascript">
-                // bind all inputs
-                var allTextInputs = $j('#emptyIdentifierTable input[type=text]');
-                $j(allTextInputs).bind('keyup', function(event){
-                    timeOutSearch(event);
-                });
-            </script>
         </spring:nestedPath>
         <div class="tabBar" id="identifierTabBar">
 			<span id="identifierError" class="newError"></span>
@@ -1264,12 +1249,6 @@
                         $j(nameContentX).attr('width', '100%');
                         createPreferred(preferred, 'address', position, nameContentX, hidden);
                         createDelete('address', position, nameContentX.find('tr:first'));
-
-                        // bind all inputs
-                        //var allTextInputs = $j('#addressContent' + position + ' input[type=text]');
-                        //$j(allTextInputs).bind('keyup', function(event){
-                        //    timeOutSearch(event);
-                        //});
                     });
                 </script>
 			</c:forEach>
@@ -1282,13 +1261,6 @@
                         <spring:nestedPath path="emptyAddress">
                             <openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                         </spring:nestedPath>
-                        <script type="text/javascript">
-                            // bind all inputs
-                            var allTextInputs = $j('#addressPortlet input[type=text]');
-                            $j(allTextInputs).bind('keyup', function(event){
-                                timeOutSearch(event);
-                            });
-                        </script>
                     </div>
                 </td>
             </tr>
@@ -1703,7 +1675,23 @@
 		first.focus();
 	});
 
-    changeNameHeaderHack();
+    var allNameTextInputs = $j('#nameContent input[type=text]');
+    $j(allNameTextInputs).bind('keyup', function(event){
+        timeOutSearch(event);
+    });
+
+    // bind all inputs
+    var allIdentifierTextInputs = $j('#identifierContent input[type=text]');
+    $j(allIdentifierTextInputs).bind('keyup', function(event){
+        timeOutSearch(event);
+    });
+
+    // bind all inputs
+    var allAddressTextInputs = $j('#addressContent input[type=text]');
+    $j(allAddressTextInputs).bind('keyup', function(event){
+        timeOutSearch(event);
+    });
+
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>
