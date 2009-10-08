@@ -63,7 +63,7 @@
 		<!-- (lib should only contain this module's required -->
 		<!-- libraries that OpenMRS doesn't contain already) -->
 		<copy todir="build/lib" failonerror="false">
-			<fileset dir="lib" includes="**/*" />
+			<fileset dir="lib" includes="**/*" />       
 		</copy>
 		
 		<!-- Create distributable jar file -->
@@ -74,7 +74,7 @@
 	
 	<target name="deploy-web" depends="package-module">
 		<property environment="env"/>
-		<copy todir="${module.tomcat.home}/webapps/openmrs/WEB-INF/view/module/amrsregistration">
+		<copy todir="${module.tomcat.brian.home}/webapps/openmrs/WEB-INF/view/module/amrsregistration">
 			<fileset dir="web/module" includes="**/*" />
 		</copy>
 	</target>
@@ -82,7 +82,7 @@
 	<target name="clean" description="Delete build and dist directories">
 		<delete dir="dist" />
 		<delete dir="build" />
-        <delete dir="out" />
+        <delete dir="idea/out" />
 	</target>
 	
 	<target name="compile-module" depends="init" description="Compiles the module">

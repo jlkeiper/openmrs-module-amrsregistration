@@ -1,14 +1,10 @@
     <tr id="identifierContent${varStatus.index}" <c:if test='${varStatus.index == 0 && (identifier.identifier == null || identifier.identifier == "")}'>style="display: none;"</c:if> >
         <td class="spacing" style="white-space: nowrap">
             <spring:bind path="identifier">
-                <c:choose>
-                    <c:when test="${identifier.dateCreated != null}">
-                        ${status.value}
-                    </c:when>
-                    <c:otherwise>
-                        <input type="text" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
-                    </c:otherwise>
-                </c:choose>
+                <c:if test="${identifier.dateCreated != null}">
+                    ${status.value}
+                </c:if>
+                <input type="<c:choose><c:when test='${identifier.dateCreated != null}'>hidden</c:when><c:otherwise>text</c:otherwise></c:choose>" id="${status.expression}" name="${status.expression}" value="${status.value}" onkeyup="timeOutSearch(event)"/>
             </spring:bind>
         </td>
         <td class="spacing" style="white-space: nowrap">
@@ -18,6 +14,7 @@
                         <openmrs:forEachRecord name="patientIdentifierType">
                             <c:if test="${record.patientIdentifierTypeId == status.value}">
                                 ${record.name}
+                                <input type="hidden" id="patient.identifiers[${varStatus.index}].identifierType" name="identifierType" value="${status.value}" />
                             </c:if>
                         </openmrs:forEachRecord>
                     </c:when>
@@ -44,6 +41,7 @@
                         <openmrs:forEachRecord name="location">
                             <c:if test="${record.locationId == status.value}">
                                 ${record.name}
+                                    <input type="hidden" id="patient.identifiers[${varStatus.index}].location" name="patient.identifiers[${varStatus.index}].location" value="${status.value}" />
                             </c:if>
                         </openmrs:forEachRecord>
                     </c:when>

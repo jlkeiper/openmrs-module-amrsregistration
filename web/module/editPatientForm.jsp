@@ -94,7 +94,19 @@
 		$j('#mask').hide();
 		$j('.window').hide();
 	}
-    
+
+    function isEmpty(parentEl) {
+        var empty = true;
+        $j.each($j(parentEl).find(':text'), function(i, n) {
+            //alert("empty? " + n.id + " - |" + n.value + "|");
+            if (n.value.length > 0) {
+                empty = false;
+            }
+        });
+        //alert("Empty? " + empty + " " + parentEl.name);
+        return empty;
+    }
+
     function updateData(identifier) {
     	// get the form and reset the form
     	$j(document.forms[0].reset());
@@ -268,11 +280,50 @@
 		if (type == 'identifier')
 			return $j('#identifierContent');
 	}
+
+    function hideInputs(templateClone) {
+        // Hide the inputs of the template and shows only text.
+        $j.each($j(templateClone).find('td'), function(i, n) {
+            $j(n).hide();
+            if ($j(n).find('a').attr('tagName') == 'A') {
+                $j(n).show();
+            }
+            $j.each($j(n).find(':input'), function (j, p) {
+                $j(n).show();
+                if (p.type == 'text') {
+                    p.name = getNameSuffix(p.name);
+                    p.style.border = 'none';
+                    p.readOnly = true;
+                    ///$j(n).html(p.value + n.innerHTML);
+                    if (p.value.length < 1) {
+                        $j(n).hide();
+                    }
+                }
+                if (p.tagName == 'select') {
+                    alert($j(p).find('option [selected]'));
+                }
+            });
+        });
+        return templateClone;
+    }
+
+    // TODO: fix this ... seems not to work with the controller line 354
+    function getNameSuffix(name) {
+        return name;
+        /*
+        var newName = name;
+        if (name.indexOf('.') > 0) {
+            newName = name.substring(name.lastIndexOf('.')+1, name.length);
+        }
+        return newName;
+        */
+    }
 	
 	function duplicateElement(type, id) {
 		// clone the template and add preferred section
 		var templateClone = getTemplateType(type).clone(true);
 
+        
         if (type == 'identifier') {
             $j(templateClone).find('td').show();
             $j(templateClone).find("#addNewIdentifierData").replaceWith("<td></td>");
@@ -281,29 +332,18 @@
             $j(templateClone).find("#identifierPreferred").attr("id", "identifierPreferred" + id);
         }
 
-        if (type == 'address') {
-            $j.each($j(templateClone).find('tr'), function(i, n) {
-                $j(n).find('td:first').remove();
-            });
-            $j.each($j(templateClone).find('td'), function(i, n) {
-                if ($j(n).find('input').length < 1) {
-                    n.innerHTML='';
-                }
-            });            
-        }
-        $j.each($j(templateClone).find('input'), function(i, n) {
-            if (n.id != ('identifierPreferred' + id)) {
-                return n.parentNode.innerHTML=n.value;
-            }
-        });
         $j.each($j(templateClone).find('select'), function(i, n) {
             n.selectedIndex = $j('#' + type + 'Content').find('select').get(i).selectedIndex;
-            n.parentNode.innerHTML = n.options[n.selectedIndex].text; 
+            n.style.color = 'black';
+            //n.parentNode.innerHTML = n.options[n.selectedIndex].text;
         });
+
 		if (type == 'name') {
 			createPreferred(false, type, id, templateClone, false);
 			createDelete(type, id, templateClone);
         }
+
+        templateClone = hideInputs(templateClone);
 
 		// custom mods for address
 		if (type == 'address') {
@@ -374,7 +414,7 @@
             if (type == 'address') {
                 var appended = false;
                 $j.each($j('#' + type + 'Position').children('tr'), function(i, n) {
-                    if ($j(n).children('td').length < 3 && !appended) {
+                    if ($j(n).children('td').length < 2 && !appended) {
                         $j(n).append(newElement);
                         appended = true;
                     }
@@ -414,6 +454,7 @@
     }
 	
 	function removeTemplate() {
+        $j(':input').show();
 		// remove name, id and address template when submitting
 		var obj = document.getElementById("identifierContent");
 		if (obj != null)
@@ -631,12 +672,14 @@
 	}
 	
 	function timeOutSearch(e) {
-		c = e.keyCode;
-		
-		if (isAlphaNumericCharacter(c) || isDashCharacter(c) || isBackspaceDelete(c)) {
-			clearTimeout(searchTimeout);
-			searchTimeout = setTimeout("patientSearch()", searchDelay);
-		}
+        if ($j('tr [id*=nameContent]').length < 2) {
+            c = e.keyCode;
+
+            if (isAlphaNumericCharacter(c) || isDashCharacter(c) || isBackspaceDelete(c)) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout("patientSearch()", searchDelay);
+            }
+        }
 	}
 
     function patientSearch() {
@@ -994,17 +1037,17 @@
                                             <tr id="nameContent${varStatus.index}">
                                                 <spring:bind path="givenName">
                                                     <td>
-                                                        ${status.value}
+                                                        <input type="text" id="patient.names[${varStatus.index}].givenName" name="${status.expression}" value="${status.value}" style="border: none;" readonly="true"/>
                                                     </td>
                                                 </spring:bind>
                                                 <spring:bind path="middleName">
                                                     <td>
-                                                        ${status.value}
+                                                        <input type="text" id="patient.names[${varStatus.index}].middleName" name="${status.expression}" value="${status.value}" style="border: none;" readonly="true"/>
                                                    </td>
                                                 </spring:bind>
                                                 <spring:bind path="familyName">
                                                     <td>
-                                                        ${status.value}
+                                                        <input type="text" id="patient.names[${varStatus.index}].familyName" name="${status.expression}" value="${status.value}" style="border: none;" readonly="true"/>
                                                     </td>
                                                 </spring:bind>
                                             </tr>
@@ -1058,6 +1101,9 @@
                                         </td>
                                     </tr>
                                 </spring:nestedPath>
+                                  <script type="text/javascript">
+                                      $j('#namePreferredLabel').show();
+                                  </script>
                               </c:forEach>
                               </tbody>
                           </table>
@@ -1227,25 +1273,25 @@
 
 <!-- Patient Address Section -->
 		<table>
-            <col width="33%"/>
-            <col width="33%"/>
-            <col width="34%"/>
+            <col width="50%"/>
+            <col width="50%"/>
             <tbody id="addressPosition">
 			<c:forEach var="address" items="${amrsRegistration.patient.addresses}" varStatus="varStatus">
-                <c:if test="${varStatus.index % 3 == 0}"><tr valign="top"></c:if>
-                <c:if test="${varStatus.index > 1}">
+                <c:if test="${varStatus.index % 2 == 0}"><tr valign="top"></c:if>
+                <!-- c:if test="${address.subregion != null}" -->
                     <td  id="addressContent${varStatus.index}" style='border: thin outset lightgray'>
                         <spring:nestedPath path="amrsRegistration.patient.addresses[${varStatus.index}]">
-                            <openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="compact" parameters="layoutMode=view|layoutShowTable=true|layoutShowExtended=false" />
+                            <openmrs:portlet url="addressLayout" id="addressPortlet${varStatus.index}" size="full" parameters="layoutMode=edit|layoutShowTable=true|layoutShowExtended=false" />
                         </spring:nestedPath>
                     </td>
-                </c:if>
+                <!-- /c:if -->
                 <script type="text/javascript">
                     $j(document).ready(function () {
                         var hidden = ${fn:length(amrsRegistration.patient.addresses) <= 1};
                         var preferred = ${address.preferred};
                         var position = ${varStatus.index};
                         var nameContentX = $j('#addressPortlet' + position).find('table');
+                        nameContentX = hideInputs(nameContentX);
                         $j(nameContentX).attr('width', '100%');
                         createPreferred(preferred, 'address', position, nameContentX, hidden);
                         createDelete('address', position, nameContentX.find('tr:first'));
@@ -1671,7 +1717,7 @@
 <script type="text/javascript">
 	// bind onkeyup for each of the address layout text field
 	$j(document).ready(function() {
-		var first = $j('#nameContent0 input[type=text]:eq(0)');
+		var first = $j('#nameContent input[type=text]:eq(0)');
 		first.focus();
 	});
 
@@ -1691,6 +1737,17 @@
     $j(allAddressTextInputs).bind('keyup', function(event){
         timeOutSearch(event);
     });
+
+    function removeEmptyAddress(addressContentX) {
+        ///alert($j(addressContentX).get(0).id);
+        if (addressContentX.id != 'addressContent' && isEmpty(addressContentX)) {
+            $j(addressContentX).remove();
+        } else {
+            $j(addressContentX).show();
+        }
+    }
+    //removeEmptyAddress($j('td [id*=addressContent]'));
+    removeEmptyAddress($j('#addressContent0'));
 
 </script>
 

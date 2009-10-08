@@ -576,7 +576,27 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			boolean[] addresses = new boolean[patient.getAddresses().size()];
 			boolean[] names = new boolean[patient.getNames().size()];
 			boolean[] ids = new boolean[patient.getIdentifiers().size()];
-			
+            /*
+            String[] address1s = ServletRequestUtils.getStringParameters(request, "address1");
+            String[] address2s = ServletRequestUtils.getStringParameters(request, "address2");
+            String[] cells = ServletRequestUtils.getStringParameters(request, "neighborhoodCell");
+            String[] cities = ServletRequestUtils.getStringParameters(request, "cityVillage");
+            String[] townships = ServletRequestUtils.getStringParameters(request, "townshipDivision");
+            String[] counties = ServletRequestUtils.getStringParameters(request, "countyDistrict");
+            String[] states = ServletRequestUtils.getStringParameters(request, "stateProvince");
+            String[] regions = ServletRequestUtils.getStringParameters(request, "region");
+            String[] subregions = ServletRequestUtils.getStringParameters(request, "subregion");
+            String[] countries = ServletRequestUtils.getStringParameters(request, "country");
+            String[] postalCodes = ServletRequestUtils.getStringParameters(request, "postalCode");
+            log.error("regions.length: " + regions.length);
+            log.error("subregions.length: " + subregions.length);
+            for(int i=0; i<regions.length-1; i++) {
+                log.error("region[" + i + "]: " + regions[i]);
+            }
+            for(int i=0; i<regions.length-1; i++) {
+                log.error("subregion[" + i + "]: " + subregions[i]);
+            }
+            */
 			int counter = NumberUtils.max(addresses.length, names.length, ids.length);
 			for (int i = 0; i < counter; i++) {
 	            if (i < addresses.length)
@@ -830,6 +850,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 
 		foundInvalid = false;
 		for (PersonAddress address: patient.getAddresses()) {
+            if (address.isBlank()) {
+                patient.removeAddress(address);
+                continue;
+            }
     		if (StringUtils.isBlank(address.getSubregion()) ||
     				StringUtils.isBlank(address.getRegion()))
     			
