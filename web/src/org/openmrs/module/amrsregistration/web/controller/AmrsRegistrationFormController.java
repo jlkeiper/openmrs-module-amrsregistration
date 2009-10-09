@@ -989,7 +989,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     	to.setDead(from.isDead());
     	to.setDeathDate(from.getDeathDate());
     	to.setCauseOfDeath(from.getCauseOfDeath());
-		
+
+        to.setCreator(from.getCreator());
+        to.setDateCreated(from.getDateCreated());
     	to.setPersonCreator(from.getPersonCreator());
     	to.setPersonDateCreated(from.getPersonDateCreated());
     	to.setPersonChangedBy(from.getPersonChangedBy());
