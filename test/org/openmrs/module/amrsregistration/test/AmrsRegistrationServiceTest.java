@@ -9,9 +9,8 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
-import org.openmrs.module.amrsregistration.AmrsRegistrationService;
-import org.openmrs.module.amrsregistration.AmrsSearchManager;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.amrsregistration.AmrsRegistrationService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 public class AmrsRegistrationServiceTest extends
