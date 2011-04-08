@@ -226,8 +226,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         		// Get the preferred value of the preferred from the list
         		// The value will be 1 or 2 or 3 ... or n, where n is the position of the name in the set
         		// The names implementation is using TreeSet, so names in a person object always will have the same order
-        		String namePreferred = ServletRequestUtils.getStringParameter(request, "namePreferred", StringUtils.EMPTY);
-        		int selectedName = NumberUtils.toInt(namePreferred);
+        		int selectedName = ServletRequestUtils.getIntParameter(request, "namePreferred", 0);
         		
         		// flag whether the preferred name is one of the name in the person object or a new PersonName object
         		boolean preferredNameCreated = true;
@@ -250,8 +249,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         			// you will get it as an array inside the request object.
         			selectedName = selectedName - patient.getNames().size();
         		
-        		String identifierPreferred = ServletRequestUtils.getStringParameter(request, "identifierPreferred", StringUtils.EMPTY);
-        		int selectedIdentifier = NumberUtils.toInt(identifierPreferred);
+        		int selectedIdentifier = ServletRequestUtils.getIntParameter(request, "identifierPreferred", 0);
 
         		boolean preferredIdentifierCreated = true;
         		if (selectedIdentifier < patient.getIdentifiers().size()) {
@@ -292,8 +290,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
         		
         		// arrays from the identifiers section
         		String[] ids = ServletRequestUtils.getStringParameters(request, "identifier");
-        		String[] idTypes = ServletRequestUtils.getStringParameters(request, "identifierType");
-        		String[] locations = ServletRequestUtils.getStringParameters(request, "location");
+        		int[] idTypes = ServletRequestUtils.getIntParameters(request, "identifierType");
+        		int[] locations = ServletRequestUtils.getIntParameters(request, "location");
         		
         		// only process when the user add a new identifier
         		if (ids != null && idTypes != null && locations != null) {
@@ -307,10 +305,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 							PatientIdentifier identifier = new PatientIdentifier();
 							identifier.setIdentifier(ids[j]);
 							
-							Integer idType = NumberUtils.createInteger(idTypes[j]);
+							Integer idType = idTypes[j];
 							identifier.setIdentifierType(Context.getPatientService().getPatientIdentifierType(idType));
 							
-							Integer location = NumberUtils.createInteger(locations[j]);
+							Integer location = locations[j];
 							identifier.setLocation(locationService.getLocation(location));
 							// Assign preferred for selected identifier. The array will be indexed the same way
 							// with how it is rendered on the page. So, we can tell which one is preferred or not
@@ -508,6 +506,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     		
     		// variable that will be sent from jsp for the amrs id
 			String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
+			int amrsLocID = ServletRequestUtils.getIntParameter(request, "locationId", -1);
 			if (amrsId != null) {
 				// prepare the amrs target id
 				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
@@ -515,7 +514,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				try {
 					// search if the patient already have the targeted identifier or not
 					// if yes then do update
-	                validator.validateIdentifier(amrsId, type);
+	                PatientIdentifierValidator.validateIdentifier(amrsId, type);
 	                for (PatientIdentifier identifier : patient.getIdentifiers()) {
                         if (patient.getIdentifiers().size() == 1 &&
                                 (identifier == null || identifier.getIdentifier() == null || identifier.getIdentifier() == "")) {
@@ -525,7 +524,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
                         if (identifier.getIdentifierType() != null && identifier.getIdentifierType().equals(type)) {
 	                    	foundAmrsId = true;
 	                    	identifier.setIdentifier(amrsId);
-                            validator.validateIdentifier(identifier);
+                            PatientIdentifierValidator.validateIdentifier(identifier);
 	                    }
 	                }
 	                // if not then create a new identifier
@@ -533,8 +532,12 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                	PatientIdentifier identifier = new PatientIdentifier();
 	                	identifier.setIdentifier(amrsId);
 	                	identifier.setIdentifierType(type);
+	                	Location location = Context.getLocationService().getLocation(amrsLocID);
+						if (location != null)
+							identifier.setLocation(location);
+						else
 	                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
-                        validator.validateIdentifier(identifier);
+                        PatientIdentifierValidator.validateIdentifier(identifier);
                         patient.addIdentifier(identifier);
 	                }
                 }
@@ -549,7 +552,6 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	/**
      * @see org.springframework.web.servlet.mvc.AbstractWizardFormController#onBindAndValidate(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.BindException, int)
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected void onBindAndValidate(HttpServletRequest request, Object command, BindException errors, int page)
                                                                                                                 throws Exception {
@@ -608,7 +610,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
             }
 
 			boolean updateNeeded = false;
-			Enumeration paramNames = request.getParameterNames();
+			Enumeration<?> paramNames = request.getParameterNames();
 			while (paramNames.hasMoreElements()) {
 				String paramName = (String) paramNames.nextElement();
 				for (int i = 0; i < counter; i++) {
@@ -794,7 +796,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 			AmrsRegistration amrsRegistration = (AmrsRegistration) command;
 			Patient patient = amrsRegistration.getPatient();
 			for (PatientIdentifier identifier: patient.getIdentifiers()) {
-				PatientIdentifierType identifierType = identifier.getIdentifierType();
+				// PatientIdentifierType identifierType = identifier.getIdentifierType();
 				if (!StringUtils.isBlank(identifier.getIdentifier()))
 					validator.validate(identifier, errors);
 			}

@@ -315,6 +315,10 @@
 			<span style="font: bold 0.8em verdana">(${amrsIdType})</span>
 		<br />
 		<br />
+		<span style="font: bold 0.8em verdana;">Registration Location:</span>
+		<openmrs:fieldGen
+	type="org.openmrs.Location" formFieldName="locationId" val=""
+	allowUserDefault="true" />
 		<div style="clear: both">&nbsp;</div>
 		</div>
 		<input type="hidden" name="_page2" value="true" />
