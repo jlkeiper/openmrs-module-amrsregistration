@@ -129,6 +129,8 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 				localHashMap.put("emptyAddress", new PersonAddress());
 				// add new template for relationship
 				localHashMap.put("emptyRelationship", new Relationship());
+				//add the last used registration location
+				localHashMap.put("lastRegLocation", Context.getLocationService().getLocation(2));
 				
 				// used to flag down whether to show the patient's attributes or not
 				List<PersonAttributeType> attributeTypes = Context.getPersonService().getPersonAttributeTypes(PERSON_TYPE.PATIENT, ATTR_VIEW_TYPE.LISTING);
@@ -507,7 +509,7 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
     		// variable that will be sent from jsp for the amrs id
 			String amrsId = ServletRequestUtils.getStringParameter(request, "amrsIdentifier", null);
 			int amrsLocID = ServletRequestUtils.getIntParameter(request, "locationId", -1);
-			if (amrsId != null) {
+				if (amrsId != null) {
 				// prepare the amrs target id
 				PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(AmrsRegistrationConstants.AMRS_TARGET_ID);
             	boolean foundAmrsId = false;
@@ -533,8 +535,10 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                	identifier.setIdentifier(amrsId);
 	                	identifier.setIdentifierType(type);
 	                	Location location = Context.getLocationService().getLocation(amrsLocID);
-						if (location != null)
+						if (location != null){
 							identifier.setLocation(location);
+							request.response
+						}
 						else
 	                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
                         PatientIdentifierValidator.validateIdentifier(identifier);

@@ -317,7 +317,7 @@
 		<br />
 		<span style="font: bold 0.8em verdana;">Registration Location:</span>
 		<openmrs:fieldGen
-	type="org.openmrs.Location" formFieldName="locationId" val=""
+	type="org.openmrs.Location" formFieldName="locationId" val="${lastRegLocation}"
 	allowUserDefault="true" />
 		<div style="clear: both">&nbsp;</div>
 		</div>

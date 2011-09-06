@@ -16,4 +16,7 @@ public interface AmrsRegistrationConstants {
 	String AMRS_TARGET_ID_KEY = "amrsregistration.idType";
 	
 	String AMRS_TARGET_ID = Context.getAdministrationService().getGlobalProperty(AMRS_TARGET_ID_KEY);
+	
+	//Add cookie to temporarily store the point of registration.
+	String LOCATION_COOKIE = "cached location";
 }
