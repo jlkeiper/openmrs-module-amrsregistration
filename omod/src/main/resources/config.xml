@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.0//EN" "http://resources.openmrs.org/doctype/config-1.0.dtd">
-<module configVersion="1.0">
 
-<!-- Base Module Properties -->
-    <id>@MODULE_ID@</id>
-    <name>@MODULE_NAME@</name>
-    <version>@MODULE_VERSION@</version>
-    <package>@MODULE_PACKAGE@</package>
+<module configVersion="1.2">
+	
+	<!-- Module Properties -->
+	<id>${project.parent.artifactId}</id>
+	<name>${project.parent.name}</name>
+	<version>${project.parent.version}</version>
+	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
     <author>Win Ribeka, Brian McKown</author>
     <description>
-	AMRS Registration Module is for registering patients.
+		${project.parent.description}
     </description>
-    <require_version>1.6.2.0000</require_version>
-<!--
-    <require_modules>
-        <require_module>org.openmrs.module.remoteformentry</require_module>
-    </require_modules>
--->
-    <activator>org.openmrs.module.amrsregistration.AmrsRegistrationActivator</activator>
-    <!--<updateURL>https://dev.openmrs.org/modules/download/amrsregistration/update.rdf</updateURL> -->
+	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
+	<require_version>${openMRSVersion}</require_version>
+	<!-- / Module Properties -->
 
-<!-- /Base Module Properties -->
+	
+	<!-- Module Activator -->
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.AmrsRegistrationActivator</activator>
+    <require_modules>
+        <!--
+        <require_module>org.openmrs.module.remoteformentry</require_module>
+        -->
+    </require_modules>
+
 <!-- Extensions -->
     <extension>
         <point>org.openmrs.admin.list</point>
@@ -30,7 +33,7 @@
 
 <!-- Required Privileges-->
     <privilege>
-        <name>@MODULE_NAME@</name>
+        <name>AMRS Registration</name>
         <description>Allows user to register new patients, find patients through name, id and barcode.</description>
     </privilege>
 <!--Required Privileges -->
@@ -151,10 +154,4 @@
         <file>messages_es.properties</file>
     </messages>
 <!-- /Internationalization -->
-    <tomcat>
-        <home>/home/nribeka/Desktop/Work/ApacheTomcat</home>
-        <brian>
-            <home>/opt/tomcat</home>
-        </brian>
-    </tomcat>
 </module>

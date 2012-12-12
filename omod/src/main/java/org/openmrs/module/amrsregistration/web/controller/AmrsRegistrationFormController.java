@@ -537,10 +537,9 @@ public class AmrsRegistrationFormController extends AbstractWizardFormController
 	                	Location location = Context.getLocationService().getLocation(amrsLocID);
 						if (location != null){
 							identifier.setLocation(location);
-							request.response
 						}
 						else
-	                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
+		                	identifier.setLocation(Context.getLocationService().getDefaultLocation());
                         PatientIdentifierValidator.validateIdentifier(identifier);
                         patient.addIdentifier(identifier);
 	                }

@@ -12,9 +12,9 @@
 	<url>http://openmrs.org</url>
 
 	<scm>
-		<connection>scm:svn:http://svn.openmrs.org/openmrs-modules/amrsregistration/trunk/</connection>
-		<developerConnection>scm:svn:http://svn.openmrs.org/openmrs-modules/amrsregistration/trunk/</developerConnection>
-		<url>http://svn.openmrs.org/openmrs-modules/amrsregistration/trunk/</url>
+		<connection>scm:git:https://github.com/AMPATH/openmrs-module-amrsregistration/</connection>
+		<developerConnection>scm:git:https://github.com/AMPATH/openmrs-module-amrsregistration/</developerConnection>
+		<url>https://github.com/AMPATH/openmrs-module-amrsregistration/</url>
 	</scm>
 
 	<modules>
@@ -22,20 +22,18 @@
 		<module>omod</module>
 	</modules>
 
+	<properties>
+		<openMRSVersion>1.6.2</openMRSVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
-			<!--
-			Libraries from lib to add as dependencies with compile or runtime scope:
+			<!-- External dependencies -->
 			
-				
-			Find matching dependencies in maven central repository.
-			<dependency>
-				<groupId>org.other.library</groupId>
-				<artifactId>library-name</artifactId>
-				<version>library.version</version>
-				<scope>compile</scope>
-			</dependency>
-			-->
+			<!-- End External dependencies -->
+
+			<!-- Begin OpenMRS core -->
 			
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
@@ -58,12 +56,11 @@
 				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
+
+			<!-- End OpenMRS core -->
+
 		</dependencies>
 	</dependencyManagement>
-
-	<properties>
-		<openMRSVersion>1.6.2</openMRSVersion>
-	</properties>
 
 	<build>
 		<pluginManagement>
@@ -72,14 +69,20 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<target>1.5</target>
-						<source>1.5</source>
+						<target>1.6</target>
+						<source>1.6</source>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.openmrs.maven.plugins</groupId>
 					<artifactId>maven-openmrs-plugin</artifactId>
-					<version>1.0</version>
+					<version>1.0.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.4</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
