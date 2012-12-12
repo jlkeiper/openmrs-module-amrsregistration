@@ -12,23 +12,17 @@ import org.openmrs.RelationshipType;
 
 public class AmrsRegistration implements Serializable{
 
-	/**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     
     private List<Relationship> relationships;
     
     private Patient patient;
 
-	/**
-     * 
-     */
     public AmrsRegistration() {
 	    super();
     }
 
-	/**
+    /**
      * @param relationships
      * @param patient
      */

@@ -1,48 +1,39 @@
 package org.openmrs.module.amrsregistration;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import org.openmrs.Patient;
-import org.openmrs.Person;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
-import org.openmrs.module.amrsregistration.db.AmrsRegistrationDAO;
 
 public interface AmrsRegistrationService {
-    public void setRemoteRegistrationDAO(
-            AmrsRegistrationDAO paramAmrsRegistrationDAO);
 
-    /**
-     * This method will be used for remote registration.  Registered patient
-     * information will be placed into an xml file for the FormEntry processor.
-     * @param paramPatient
-     * @param paramString1
-     * @param paramString2
-     * @throws APIException
-     */
-    public void registerPatient(Patient paramPatient,
-            String paramString1, String paramString2) throws APIException;
+	/**
+	 * Generate an XML file as a record of this registration event.
+	 *
+	 * @param registration the registration event to be encoded
+	 * @throws APIException
+	 */
+	public String renderRegistrationXML(AmrsRegistration registration) throws APIException;
 
-    /**
-     * Find Persons using all possible Person parameters.
-     * @param paramPersonName
-     * @param paramPersonAddress
-     * @param paramSet
-     * @param paramString
-     * @param paramDate
-     * @param paramInteger
-     * @param limit  Optionally limit the number of results to return.
-     * @return
-     * @throws APIException
-     */
-    public List<Person> getPersons(PersonName paramPersonName,
-            PersonAddress paramPersonAddress, Set<PersonAttribute> paramSet,
-            String paramString, Date paramDate, Integer paramInteger, Integer limit)
-            throws APIException;
-    public String sayHello() throws APIException;
+	/**
+	 * Saves an XML file to an archive.
+	 *
+	 * @param xml the file to be saved
+	 * @throws APIException
+	 */
+	public void saveRegistrationXMLToFile(String xml) throws APIException;
 
-    public List<Person> getPersons();
+	/**
+	 * Reads an XML file and interprets it into an AmrsRegistration object.
+	 *
+	 * @param xml source file for registration event
+	 * @return the rendered registration object
+	 * @throws APIException
+	 */
+	public AmrsRegistration renderRegistration(String xml) throws APIException;
+
+	/**
+	 * Saves a registration event.
+	 *
+	 * @param registration the registration event details
+	 * @throws APIException
+	 */
+	public void register(AmrsRegistration registration) throws APIException;
 }

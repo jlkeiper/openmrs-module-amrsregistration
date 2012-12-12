@@ -25,7 +25,7 @@
                     <property name="transactionManager"><ref bean="transactionManager"/></property>
                     <property name="target">
                         <bean class="org.openmrs.module.amrsregistration.impl.AmrsRegistrationServiceImpl">
-                            <property name="remoteRegistrationDAO">
+                            <property name="dao">
                                 <bean class="org.openmrs.module.amrsregistration.db.hibernate.HibernateAmrsRegistrationDAO">
                                     <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                                 </bean>
