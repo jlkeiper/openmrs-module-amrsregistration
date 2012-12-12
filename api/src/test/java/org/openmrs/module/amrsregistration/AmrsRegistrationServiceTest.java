@@ -1,4 +1,4 @@
-package org.openmrs.module.amrsregistration.test;
+package org.openmrs.module.amrsregistration;
 
 import java.util.List;
 
